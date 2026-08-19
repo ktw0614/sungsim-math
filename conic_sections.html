@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이차곡선의 정의 시각화 도구</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        canvas { background-color: #ffffff; cursor: crosshair; touch-action: none; }
+        .tab-active { border-bottom: 4px solid #3b82f6; color: #1d4ed8; font-weight: bold; }
+        .tab-inactive { color: #64748b; }
+        .tab-inactive:hover { color: #3b82f6; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4">
+
+    <header class="mb-6 text-center">
+        <h1 class="text-3xl font-bold text-slate-800 mb-2">이차곡선의 정의 시각화</h1>
+        <p class="text-slate-600">2022 개정 교육과정 수학 기하 - 포물선과 타원</p>
+    </header>
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        
+        <!-- 왼쪽 패널: 컨트롤 -->
+        <div class="w-full md:w-1/3 bg-slate-50 border-r border-slate-200 p-6 flex flex-col">
+            
+            <!-- 탭 메뉴 -->
+            <div class="flex mb-6 border-b border-slate-300">
+                <button id="tab-parabola" class="flex-1 py-3 text-center tab-active transition" onclick="switchTab('parabola')">포물선</button>
+                <button id="tab-ellipse" class="flex-1 py-3 text-center tab-inactive transition" onclick="switchTab('ellipse')">타원</button>
+                <button id="tab-hyperbola" class="flex-1 py-3 text-center tab-inactive transition" onclick="switchTab('hyperbola')">쌍곡선</button>
+            </div>
+
+            <!-- 상태 표시 패널 -->
+            <div id="equation-display" class="bg-blue-50 text-blue-900 p-4 rounded-lg mb-6 font-mono text-center text-lg shadow-inner">
+                y² = 4px
+            </div>
+
+            <!-- 포물선 컨트롤 -->
+            <div id="controls-parabola" class="flex-col gap-6 flex">
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>초점 매개변수 (p)</span>
+                        <span id="val-p" class="font-bold text-blue-600">1</span>
+                    </label>
+                    <input type="range" id="slider-p" min="-5" max="5" step="0.5" value="1" class="w-full accent-blue-600">
+                    <p class="text-xs text-slate-500 mt-1">p가 0이 아닐 때 성립합니다.</p>
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>점 P의 위치 (y좌표)</span>
+                    </label>
+                    <input type="range" id="slider-py" min="-8" max="8" step="0.1" value="3" class="w-full accent-emerald-500">
+                </div>
+            </div>
+
+            <!-- 타원 컨트롤 -->
+            <div id="controls-ellipse" class="flex-col gap-6 hidden">
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>x축 방향 길이 (a)</span>
+                        <span id="val-a" class="font-bold text-blue-600">5</span>
+                    </label>
+                    <input type="range" id="slider-a" min="1" max="9" step="0.5" value="5" class="w-full accent-blue-600">
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>y축 방향 길이 (b)</span>
+                        <span id="val-b" class="font-bold text-blue-600">3</span>
+                    </label>
+                    <input type="range" id="slider-b" min="1" max="9" step="0.5" value="3" class="w-full accent-purple-600">
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>점 P의 위치 (각도)</span>
+                    </label>
+                    <input type="range" id="slider-angle" min="0" max="360" step="1" value="45" class="w-full accent-emerald-500">
+                </div>
+            </div>
+
+            <!-- 쌍곡선 컨트롤 -->
+            <div id="controls-hyperbola" class="flex-col gap-6 hidden">
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>주축 방향 길이 변수 (a)</span>
+                        <span id="val-ha" class="font-bold text-blue-600">4</span>
+                    </label>
+                    <input type="range" id="slider-ha" min="1" max="8" step="0.5" value="4" class="w-full accent-blue-600">
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>켤레축 방향 길이 변수 (b)</span>
+                        <span id="val-hb" class="font-bold text-blue-600">3</span>
+                    </label>
+                    <input type="range" id="slider-hb" min="1" max="8" step="0.5" value="3" class="w-full accent-purple-600">
+                </div>
+                <div>
+                    <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                        <span>점 P의 위치 (매개변수)</span>
+                    </label>
+                    <input type="range" id="slider-ht" min="-2.5" max="2.5" step="0.05" value="0.5" class="w-full accent-emerald-500">
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-2">
+                <button id="btn-animate" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded transition shadow" onclick="toggleAnimation()">
+                    ▶ 자동 이동
+                </button>
+            </div>
+
+            <div class="mt-auto pt-6 border-t border-slate-200">
+                <h3 class="font-bold text-slate-800 mb-2">기하학적 정의</h3>
+                <div id="def-parabola" class="text-sm text-slate-600 leading-relaxed">
+                    평면 위의 한 점 <span class="text-red-500 font-bold">초점(F)</span>과 그 점을 지나지 않는 한 직선 <span class="text-blue-500 font-bold">준선(l)</span>에 이르는 <span class="text-emerald-600 font-bold">거리가 같은 점(P)</span>들의 모임. <br>
+                    <strong>거리 계산: <span id="calc-parabola">PF = PH = 0.00</span></strong>
+                </div>
+                <div id="def-ellipse" class="text-sm text-slate-600 leading-relaxed hidden">
+                    평면 위의 두 <span class="text-red-500 font-bold">초점(F, F')</span>으로부터의 <span class="text-emerald-600 font-bold">거리의 합이 일정한 점(P)</span>들의 모임.<br>
+                    <strong>거리 계산: <span id="calc-ellipse">PF + PF' = 0.00</span></strong>
+                </div>
+                <div id="def-hyperbola" class="text-sm text-slate-600 leading-relaxed hidden">
+                    평면 위의 두 <span class="text-red-500 font-bold">초점(F, F')</span>으로부터의 <span class="text-emerald-600 font-bold">거리의 차가 일정한 점(P)</span>들의 모임.<br>
+                    <strong>거리 계산: <span id="calc-hyperbola">|PF - PF'| = 0.00</span></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오른쪽 패널: 캔버스 -->
+        <div class="w-full md:w-2/3 relative flex justify-center items-center bg-white p-4">
+            <canvas id="mathCanvas" width="600" height="600" class="w-full max-w-[600px] h-auto border border-slate-200 rounded shadow-sm"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mathCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 스케일 설정 (1단위를 몇 픽셀로 그릴 것인가)
+        const scale = 30; 
+        const originX = canvas.width / 2;
+        const originY = canvas.height / 2;
+
+        let currentMode = 'parabola'; // 'parabola' or 'ellipse'
+        let isAnimating = false;
+        let animationId;
+
+        // 상태 변수
+        let state = {
+            p: 2,
+            py: 3, // 포물선에서의 점 P의 y좌표
+            a: 5,
+            b: 3,
+            angle: 45, // 타원에서의 점 P의 위치 각도(도)
+            ha: 4,
+            hb: 3,
+            ht: 0.5, // 쌍곡선에서의 매개변수
+            htDir: 1 // 쌍곡선 애니메이션 방향
+        };
+
+        // UI 요소 연결
+        const sliders = {
+            p: document.getElementById('slider-p'),
+            py: document.getElementById('slider-py'),
+            a: document.getElementById('slider-a'),
+            b: document.getElementById('slider-b'),
+            angle: document.getElementById('slider-angle'),
+            ha: document.getElementById('slider-ha'),
+            hb: document.getElementById('slider-hb'),
+            ht: document.getElementById('slider-ht')
+        };
+        const displays = {
+            p: document.getElementById('val-p'),
+            a: document.getElementById('val-a'),
+            b: document.getElementById('val-b'),
+            ha: document.getElementById('val-ha'),
+            hb: document.getElementById('val-hb'),
+            eq: document.getElementById('equation-display'),
+            calcP: document.getElementById('calc-parabola'),
+            calcE: document.getElementById('calc-ellipse'),
+            calcH: document.getElementById('calc-hyperbola')
+        };
+
+        sliders.p.addEventListener('input', (e) => { 
+            let val = parseFloat(e.target.value);
+            if(val === 0) { val = 0.5; sliders.p.value = 0.5; } // p는 0이 될 수 없음
+            state.p = val; displays.p.innerText = val; updateUI(); render(); 
+        });
+        sliders.py.addEventListener('input', (e) => { state.py = parseFloat(e.target.value); render(); });
+        
+        sliders.a.addEventListener('input', (e) => { state.a = parseFloat(e.target.value); displays.a.innerText = state.a; updateUI(); render(); });
+        sliders.b.addEventListener('input', (e) => { state.b = parseFloat(e.target.value); displays.b.innerText = state.b; updateUI(); render(); });
+        sliders.angle.addEventListener('input', (e) => { state.angle = parseFloat(e.target.value); render(); });
+
+        sliders.ha.addEventListener('input', (e) => { state.ha = parseFloat(e.target.value); displays.ha.innerText = state.ha; updateUI(); render(); });
+        sliders.hb.addEventListener('input', (e) => { state.hb = parseFloat(e.target.value); displays.hb.innerText = state.hb; updateUI(); render(); });
+        sliders.ht.addEventListener('input', (e) => { state.ht = parseFloat(e.target.value); render(); });
+
+        function switchTab(mode) {
+            currentMode = mode;
+            
+            // 탭 스타일 변경
+            document.getElementById('tab-parabola').className = mode === 'parabola' ? 'flex-1 py-3 text-center tab-active transition' : 'flex-1 py-3 text-center tab-inactive transition';
+            document.getElementById('tab-ellipse').className = mode === 'ellipse' ? 'flex-1 py-3 text-center tab-active transition' : 'flex-1 py-3 text-center tab-inactive transition';
+            document.getElementById('tab-hyperbola').className = mode === 'hyperbola' ? 'flex-1 py-3 text-center tab-active transition' : 'flex-1 py-3 text-center tab-inactive transition';
+            
+            // 컨트롤 패널 변경
+            document.getElementById('controls-parabola').style.display = mode === 'parabola' ? 'flex' : 'none';
+            document.getElementById('controls-ellipse').style.display = mode === 'ellipse' ? 'flex' : 'none';
+            document.getElementById('controls-hyperbola').style.display = mode === 'hyperbola' ? 'flex' : 'none';
+            
+            // 설명 패널 변경
+            document.getElementById('def-parabola').style.display = mode === 'parabola' ? 'block' : 'none';
+            document.getElementById('def-ellipse').style.display = mode === 'ellipse' ? 'block' : 'none';
+            document.getElementById('def-hyperbola').style.display = mode === 'hyperbola' ? 'block' : 'none';
+
+            updateUI();
+            render();
+        }
+
+        function updateUI() {
+            if (currentMode === 'parabola') {
+                displays.eq.innerHTML = `y² = ${4 * state.p}x`;
+            } else if (currentMode === 'ellipse') {
+                displays.eq.innerHTML = `<span class="inline-block"><div class="border-b border-blue-900 px-1">x²</div><div class="px-1">${state.a**2}</div></span> + <span class="inline-block"><div class="border-b border-blue-900 px-1">y²</div><div class="px-1">${state.b**2}</div></span> = 1`;
+            } else {
+                displays.eq.innerHTML = `<span class="inline-block"><div class="border-b border-blue-900 px-1">x²</div><div class="px-1">${state.ha**2}</div></span> - <span class="inline-block"><div class="border-b border-blue-900 px-1">y²</div><div class="px-1">${state.hb**2}</div></span> = 1`;
+            }
+        }
+
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            const btn = document.getElementById('btn-animate');
+            if (isAnimating) {
+                btn.innerHTML = '❚❚ 일시정지';
+                btn.classList.replace('bg-emerald-500', 'bg-amber-500');
+                btn.classList.replace('hover:bg-emerald-600', 'hover:bg-amber-600');
+                animate();
+            } else {
+                btn.innerHTML = '▶ 자동 이동';
+                btn.classList.replace('bg-amber-500', 'bg-emerald-500');
+                btn.classList.replace('hover:bg-amber-600', 'hover:bg-emerald-600');
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function animate() {
+            if (currentMode === 'parabola') {
+                state.py += 0.05;
+                if (state.py > 8) state.py = -8;
+                sliders.py.value = state.py;
+            } else if (currentMode === 'ellipse') {
+                state.angle += 0.5;
+                if (state.angle >= 360) state.angle = 0;
+                sliders.angle.value = state.angle;
+            } else {
+                state.ht += 0.02 * state.htDir;
+                if (state.ht >= 2.5 || state.ht <= -2.5) state.htDir *= -1;
+                sliders.ht.value = state.ht;
+            }
+            render();
+            if (isAnimating) animationId = requestAnimationFrame(animate);
+        }
+
+        // 좌표계 변환 헬퍼 함수
+        function toCanvasX(x) { return originX + x * scale; }
+        function toCanvasY(y) { return originY - y * scale; } // y축은 위로 갈수록 증가
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.lineWidth = 1;
+            // 그리드
+            for (let i = -20; i <= 20; i++) {
+                ctx.strokeStyle = i === 0 ? '#000' : '#e2e8f0'; // 축은 검은색, 나머지는 연한 회색
+                
+                // 수직선
+                ctx.beginPath();
+                ctx.moveTo(toCanvasX(i), 0);
+                ctx.lineTo(toCanvasX(i), canvas.height);
+                ctx.stroke();
+                
+                // 수평선
+                ctx.beginPath();
+                ctx.moveTo(0, toCanvasY(i));
+                ctx.lineTo(canvas.width, toCanvasY(i));
+                ctx.stroke();
+
+                // 숫자 표기
+                if (i !== 0 && i % 2 === 0) {
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.font = '10px Arial';
+                    ctx.fillText(i, toCanvasX(i) + 5, originY + 15);
+                    ctx.fillText(i, originX + 5, toCanvasY(i) - 5);
+                }
+            }
+            
+            // 축 레이블
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial font-bold';
+            ctx.fillText('x', canvas.width - 15, originY - 10);
+            ctx.fillText('y', originX + 10, 15);
+            ctx.fillText('O', originX - 15, originY + 15);
+        }
+
+        function drawPoint(x, y, color, label, labelOffsetX = 10, labelOffsetY = -10) {
+            const cx = toCanvasX(x);
+            const cy = toCanvasY(y);
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(label, cx + labelOffsetX, cy + labelOffsetY);
+        }
+
+        function drawLine(x1, y1, x2, y2, color, isDashed = false) {
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(x1), toCanvasY(y1));
+            ctx.lineTo(toCanvasX(x2), toCanvasY(y2));
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            if (isDashed) ctx.setLineDash([5, 5]);
+            else ctx.setLineDash([]);
+            ctx.stroke();
+            ctx.setLineDash([]); // 리셋
+        }
+
+        function renderParabola() {
+            const { p, py } = state;
+            
+            // 포물선 그리기 (y^2 = 4px -> x = y^2 / 4p)
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155'; // 곡선 색상
+            ctx.lineWidth = 2;
+            for (let y = -10; y <= 10; y += 0.1) {
+                let x = (y * y) / (4 * p);
+                if (y === -10) ctx.moveTo(toCanvasX(x), toCanvasY(y));
+                else ctx.lineTo(toCanvasX(x), toCanvasY(y));
+            }
+            ctx.stroke();
+
+            // 초점 F(p, 0)
+            drawPoint(p, 0, '#ef4444', 'F');
+
+            // 준선 x = -p
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(-p), 0);
+            ctx.lineTo(toCanvasX(-p), canvas.height);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillText('준선 l', toCanvasX(-p) - 40, 20);
+
+            // 점 P 위상 계산
+            const px = (py * py) / (4 * p);
+            drawPoint(px, py, '#059669', 'P(x,y)');
+
+            // 수선의 발 H(-p, py)
+            drawPoint(-p, py, '#3b82f6', 'H', -20, -10);
+
+            // 선분 PF (초점까지 거리)
+            drawLine(px, py, p, 0, '#ef4444', true);
+            // 선분 PH (준선까지 거리)
+            drawLine(px, py, -p, py, '#3b82f6', true);
+
+            // 거리 계산 및 UI 업데이트
+            const distPF = Math.sqrt(Math.pow(px - p, 2) + Math.pow(py - 0, 2));
+            const distPH = Math.abs(px - (-p));
+            
+            displays.calcP.innerHTML = `<span class="text-red-500">PF (${distPF.toFixed(2)})</span> = <span class="text-blue-500">PH (${distPH.toFixed(2)})</span>`;
+        }
+
+        function renderEllipse() {
+            const { a, b, angle } = state;
+            
+            // 타원 그리기
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            for (let i = 0; i <= 360; i++) {
+                let rad = i * Math.PI / 180;
+                let x = a * Math.cos(rad);
+                let y = b * Math.sin(rad);
+                if (i === 0) ctx.moveTo(toCanvasX(x), toCanvasY(y));
+                else ctx.lineTo(toCanvasX(x), toCanvasY(y));
+            }
+            ctx.stroke();
+
+            // 초점 계산
+            let c, isXAxis;
+            if (a >= b) {
+                c = Math.sqrt(a*a - b*b);
+                isXAxis = true;
+            } else {
+                c = Math.sqrt(b*b - a*a);
+                isXAxis = false;
+            }
+
+            let f1 = isXAxis ? {x: c, y: 0} : {x: 0, y: c};
+            let f2 = isXAxis ? {x: -c, y: 0} : {x: 0, y: -c};
+
+            // 초점 F, F'
+            drawPoint(f1.x, f1.y, '#ef4444', 'F');
+            drawPoint(f2.x, f2.y, '#ef4444', "F'", -20, 20);
+
+            // 점 P 위치
+            let rad = angle * Math.PI / 180;
+            let px = a * Math.cos(rad);
+            let py = b * Math.sin(rad);
+            drawPoint(px, py, '#059669', 'P(x,y)');
+
+            // 선분 PF, PF'
+            drawLine(px, py, f1.x, f1.y, '#ef4444', true);
+            drawLine(px, py, f2.x, f2.y, '#ef4444', true);
+
+            // 거리 계산 및 UI 업데이트
+            const dist1 = Math.sqrt(Math.pow(px - f1.x, 2) + Math.pow(py - f1.y, 2));
+            const dist2 = Math.sqrt(Math.pow(px - f2.x, 2) + Math.pow(py - f2.y, 2));
+            const sum = dist1 + dist2;
+            const targetSum = isXAxis ? 2*a : 2*b;
+            
+            displays.calcE.innerHTML = `<span class="text-red-500">PF (${dist1.toFixed(2)}) + PF' (${dist2.toFixed(2)})</span> = <span class="text-blue-600 font-black">${sum.toFixed(2)} (일정)</span>`;
+        }
+
+        function renderHyperbola() {
+            const { ha, hb, ht } = state;
+            
+            // 점근선 그리기 (y = b/a x, y = -b/a x)
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(-15), toCanvasY(-15 * hb / ha));
+            ctx.lineTo(toCanvasX(15), toCanvasY(15 * hb / ha));
+            ctx.moveTo(toCanvasX(-15), toCanvasY(15 * hb / ha));
+            ctx.lineTo(toCanvasX(15), toCanvasY(-15 * hb / ha));
+            ctx.strokeStyle = '#94a3b8'; // 점근선 색상
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]); // 리셋
+            
+            // 점근선 텍스트 표기
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px Arial';
+            ctx.fillText('점근선', toCanvasX(12), toCanvasY(12 * hb / ha) - 10);
+
+            // 쌍곡선 그리기
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            
+            // 오른쪽 가지
+            for (let t = -3; t <= 3; t += 0.1) {
+                let x = ha * Math.cosh(t);
+                let y = hb * Math.sinh(t);
+                if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y));
+                else ctx.lineTo(toCanvasX(x), toCanvasY(y));
+            }
+            ctx.stroke();
+
+            // 왼쪽 가지
+            ctx.beginPath();
+            for (let t = -3; t <= 3; t += 0.1) {
+                let x = -ha * Math.cosh(t);
+                let y = hb * Math.sinh(t);
+                if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y));
+                else ctx.lineTo(toCanvasX(x), toCanvasY(y));
+            }
+            ctx.stroke();
+
+            // 초점 계산 c = sqrt(a^2 + b^2)
+            let c = Math.sqrt(ha*ha + hb*hb);
+            let f1 = {x: c, y: 0};
+            let f2 = {x: -c, y: 0};
+
+            // 초점 F, F'
+            drawPoint(f1.x, f1.y, '#ef4444', 'F');
+            drawPoint(f2.x, f2.y, '#ef4444', "F'", -25, 20);
+
+            // 점 P 위치 (오른쪽 가지에서 움직임)
+            let px = ha * Math.cosh(ht);
+            let py = hb * Math.sinh(ht);
+            drawPoint(px, py, '#059669', 'P(x,y)');
+
+            // 선분 PF, PF'
+            drawLine(px, py, f1.x, f1.y, '#ef4444', true);
+            drawLine(px, py, f2.x, f2.y, '#ef4444', true);
+
+            // 거리 계산 및 UI 업데이트
+            const dist1 = Math.sqrt(Math.pow(px - f1.x, 2) + Math.pow(py - f1.y, 2));
+            const dist2 = Math.sqrt(Math.pow(px - f2.x, 2) + Math.pow(py - f2.y, 2));
+            const diff = Math.abs(dist1 - dist2);
+            
+            displays.calcH.innerHTML = `|<span class="text-red-500">PF (${dist1.toFixed(2)}) - PF' (${dist2.toFixed(2)})</span>| = <span class="text-blue-600 font-black">${diff.toFixed(2)} (일정)</span>`;
+        }
+
+        function render() {
+            drawGrid();
+            if (currentMode === 'parabola') {
+                renderParabola();
+            } else if (currentMode === 'ellipse') {
+                renderEllipse();
+            } else {
+                renderHyperbola();
+            }
+        }
+
+        // 초기화 실행
+        updateUI();
+        render();
+
+        // 반응형 캔버스 리사이징 (필요시)
+        window.addEventListener('resize', () => {
+            // 현재 구조에서는 고정 600x600 안에서 스케일링 하므로 생략가능하지만,
+            // 모바일 환경을 위해 캔버스 CSS 크기는 100%로 유동적으로 둠.
+        });
+
+    </script>
+</body>
+</html>
