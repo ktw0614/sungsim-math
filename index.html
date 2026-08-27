@@ -115,22 +115,25 @@
                 눈으로 보고, 직접 만지며 이해하는 예쁘고 친절한 기하학
             </p>
             <p class="text-sm text-slate-400">
-                오늘 공부할 단원의 도구를 선택해 볼까요?
+                오늘 공부할 대단원을 선택해 볼까요?
             </p>
         </div>
     </header>
 
-    <main class="w-full max-w-6xl px-4 py-12 flex flex-col gap-12 relative z-10">
+    <main class="w-full max-w-6xl px-4 py-12 flex flex-col gap-14 relative z-10">
         
-        <!-- 1. 개념 시각화 랩 -->
+        <!-- Ⅰ. 이차곡선 -->
         <section>
-            <div class="flex items-center gap-2 mb-6 ml-2">
-                <span class="text-3xl">🎨</span>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight">개념 쏙쏙 시각화 랩</h2>
-                <span class="text-sm text-pink-400 font-medium ml-2 mt-2 hidden md:inline">복잡한 기하학적 정의를 직관적으로 이해해요!</span>
+            <div class="flex flex-col mb-6 ml-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🪐</span>
+                    <h2 class="text-2xl font-black text-slate-700 tracking-tight">Ⅰ. 이차곡선</h2>
+                </div>
+                <p class="text-sm text-pink-400 font-medium ml-10 mt-1">포물선, 타원, 쌍곡선의 신비한 궤도 탐험</p>
             </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
+                <!-- 이차곡선 정의 시각화 -->
                 <a href="conic_sections.html" class="block glass-card rounded-3xl p-6 group">
                     <div class="flex items-center gap-4 mb-5">
                         <div class="w-14 h-14 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center text-3xl font-bold group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-pink-100">
@@ -138,31 +141,11 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-700 group-hover:text-pink-500 transition-colors">이차곡선 정의 시각화</h3>
                     </div>
-                    <p class="text-slate-500 text-sm leading-relaxed font-medium">포물선, 타원, 쌍곡선이 그려지는 원리(거리의 합/차)를 예쁜 슬라이더로 직접 움직이며 확인해 보세요.</p>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">포물선, 타원, 쌍곡선이 그려지는 원리를 슬라이더로 직접 움직이며 직관적으로 확인해 보세요.</p>
+                    <div class="text-xs font-bold text-pink-600 bg-pink-100/50 border border-pink-200 inline-block px-3 py-1.5 rounded-full">✨ 개념 시각화</div>
                 </a>
                 
-                <a href="space_geometry.html" class="block glass-card rounded-3xl p-6 group">
-                    <div class="flex items-center gap-4 mb-5">
-                        <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center text-3xl font-bold group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-sky-100">
-                            🏰
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-700 group-hover:text-sky-500 transition-colors">공간도형 3D 마법 탐구실</h3>
-                    </div>
-                    <p class="text-slate-500 text-sm leading-relaxed font-medium">꼬인 위치, 삼수선 정리, 정사영을 3D 공간에서 마우스로 요리조리 돌려보며 직관적으로 탐험해 보세요!</p>
-                </a>
-
-            </div>
-        </section>
-
-        <!-- 2. 실전 훈련 랩 -->
-        <section>
-            <div class="flex items-center gap-2 mb-6 ml-2">
-                <span class="text-3xl">📝</span>
-                <h2 class="text-2xl font-black text-slate-700 tracking-tight">실력 쑥쑥 훈련 랩</h2>
-                <span class="text-sm text-indigo-400 font-medium ml-2 mt-2 hidden md:inline">방정식과 평행이동, 이제 두렵지 않아요!</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
+                <!-- 방정식 유도 빌드업 -->
                 <a href="equation_derivation.html" class="block glass-card rounded-3xl p-6 group">
                     <div class="flex items-center gap-4 mb-5">
                         <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center text-3xl font-bold group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-purple-100">
@@ -170,10 +153,11 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-700 group-hover:text-purple-500 transition-colors">방정식 유도 빌드업</h3>
                     </div>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">타원과 쌍곡선의 초점, 거리의 합/차를 이용해 값을 찾고 방정식을 완성하는 4단계 과정을 차근차근 연습해요.</p>
-                    <div class="text-xs font-bold text-purple-600 bg-purple-100/50 border border-purple-200 inline-block px-3 py-1.5 rounded-full">✨ 무한 생성 지원</div>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">타원과 쌍곡선의 초점, 거리의 합/차를 이용해 값을 찾고 방정식을 완성하는 과정을 연습해요.</p>
+                    <div class="text-xs font-bold text-purple-600 bg-purple-100/50 border border-purple-200 inline-block px-3 py-1.5 rounded-full">💯 무한 생성 지원</div>
                 </a>
 
+                <!-- 평행이동 무한 훈련기 -->
                 <a href="conic_practice_dynamic.html" class="block glass-card rounded-3xl p-6 group">
                     <div class="flex items-center gap-4 mb-5">
                         <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-3xl font-bold group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-indigo-100">
@@ -185,6 +169,7 @@
                     <div class="text-xs font-bold text-indigo-600 bg-indigo-100/50 border border-indigo-200 inline-block px-3 py-1.5 rounded-full">💯 자동 채점 지원</div>
                 </a>
 
+                <!-- 일반형 -> 표준형 변환 -->
                 <a href="general_to_standard.html" class="block glass-card rounded-3xl p-6 group">
                     <div class="flex items-center gap-4 mb-5">
                         <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center text-3xl font-bold group-hover:bg-teal-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-teal-100">
@@ -192,10 +177,59 @@
                         </div>
                         <h3 class="text-xl font-bold text-slate-700 group-hover:text-teal-500 transition-colors">일반형 → 표준형 변환</h3>
                     </div>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">어지럽게 전개된 이차곡선의 방정식을 깔끔한 완전제곱식(표준형)으로 예쁘게 정리하는 계산을 연습해요.</p>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">어지럽게 전개된 이차곡선의 방정식을 깔끔한 완전제곱식(표준형)으로 예쁘게 정리하는 계산 연습.</p>
                     <div class="text-xs font-bold text-teal-600 bg-teal-100/50 border border-teal-200 inline-block px-3 py-1.5 rounded-full">💯 자동 채점 지원</div>
                 </a>
+            </div>
+        </section>
 
+        <!-- Ⅱ. 공간도형과 공간좌표 -->
+        <section>
+            <div class="flex flex-col mb-6 ml-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🏰</span>
+                    <h2 class="text-2xl font-black text-slate-700 tracking-tight">Ⅱ. 공간도형과 공간좌표</h2>
+                </div>
+                <p class="text-sm text-sky-500 font-medium ml-10 mt-1">점, 선, 면이 그리는 3차원 마법의 세계</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 공간도형 3D 마법 탐구실 -->
+                <a href="space_geometry.html" class="block glass-card rounded-3xl p-6 group">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center text-3xl font-bold group-hover:bg-sky-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-sky-100">
+                            🔮
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-700 group-hover:text-sky-500 transition-colors">공간도형 3D 탐구실</h3>
+                    </div>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-5 font-medium">꼬인 위치, 삼수선 정리, 정사영을 3D 공간에서 마우스로 요리조리 돌려보며 직관적으로 탐험해 보세요!</p>
+                    <div class="text-xs font-bold text-sky-600 bg-sky-100/50 border border-sky-200 inline-block px-3 py-1.5 rounded-full">✨ 3D 시각화</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Ⅲ. 벡터 -->
+        <section>
+            <div class="flex flex-col mb-6 ml-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🚀</span>
+                    <h2 class="text-2xl font-black text-slate-700 tracking-tight">Ⅲ. 벡터</h2>
+                </div>
+                <p class="text-sm text-emerald-500 font-medium ml-10 mt-1">크기와 방향을 가진 물리량의 새로운 수학적 탐구</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 벡터 Coming Soon 카드 -->
+                <div class="block glass-card rounded-3xl p-6 opacity-80 border-dashed border-2 border-slate-300">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-3xl font-bold shadow-sm border border-slate-200">
+                            ⏳
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-500">벡터 시각화 & 훈련 랩</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-5 font-medium">벡터의 덧셈/뺄셈, 내적, 그리고 위치벡터의 원리를 완벽하게 이해할 수 있는 특별한 도구를 제작 중입니다.</p>
+                    <div class="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 inline-block px-3 py-1.5 rounded-full shadow-inner">🛠️ Coming Soon ...</div>
+                </div>
             </div>
         </section>
 
