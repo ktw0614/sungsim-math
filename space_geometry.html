@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공간도형 3D 마법 탐구실</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff');
+        body { font-family: 'NanumSquareRound', sans-serif; background-color: #fcf8f2; }
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); }
+        .tab-btn.active { background-color: #fbc2eb; color: #fff; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(251, 194, 235, 0.5); }
+        .tab-btn { transition: all 0.3s ease; color: #888; background-color: transparent; }
+        .tab-btn:hover { background-color: #fde8f5; color: #a18cd1; }
+        canvas { outline: none; border-radius: 1rem; }
+        input[type=range] { accent-color: #fbc2eb; }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden text-gray-700">
+
+    <aside class="w-72 glass-panel m-4 rounded-3xl shadow-xl flex flex-col p-6 z-10 relative">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 leading-tight">
+                공간도형<br>마법 탐구실 🏰
+            </h1>
+            <p class="text-xs text-gray-400 mt-2">전주성심여고 기하 클래스</p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <button onclick="setMode('skew')" id="btn-skew" class="tab-btn active px-4 py-3 rounded-2xl text-left text-sm flex items-center gap-3">
+                <span class="text-xl">🎲</span> 1. 꼬인 위치 탐험
+            </button>
+            <button onclick="setMode('three-perp')" id="btn-three-perp" class="tab-btn px-4 py-3 rounded-2xl text-left text-sm flex items-center gap-3">
+                <span class="text-xl">📐</span> 2. 삼수선 정리
+            </button>
+            <button onclick="setMode('projection')" id="btn-projection" class="tab-btn px-4 py-3 rounded-2xl text-left text-sm flex items-center gap-3">
+                <span class="text-xl">☀️</span> 3. 정사영의 마법
+            </button>
+        </div>
+
+        <div class="mt-auto bg-white p-4 rounded-2xl shadow-sm border border-pink-50">
+            <h2 id="info-title" class="text-sm font-bold text-pink-500 mb-2"></h2>
+            <p id="info-content" class="text-xs text-gray-600 leading-relaxed"></p>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col p-4 pl-0">
+        <div class="relative w-full rounded-3xl overflow-hidden glass-panel flex-grow flex flex-col shadow-lg p-2">
+            
+            <div id="instruction-banner" class="bg-gradient-to-r from-pink-100 to-purple-100 text-purple-800 text-sm py-2.5 px-5 font-bold flex justify-between items-center rounded-2xl mb-2">
+                <span id="instruction-text">💡 정육면체의 모서리를 마우스로 직접 클릭해 보세요! 👀</span>
+                <div class="flex gap-2">
+                    <button onclick="resetCamera()" class="bg-white px-3 py-1 rounded-full shadow text-pink-500 hover:bg-pink-50 transition text-xs font-bold">카메라 원위치 🎬</button>
+                </div>
+            </div>
+            
+            <div id="canvas-container" class="flex-grow h-full w-full relative"></div>
+            
+            <div id="slider-container" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 glass-panel px-6 py-4 rounded-full flex items-center gap-4 hidden shadow-xl">
+                <span class="text-sm font-bold text-purple-600">빛의 각도 기울이기 ($\theta$)</span>
+                <input type="range" id="angleSlider" min="0" max="89" value="0" class="w-48" oninput="updateProjection()">
+                <span id="angleValue" class="text-sm font-bold text-pink-500 w-8 text-right">0°</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let scene, camera, renderer, controls;
+        let currentGroup = new THREE.Group();
+        let mode = 'skew'; // skew, three-perp, projection
+        
+        let skewEdges = [];
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+
+        // 텍스트 및 수식 정보 데이터
+        const infos = {
+            'skew': {
+                title: '🎲 꼬인 위치 (Skew lines)',
+                content: `공간에서 서로 만나지도 않고, 평행하지도 않은 두 직선을 <strong>'꼬인 위치'</strong>에 있다고 해요.<br><br>
+                          👉 화면 속 정육면체의 모서리를 클릭해 보세요! 선택한 모서리와 꼬인 위치에 있는 4개의 모서리가 보라색으로 마법처럼 나타납니다 ✨`
+            },
+            'three-perp': {
+                title: '🎀 삼수선 정리 (Three Perpendiculars)',
+                content: `공간에서 직선과 평면이 만나는 아름다운 수직 규칙이에요. 화면을 돌려보며 세 곳의 <strong>수직 기호(직각 사각형)</strong>를 확인해 보세요!<br><br>
+                          1. $PO \\perp$ 바닥 평면<br>
+                          2. $OH \\perp l$<br>
+                          👉 이 두 가지가 성립하면, 마법처럼 $PH \\perp l$ 도 수직이 된답니다! 📐`
+            },
+            'projection': {
+                title: '🌟 정사영 (빛이 그리는 그림자)',
+                content: `도형에 빛을 수직으로 비출 때 바닥에 내려앉은 그림자를 <strong>'정사영'</strong>이라고 해요.<br><br>
+                          원래 넓이를 $S$, 그림자의 넓이를 $S'$, 기울어진 각도를 $\\theta$라 할 때 <strong>$S' = S \\cos \\theta$</strong> 가 성립한답니다. 😲<br>
+                          슬라이더를 움직여 그림자가 어떻게 변하는지 관찰해 보세요!`
+            }
+        };
+
+        function init() {
+            const container = document.getElementById('canvas-container');
+            
+            // 씬, 카메라, 렌더러 설정
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xfcf8f2); // 파스텔 배경
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // 빛 설정
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            directionalLight.position.set(10, 20, 10);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // 컨트롤 설정
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            scene.add(currentGroup);
+
+            // 클릭 이벤트 리스너 추가 (꼬인 위치용)
+            renderer.domElement.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('resize', onWindowResize);
+
+            setMode('skew');
+            animate();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            
+            // UI 버튼 스타일 변경
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + mode).classList.add('active');
+
+            // 텍스트 업데이트
+            const titleEl = document.getElementById('info-title');
+            const contentEl = document.getElementById('info-content');
+            titleEl.innerHTML = infos[mode].title;
+            contentEl.innerHTML = infos[mode].content;
+
+            // LaTeX 수식 다시 렌더링
+            if (window.MathJax && MathJax.typesetPromise) {
+                MathJax.typesetPromise([titleEl, contentEl]).catch((err) => console.log('MathJax Error:', err));
+            }
+            
+            document.getElementById('slider-container').classList.toggle('hidden', mode !== 'projection');
+
+            if(mode === 'skew') document.getElementById('instruction-text').innerText = '💡 정육면체의 모서리를 마우스로 직접 클릭해 보세요! 👀';
+            else if(mode === 'three-perp') document.getElementById('instruction-text').innerText = '💡 3곳의 직각 기호를 화면을 돌려가며 모두 찾아보세요! 👀';
+            else document.getElementById('instruction-text').innerText = '💡 슬라이더를 움직여 도형의 기울기(θ)를 조절해 보세요! 👀';
+
+            clearGroup();
+
+            if (mode === 'skew') buildSkew();
+            else if (mode === 'three-perp') buildThreePerp();
+            else if (mode === 'projection') buildProjection();
+
+            resetCamera();
+        }
+
+        function clearGroup() {
+            while(currentGroup.children.length > 0){ 
+                const child = currentGroup.children[0];
+                currentGroup.remove(child); 
+            }
+            skewEdges = [];
+        }
+
+        function resetCamera() {
+            if(mode === 'skew') {
+                camera.position.set(12, 10, 15);
+            } else if (mode === 'three-perp') {
+                camera.position.set(15, 12, 18);
+            } else {
+                camera.position.set(0, 15, 25);
+            }
+            controls.target.set(0,0,0);
+            controls.update();
+        }
+
+        function createLabel(text, colorHex, fontSize=24) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 텍스트 길이 측정
+            ctx.font = `bold ${fontSize}px "NanumSquareRound", sans-serif`;
+            const metrics = ctx.measureText(text);
+            const textWidth = Math.ceil(metrics.width);
+            
+            // 캔버스 크기를 텍스트 폭에 맞게 자동 조정
+            canvas.width = textWidth + 30;
+            canvas.height = fontSize + 20;
+            
+            // 크기 변경 후 폰트 재설정 필수
+            ctx.font = `bold ${fontSize}px "NanumSquareRound", sans-serif`;
+            ctx.fillStyle = colorHex;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width/2, canvas.height/2);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(material);
+            
+            // 스프라이트 스케일도 캔버스 비율에 맞게 조정
+            sprite.scale.set(canvas.width/30, canvas.height/30, 1);
+            return sprite;
+        }
+
+        function buildSkew() {
+            // 은은한 모눈 바닥
+            const gridHelper = new THREE.GridHelper(20, 20, 0xfbc2eb, 0xfde8f5);
+            gridHelper.position.y = -3;
+            currentGroup.add(gridHelper);
+
+            const vertices = [
+                new THREE.Vector3(-3, -3, -3), new THREE.Vector3(3, -3, -3), // 0, 1
+                new THREE.Vector3(3, 3, -3), new THREE.Vector3(-3, 3, -3),   // 2, 3
+                new THREE.Vector3(-3, -3, 3), new THREE.Vector3(3, -3, 3),   // 4, 5
+                new THREE.Vector3(3, 3, 3), new THREE.Vector3(-3, 3, 3)      // 6, 7
+            ];
+            
+            const edgeIndices = [
+                [0,1], [1,2], [2,3], [3,0], // back
+                [4,5], [5,6], [6,7], [7,4], // front
+                [0,4], [1,5], [2,6], [3,7]  // connecting
+            ];
+
+            // 클릭하기 쉽도록 선 대신 실린더(원기둥) 사용
+            edgeIndices.forEach((idxPair, index) => {
+                const v1 = vertices[idxPair[0]];
+                const v2 = vertices[idxPair[1]];
+                const distance = v1.distanceTo(v2);
+                
+                const geo = new THREE.CylinderGeometry(0.2, 0.2, distance, 12);
+                const mat = new THREE.MeshLambertMaterial({color: 0xd1d8e0}); // 기본 연회색
+                const mesh = new THREE.Mesh(geo, mat);
+                
+                // 위치와 회전 설정
+                const mid = new THREE.Vector3().addVectors(v1, v2).multiplyScalar(0.5);
+                mesh.position.copy(mid);
+                const dir = new THREE.Vector3().subVectors(v2, v1).normalize();
+                mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+                
+                mesh.userData = { id: index, v1: v1, v2: v2 };
+                skewEdges.push(mesh);
+                currentGroup.add(mesh);
+            });
+
+            // 안내 라벨 둥둥 띄우기
+            const label = createLabel("클릭해봐요!", "#ff6b81", 32);
+            label.position.set(0, 4.5, 0);
+            currentGroup.add(label);
+        }
+
+        function onPointerDown(event) {
+            if(mode !== 'skew') return;
+            
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(skewEdges);
+
+            if(intersects.length > 0) {
+                const clickedMesh = intersects[0].object;
+                highlightSkew(clickedMesh);
+            }
+        }
+
+        function highlightSkew(clickedMesh) {
+            const v1 = clickedMesh.userData.v1;
+            const v2 = clickedMesh.userData.v2;
+            const dirClick = new THREE.Vector3().subVectors(v2, v1).normalize();
+
+            skewEdges.forEach(mesh => {
+                const ev1 = mesh.userData.v1;
+                const ev2 = mesh.userData.v2;
+                const dirEdge = new THREE.Vector3().subVectors(ev2, ev1).normalize();
+
+                // 정점 공유 여부 (만나는지)
+                const shareVertex = ev1.equals(v1) || ev1.equals(v2) || ev2.equals(v1) || ev2.equals(v2);
+                // 평행 여부 (내적의 절댓값이 1에 가까우면 평행)
+                const isParallel = Math.abs(dirClick.dot(dirEdge)) > 0.99;
+
+                mesh.material.transparent = false;
+                mesh.material.opacity = 1;
+
+                if (mesh === clickedMesh) {
+                    mesh.material.color.setHex(0xff6b81); // 핑크 (선택된 선)
+                } else if (!shareVertex && !isParallel) {
+                    mesh.material.color.setHex(0x9b59b6); // 보라 (꼬인 위치)
+                } else {
+                    mesh.material.color.setHex(0xd1d8e0); // 기본 연회색
+                    mesh.material.transparent = true;
+                    mesh.material.opacity = 0.2; // 나머지는 반투명하게 숨김
+                }
+            });
+        }
+
+        function buildThreePerp() {
+            // 평면 Alpha
+            const planeGeo = new THREE.PlaneGeometry(16, 16);
+            const planeMat = new THREE.MeshLambertMaterial({color: 0xe8f0fe, transparent: true, opacity: 0.7, side: THREE.DoubleSide});
+            const plane = new THREE.Mesh(planeGeo, planeMat);
+            plane.rotation.x = -Math.PI / 2;
+            currentGroup.add(plane);
+
+            const labelAlpha = createLabel("평면 α", "#3498db");
+            labelAlpha.position.set(-6, 0.5, 6);
+            currentGroup.add(labelAlpha);
+
+            // 주요 좌표 정의
+            const O = new THREE.Vector3(0, 0, 0);
+            const P = new THREE.Vector3(0, 8, 0);
+            const H = new THREE.Vector3(0, 0, 6);
+            
+            // 직선 l (x축 방향으로 H를 지남)
+            const l_start = new THREE.Vector3(-8, 0, 6);
+            const l_end = new THREE.Vector3(8, 0, 6);
+
+            // 직선 그리기 헬퍼 함수
+            const createLine = (p1, p2, color, width=4) => {
+                const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+                const mat = new THREE.LineBasicMaterial({color: color, linewidth: width});
+                return new THREE.Line(geo, mat);
+            };
+
+            // 직선 l 추가
+            currentGroup.add(createLine(l_start, l_end, 0x34495e));
+            const labelL = createLabel("직선 l", "#34495e");
+            labelL.position.set(7, 0.5, 6);
+            currentGroup.add(labelL);
+
+            // PO, OH, PH 그리기
+            currentGroup.add(createLine(P, O, 0xff6b81)); // PO (핑크)
+            currentGroup.add(createLine(O, H, 0x9b59b6)); // OH (보라)
+            currentGroup.add(createLine(P, H, 0x1abc9c)); // PH (민트)
+
+            // 점 기호와 라벨
+            const createDot = (pos, name, color) => {
+                const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), new THREE.MeshLambertMaterial({color: color}));
+                mesh.position.copy(pos);
+                currentGroup.add(mesh);
+                const label = createLabel(name, color);
+                label.position.copy(pos).add(new THREE.Vector3(0.8, 0.8, 0));
+                currentGroup.add(label);
+            };
+            createDot(P, "P", 0xff6b81);
+            createDot(O, "O", 0x9b59b6);
+            createDot(H, "H", 0x1abc9c);
+
+            // 직각 기호 그리기 헬퍼 함수
+            function drawRightAngle(pCorner, pDir1, pDir2, size=1.0, colorHex=0xff0000) {
+                const d1 = new THREE.Vector3().subVectors(pDir1, pCorner).normalize().multiplyScalar(size);
+                const d2 = new THREE.Vector3().subVectors(pDir2, pCorner).normalize().multiplyScalar(size);
+                
+                const pt1 = new THREE.Vector3().addVectors(pCorner, d1);
+                const pt2 = new THREE.Vector3().addVectors(pt1, d2); // 꺾이는 꼭짓점
+                const pt3 = new THREE.Vector3().addVectors(pCorner, d2);
+                
+                const geo = new THREE.BufferGeometry().setFromPoints([pt1, pt2, pt3]);
+                const mat = new THREE.LineBasicMaterial({color: colorHex, linewidth: 2});
+                currentGroup.add(new THREE.Line(geo, mat));
+            }
+
+            // 1. PO ⊥ 평면 (O에서 직각) -> PO 방향과 OH 방향
+            drawRightAngle(O, P, H, 1.2, 0xff6b81);
+
+            // 2. OH ⊥ l (H에서 직각) -> HO 방향과 직선 l 방향
+            const l_dir = new THREE.Vector3(1, 0, 0).add(H);
+            drawRightAngle(H, O, l_dir, 1.2, 0x9b59b6);
+
+            // 3. PH ⊥ l (H에서 직각) -> HP 방향과 직선 l 방향
+            drawRightAngle(H, P, l_dir, 1.2, 0x1abc9c);
+        }
+
+        function buildProjection() {
+            document.getElementById('angleSlider').value = 0;
+            document.getElementById('angleValue').innerText = '0°';
+
+            // 모눈 바닥
+            const gridHelper = new THREE.GridHelper(24, 24, 0xbdc3c7, 0xecf0f1);
+            currentGroup.add(gridHelper);
+
+            // 빛 화살표 (하늘에서 내리쬐는 형태)
+            const lightDir = new THREE.Vector3(0, -1, 0);
+            const arrowColor = 0xf1c40f; // 황금색
+            const arrowPositions = [
+                new THREE.Vector3(0, 12, 0),
+                new THREE.Vector3(-4, 12, -4), new THREE.Vector3(4, 12, -4),
+                new THREE.Vector3(-4, 12, 4), new THREE.Vector3(4, 12, 4)
+            ];
+            arrowPositions.forEach(pos => {
+                const arrow = new THREE.ArrowHelper(lightDir, pos, 3, arrowColor, 0.8, 0.6);
+                currentGroup.add(arrow);
+            });
+
+            // 텍스처 생성 (도형의 넓이 S)
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#a18cd1');
+            gradient.addColorStop(1, '#fbc2eb');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 15; ctx.strokeRect(20, 20, 472, 472);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 65px "NanumSquareRound", sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('도형의 넓이 S', 256, 256);
+            const texture = new THREE.CanvasTexture(canvas);
+
+            // 본래 도형 (공중에 띄움)
+            const planeGeo = new THREE.PlaneGeometry(8, 8);
+            const matObj = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide});
+            const shapeObj = new THREE.Mesh(planeGeo, matObj);
+            shapeObj.position.y = 7;
+            shapeObj.rotation.x = -Math.PI / 2; // 바닥을 보도록 눕힘
+            
+            currentGroup.userData.shapeObj = shapeObj;
+            currentGroup.add(shapeObj);
+
+            // 그림자 도형 (바닥에 딱 붙음)
+            const shadowMat = new THREE.MeshBasicMaterial({color: 0x7f8c8d, transparent: true, opacity: 0.6, side: THREE.DoubleSide});
+            const shadowObj = new THREE.Mesh(planeGeo, shadowMat);
+            shadowObj.position.y = 0.05; // Z-fighting 방지
+            shadowObj.rotation.x = -Math.PI / 2;
+            
+            currentGroup.userData.shadowObj = shadowObj;
+            currentGroup.add(shadowObj);
+
+            // 투영선(점선) 배열 초기화
+            currentGroup.userData.projLines = [];
+            const dashMat = new THREE.LineDashedMaterial({color: 0x95a5a6, dashSize: 0.5, gapSize: 0.5});
+            for(let i=0; i<4; i++){
+                const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+                const line = new THREE.Line(geo, dashMat);
+                line.computeLineDistances(); // 점선 렌더링 필수
+                currentGroup.userData.projLines.push(line);
+                currentGroup.add(line);
+            }
+
+            // 초기 렌더링용 업데이트 호출
+            updateProjection();
+        }
+
+        function updateProjection() {
+            if(mode !== 'projection' || !currentGroup.userData.shapeObj) return;
+
+            const slider = document.getElementById('angleSlider');
+            const angle = parseInt(slider.value);
+            document.getElementById('angleValue').innerText = angle + '°';
+
+            const shapeObj = currentGroup.userData.shapeObj;
+            const shadowObj = currentGroup.userData.shadowObj;
+            const projLines = currentGroup.userData.projLines;
+
+            // 라디안 변환 (기울기 적용, X축 기준 회전)
+            const rad = angle * Math.PI / 180;
+            
+            // 본래 도형 기울이기
+            shapeObj.rotation.set(-Math.PI / 2 + rad, 0, 0);
+            shapeObj.updateMatrixWorld();
+
+            // 그림자 크기 찌그러뜨리기 (y스케일 축소, cos 적용)
+            // 평면을 눕혔으므로 로컬 y스케일이 월드상 Z폭을 담당함
+            shadowObj.scale.set(1, Math.cos(rad), 1);
+            shadowObj.updateMatrixWorld();
+
+            // 투영선 업데이트 (모서리에서 바닥으로 수직으로 내림)
+            const positions = shapeObj.geometry.attributes.position;
+            for(let i=0; i<4; i++){
+                // 본래 도형의 로컬 정점을 월드 좌표로 변환
+                const vertex = new THREE.Vector3();
+                vertex.fromBufferAttribute(positions, i);
+                shapeObj.localToWorld(vertex);
+
+                // 바닥으로 수직 투영된 점
+                const floorPt = new THREE.Vector3(vertex.x, 0.05, vertex.z);
+                
+                // 선 갱신
+                projLines[i].geometry.setFromPoints([vertex, floorPt]);
+                projLines[i].computeLineDistances(); // 점선 간격 재계산
+            }
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
