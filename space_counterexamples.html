@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공간도형 참/거짓 3D 탐구 🎀</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' },
+            chtml: { displayAlign: 'left' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: #fff5f8;
+            background-image: radial-gradient(#fbcfe8 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #475569;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.15);
+            border-radius: 24px;
+        }
+
+        /* 탭 버튼 스타일 */
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn.active {
+            background-color: #fbcfe8; /* Pink-200 */
+            color: #be185d; /* Pink-700 */
+            font-weight: 700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(244, 114, 182, 0.2);
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #fdf2f8;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 450px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #fce7f3;
+            background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+            position: relative;
+        }
+
+        .tag-true { background-color: #d1fae5; color: #047857; border: 1px solid #34d399; }
+        .tag-false { background-color: #ffe4e6; color: #e11d48; border: 1px solid #fb7185; }
+
+    </style>
+</head>
+<body class="py-8 px-4 w-full">
+
+    <div class="max-w-5xl mx-auto w-full">
+        <!-- 헤더 -->
+        <div class="text-center mb-6">
+            <div class="inline-block bg-white text-pink-500 text-xs font-bold px-4 py-1.5 rounded-full mb-3 shadow-sm border border-pink-100">
+                ✨ 교과서 63쪽 완벽 이해
+            </div>
+            <h1 class="text-3xl font-black text-slate-700">공간도형 참/거짓 <span class="text-pink-500">3D 반례 탐구</span> 🔍</h1>
+            <p class="text-slate-500 mt-2 font-medium">마우스를 드래그하여 공간을 회전시키면서 소정, 재현이의 주장이 왜 틀렸는지 반례를 눈으로 확인해 보세요!</p>
+        </div>
+
+        <div class="glass-panel p-6 flex flex-col gap-6">
+            
+            <!-- 탭 메뉴 (캐릭터 선택) -->
+            <div class="flex flex-wrap gap-3 justify-center" id="tabs">
+                <button onclick="setScenario('minho')" id="tab-minho" class="tab-btn active px-6 py-3 rounded-2xl text-slate-600 font-medium border border-slate-200 flex items-center gap-2">
+                    👨‍🎓 민호 <span class="tag-true text-xs px-2 py-0.5 rounded-full font-bold">참 (O)</span>
+                </button>
+                <button onclick="setScenario('sojeong')" id="tab-sojeong" class="tab-btn px-6 py-3 rounded-2xl text-slate-600 font-medium border border-slate-200 flex items-center gap-2">
+                    👩‍🎓 소정 <span class="tag-false text-xs px-2 py-0.5 rounded-full font-bold">거짓 (X)</span>
+                </button>
+                <button onclick="setScenario('jaehyun')" id="tab-jaehyun" class="tab-btn px-6 py-3 rounded-2xl text-slate-600 font-medium border border-slate-200 flex items-center gap-2">
+                    🧑‍🎓 재현 <span class="tag-false text-xs px-2 py-0.5 rounded-full font-bold">거짓 (X)</span>
+                </button>
+            </div>
+
+            <!-- 설명 패널 -->
+            <div id="info-panel" class="bg-white/80 rounded-2xl p-5 border border-pink-100 shadow-inner">
+                <!-- 내용이 JS를 통해 동적으로 삽입됩니다. -->
+            </div>
+
+            <!-- 3D 캔버스 -->
+            <div id="canvas-container" class="cursor-move shadow-md">
+                <!-- 캔버스 우측 하단 도움말 -->
+                <div class="absolute bottom-3 right-3 bg-white/80 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 shadow-sm pointer-events-none backdrop-blur-sm border border-slate-200">
+                    👆 마우스 드래그로 360° 회전
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // 시나리오 데이터 정의
+        const scenarios = {
+            minho: {
+                name: "민호",
+                isTrue: true,
+                statement: "l // m 이고 m // n 이면 l // n 이다.",
+                math: "직선 $l \\parallel$ 직선 $m$, 직선 $m \\parallel$ 직선 $n$ 이면, 직선 $l \\parallel$ 직선 $n$ 이다.",
+                explanation: "이 명제는 **참**입니다! 공간에서 한 직선에 평행한 두 직선은 서로 평행합니다. 화면을 돌려보며 세 직선이 절대 만나지 않고 나란히 뻗어나가는 모습을 확인하세요."
+            },
+            sojeong: {
+                name: "소정",
+                isTrue: false,
+                statement: "l // α 이고 l // β 이면 α // β 이다.",
+                math: "직선 $l \\parallel$ 평면 $\\alpha$, 직선 $l \\parallel$ 평면 $\\beta$ 이면, 평면 $\\alpha \\parallel$ 평면 $\\beta$ 이다? (거짓)",
+                explanation: "이 명제는 **거짓**입니다! 화면을 보세요. 하늘색 직선($l$)은 바닥 평면($\\alpha$)과도 평행하고, 세워진 벽면($\\beta$)과도 평행합니다. 하지만 두 평면은 서로 평행하지 않고 교차하고 있습니다. 완벽한 **반례**입니다."
+            },
+            jaehyun: {
+                name: "재현",
+                isTrue: false,
+                statement: "l // α 이고 m // α 이면 l // m 이다.",
+                math: "직선 $l \\parallel$ 평면 $\\alpha$, 직선 $m \\parallel$ 평면 $\\alpha$ 이면, 직선 $l \\parallel$ 직선 $m$ 이다? (거짓)",
+                explanation: "이 명제는 **거짓**입니다! 바닥 평면($\\alpha$) 위로 허공에 띄운 두 직선을 보세요. 두 직선 모두 바닥 평면과는 절대 만나지 않으므로 평행하지만, 자기들끼리는 평행하지 않고 **'꼬인 위치'**나 교차하는 상태에 있을 수 있습니다. (반례)"
+            }
+        };
+
+        // --- Three.js 초기화 ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        // 파스텔 톤의 아주 밝은 회색 배경
+        scene.background = new THREE.Color(0xf8fafc);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(20, 20, 25);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 10;
+        controls.maxDistance = 60;
+
+        // 조명 설정
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 20, 10);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        // 오브젝트들을 담을 그룹
+        let objectGroup = new THREE.Group();
+        scene.add(objectGroup);
+
+        // --- 헬퍼 함수들 ---
+
+        // 파스텔톤 재질 생성
+        const createMaterial = (color, opacity = 1.0) => {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                transparent: opacity < 1.0,
+                opacity: opacity,
+                side: THREE.DoubleSide,
+                roughness: 0.2,
+                metalness: 0.1
+            });
+        };
+
+        // 직선(원기둥) 생성
+        const createLine = (color, length = 30, radius = 0.15) => {
+            const geometry = new THREE.CylinderGeometry(radius, radius, length, 16);
+            const mesh = new THREE.Mesh(geometry, createMaterial(color));
+            mesh.castShadow = true;
+            return mesh;
+        };
+
+        // 평면 생성
+        const createPlane = (color, size = 20) => {
+            const geometry = new THREE.BoxGeometry(size, 0.2, size); // 두께감이 살짝 있는 판
+            const mesh = new THREE.Mesh(geometry, createMaterial(color, 0.7)); // 반투명
+            mesh.receiveShadow = true;
+            return mesh;
+        };
+
+        // 텍스트 라벨 생성 (Canvas 텍스처 사용)
+        const createLabel = (text, color) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 256; canvas.height = 128;
+            ctx.fillStyle = color;
+            ctx.font = 'bold 48px "Noto Sans KR", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 128, 64);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(6, 3, 1);
+            return sprite;
+        };
+
+        // 직각 기호 표시 함수
+        const createRightAngle = (position, color = 0xff0000) => {
+            const group = new THREE.Group();
+            const mat = new THREE.LineBasicMaterial({ color: color, linewidth: 2 });
+            const points = [];
+            const size = 1.5;
+            points.push(new THREE.Vector3(size, 0, 0));
+            points.push(new THREE.Vector3(size, size, 0));
+            points.push(new THREE.Vector3(0, size, 0));
+            const geo = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.Line(geo, mat);
+            line.position.copy(position);
+            group.add(line);
+            return group;
+        };
+
+
+        // --- 시나리오 렌더링 함수 ---
+        const buildScenario = (id) => {
+            // 기존 오브젝트 제거
+            scene.remove(objectGroup);
+            objectGroup = new THREE.Group();
+            scene.add(objectGroup);
+
+            const planeColor = 0xa7f3d0; // Mint (평면 알파)
+            const planeBetaColor = 0xfde047; // Yellow (평면 베타)
+            const line1Color = 0xbae6fd; // Sky Blue (직선 l)
+            const line2Color = 0xc7d2fe; // Indigo (직선 m)
+            const line3Color = 0xfbcfe8; // Pink (직선 n)
+
+            if (id === 'minho') {
+                // 참: l // m, m // n -> l // n
+                const lineL = createLine(line1Color);
+                lineL.position.set(-6, 0, 0);
+                objectGroup.add(lineL);
+                const labelL = createLabel("직선 l", "#0369a1");
+                labelL.position.set(-6, 10, 0);
+                objectGroup.add(labelL);
+
+                const lineM = createLine(line2Color);
+                lineM.position.set(0, 0, 0);
+                objectGroup.add(lineM);
+                const labelM = createLabel("직선 m", "#4338ca");
+                labelM.position.set(0, 10, 0);
+                objectGroup.add(labelM);
+
+                const lineN = createLine(line3Color);
+                lineN.position.set(6, 0, 0);
+                objectGroup.add(lineN);
+                const labelN = createLabel("직선 n", "#be185d");
+                labelN.position.set(6, 10, 0);
+                objectGroup.add(labelN);
+
+            } else if (id === 'sojeong') {
+                // 거짓 (반례): l // α, l // β -> α // β
+                // 평면 α (바닥)
+                const planeAlpha = createPlane(planeColor, 25);
+                planeAlpha.position.y = -5;
+                objectGroup.add(planeAlpha);
+                const labelAlpha = createLabel("평면 α", "#047857");
+                labelAlpha.position.set(10, -4.5, 10);
+                objectGroup.add(labelAlpha);
+
+                // 평면 β (벽면)
+                const planeBeta = createPlane(planeBetaColor, 25);
+                planeBeta.rotation.z = Math.PI / 2; // 세우기
+                planeBeta.position.x = -8;
+                objectGroup.add(planeBeta);
+                const labelBeta = createLabel("평면 β", "#a16207");
+                labelBeta.position.set(-7.5, 10, 10);
+                objectGroup.add(labelBeta);
+
+                // 직선 l (z축 방향, 두 평면 모두와 평행)
+                const lineL = createLine(line1Color, 30);
+                lineL.rotation.x = Math.PI / 2;
+                lineL.position.set(2, 5, 0);
+                objectGroup.add(lineL);
+                const labelL = createLabel("직선 l", "#0369a1");
+                labelL.position.set(2, 6, 12);
+                objectGroup.add(labelL);
+
+            } else if (id === 'jaehyun') {
+                // 거짓 (반례): l // α, m // α -> l // m
+                // 평면 α (바닥)
+                const planeAlpha = createPlane(planeColor, 25);
+                planeAlpha.position.y = -5;
+                objectGroup.add(planeAlpha);
+                const labelAlpha = createLabel("평면 α", "#047857");
+                labelAlpha.position.set(10, -4.5, 10);
+                objectGroup.add(labelAlpha);
+
+                // 직선 l (x축 방향)
+                const lineL = createLine(line1Color, 25);
+                lineL.rotation.z = Math.PI / 2;
+                lineL.position.set(0, 2, -4);
+                objectGroup.add(lineL);
+                const labelL = createLabel("직선 l", "#0369a1");
+                labelL.position.set(10, 3, -4);
+                objectGroup.add(labelL);
+                
+                // 직선 m (z축 방향 - 꼬인 위치)
+                const lineM = createLine(line2Color, 25);
+                lineM.rotation.x = Math.PI / 2;
+                lineM.position.set(3, 6, 0);
+                objectGroup.add(lineM);
+                const labelM = createLabel("직선 m", "#4338ca");
+                labelM.position.set(3, 7, 10);
+                objectGroup.add(labelM);
+            }
+        };
+
+        // --- UI 및 로직 ---
+        window.setScenario = function(id) {
+            // 버튼 활성화 처리
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${id}`).classList.add('active');
+
+            // 패널 내용 업데이트
+            const data = scenarios[id];
+            const panel = document.getElementById('info-panel');
+            
+            const tagHtml = data.isTrue 
+                ? `<span class="tag-true text-xs px-2 py-1 rounded-full font-bold shadow-sm whitespace-nowrap">참 (O)</span>`
+                : `<span class="tag-false text-xs px-2 py-1 rounded-full font-bold shadow-sm whitespace-nowrap">거짓 (X) 반례 시각화</span>`;
+
+            panel.innerHTML = `
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl shadow-sm border border-slate-200">
+                        ${id === 'minho' ? '👨‍🎓' : id === 'sojeong' ? '👩‍🎓' : '🧑‍🎓'}
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-700">${data.name}의 주장</h3>
+                    ${tagHtml}
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-3">
+                    <p class="text-lg font-bold text-slate-800">"${data.statement}"</p>
+                    <p class="text-slate-600 mt-2 whitespace-nowrap text-sm">${data.math}</p>
+                </div>
+                <p class="text-slate-600 leading-relaxed font-medium bg-pink-50/50 p-4 rounded-xl border border-pink-100">
+                    💡 <strong>선생님의 설명:</strong> ${data.explanation}
+                </p>
+            `;
+
+            // MathJax 렌더링 업데이트
+            if (window.MathJax) {
+                MathJax.typesetPromise([panel]).catch(function (err) {
+                    console.log(err.message);
+                });
+            }
+
+            // 3D 씬 업데이트
+            buildScenario(id);
+            
+            // 카메라 초기 위치 리셋
+            camera.position.set(20, 15, 25);
+            controls.target.set(0, 0, 0);
+        };
+
+        // 창 크기 변경 대응
+        window.addEventListener('resize', () => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // 애니메이션 루프
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // 초기화 실행
+        setScenario('minho');
+        animate();
+
+    </script>
+</body>
+</html>
