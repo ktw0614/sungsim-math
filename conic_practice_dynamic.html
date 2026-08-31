@@ -7,114 +7,109 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        body { 
+            font-family: 'Noto Sans KR', sans-serif; 
+            background-color: #fff5f8;
+            background-image: radial-gradient(#fbcfe8 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #475569;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #fdf4ff 0%, #fce7f3 50%, #e0e7ff 100%);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid white;
+        }
+        .blob { position: absolute; filter: blur(40px); z-index: 0; opacity: 0.6; animation: float 8s ease-in-out infinite; }
+        .blob-1 { background: #fbcfe8; width: 300px; height: 300px; border-radius: 50%; top: -50px; left: -100px; animation-delay: 0s; }
+        .blob-2 { background: #c7d2fe; width: 250px; height: 250px; border-radius: 50%; bottom: -80px; right: -50px; animation-delay: -3s; }
+        .blob-3 { background: #e9d5ff; width: 200px; height: 200px; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -5s; }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(20px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.15);
+        }
+        .highlight { position: relative; display: inline-block; z-index: 1; }
+        .highlight::after { content: ''; position: absolute; bottom: 2px; left: -2px; right: -2px; height: 10px; background-color: #fce7f3; z-index: -1; border-radius: 4px; }
+
         .math-font { font-family: 'Times New Roman', Times, serif; font-style: italic; }
         
-        /* 학생 입력용 텍스트 박스 스타일 */
         .ans-input {
-            width: 48px;
-            height: 32px;
-            text-align: center;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            font-weight: 900;
-            color: #334155;
-            background-color: #ffffff;
-            margin: 0 2px;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+            width: 48px; height: 32px; text-align: center;
+            border: 2px solid #fbcfe8; border-radius: 8px;
+            font-weight: 900; color: #475569; background-color: #ffffff;
+            margin: 0 2px; transition: all 0.2s ease;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
-        .ans-input:focus {
-            border-color: #6366f1;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-        /* 정답 시 스타일 */
-        .ans-correct {
-            border-color: #22c55e !important;
-            background-color: #f0fdf4 !important;
-            color: #15803d !important;
-        }
-        /* 오답 시 스타일 */
-        .ans-wrong {
-            border-color: #ef4444 !important;
-            background-color: #fef2f2 !important;
-            color: #b91c1c !important;
-        }
+        .ans-input:focus { border-color: #f472b6; outline: none; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.2); }
+        .ans-correct { border-color: #34d399 !important; background-color: #f0fdf4 !important; color: #15803d !important; }
+        .ans-wrong { border-color: #fb7185 !important; background-color: #fff1f2 !important; color: #be123c !important; }
 
-        /* 수학 분수 표시용 */
-        .math-fraction {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            vertical-align: middle;
-            margin: 0 0.2rem;
-            line-height: 1.1;
-            font-size: 0.9em;
-        }
-        .math-fraction > span:first-child {
-            border-bottom: 1.5px solid currentColor;
-            padding: 0 0.3rem;
-        }
-        .math-fraction > span:last-child {
-            padding: 0 0.3rem;
-        }
+        .math-fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 0.2rem; line-height: 1.1; font-size: 0.9em; }
+        .math-fraction > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 0.3rem; }
+        .math-fraction > span:last-child { padding: 0 0.3rem; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4">
+<body class="min-h-screen flex flex-col items-center">
 
-    <header class="mb-8 text-center w-full max-w-5xl">
-        <div class="inline-block bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-sm border border-indigo-200">
-            쌍둥이 문제 무한 생성기
-        </div>
-        <h1 class="text-3xl md:text-4xl font-black text-slate-800 mb-3 tracking-tight">이차곡선 평행이동 실전 훈련기</h1>
-        <p class="text-slate-600 font-medium mb-6">버튼을 눌러 새로운 문제를 생성하고, 빈칸을 직접 채워보세요.</p>
-        
-        <div class="flex flex-wrap justify-center gap-3 w-full">
-            <button onclick="generateParabola()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition transform active:scale-95">
-                포물선 문제 생성
-            </button>
-            <button onclick="generateEllipse()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition transform active:scale-95">
-                타원 문제 생성
-            </button>
-            <button onclick="generateHyperbola()" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition transform active:scale-95">
-                쌍곡선 문제 생성
-            </button>
+    <header class="hero-bg w-full py-12 px-4 text-center shadow-sm relative mb-8">
+        <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="inline-block bg-white/80 text-pink-500 text-xs font-bold px-4 py-1.5 rounded-full mb-4 shadow-sm border border-pink-100">
+                ✨ 쌍둥이 문제 무한 생성기
+            </div>
+            <h1 class="text-3xl md:text-4xl font-black text-slate-700 mb-3 tracking-tight">이차곡선 평행이동 <span class="highlight text-pink-500">실전 훈련기</span> 🎀</h1>
+            <p class="text-slate-500 font-medium mb-6">버튼을 눌러 새로운 문제를 생성하고, 빈칸을 직접 채워보세요.</p>
+            
+            <div class="flex flex-wrap justify-center gap-3 w-full">
+                <button onclick="generateParabola()" class="px-6 py-3 bg-pink-400 hover:bg-pink-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 border border-pink-300">
+                    🌸 포물선 생성
+                </button>
+                <button onclick="generateEllipse()" class="px-6 py-3 bg-indigo-400 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 border border-indigo-300">
+                    🦋 타원 생성
+                </button>
+                <button onclick="generateHyperbola()" class="px-6 py-3 bg-purple-400 hover:bg-purple-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 border border-purple-300">
+                    🔮 쌍곡선 생성
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="w-full max-w-5xl">
-        <!-- 가이드 메시지 -->
-        <div id="guide-msg" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-sm font-bold p-3 rounded-lg mb-4 text-center shadow-sm">
+    <main class="w-full max-w-5xl px-4 relative z-10 mb-12">
+        <div id="guide-msg" class="hidden bg-pink-50 border border-pink-200 text-pink-800 text-sm font-bold p-3 rounded-xl mb-4 text-center shadow-sm">
             💡 작성 팁: 이동량을 입력할 때는 수식 부호를 그대로 살려 숫자를 입력하세요. (예: y축으로 -3 이동시 빈칸에 -3 입력)
         </div>
 
-        <!-- 문제가 렌더링될 영역 -->
-        <div id="problem-container" class="w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 hidden">
+        <div id="problem-container" class="w-full glass-card rounded-3xl overflow-hidden hidden">
             <!-- JS로 내용 주입 -->
         </div>
 
-        <!-- 액션 버튼 영역 -->
-        <div id="action-buttons" class="hidden flex justify-end gap-3 mt-4">
-            <button onclick="resetInputs()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg shadow transition">
+        <div id="action-buttons" class="hidden flex justify-end gap-3 mt-6">
+            <button onclick="resetInputs()" class="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-600 font-bold rounded-xl border border-slate-200 shadow-sm transition">
                 다시 풀기 (초기화)
             </button>
-            <button onclick="showAnswers()" class="px-5 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg shadow transition">
+            <button onclick="showAnswers()" class="px-5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl border border-rose-200 shadow-sm transition">
                 정답 모두 보기
             </button>
-            <button onclick="checkAnswers()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition transform active:scale-95">
+            <button onclick="checkAnswers()" class="px-6 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md transition transform active:scale-95">
                 내 답안 채점하기 ✔
             </button>
         </div>
     </main>
 
     <script>
-        // 난수 생성 헬퍼 함수
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // 수식 포매팅 헬퍼 함수 (예: m=2 -> "(x-2)", m=-3 -> "(x+3)", m=0 -> "x")
         function formatTerm(variable, value, isSquare = false) {
             if (value === 0) return isSquare ? `${variable}<sup>2</sup>` : variable;
             const sign = value > 0 ? '-' : '+';
@@ -122,12 +117,10 @@
             return isSquare ? `(${variable}${sign}${num})<sup>2</sup>` : `(${variable}${sign}${num})`;
         }
 
-        // 분수 HTML 생성 헬퍼 함수
         function frac(num, den) {
-            return `<div class="math-fraction"><span class="border-b border-slate-800 px-1">${num}</span><span class="px-1">${den}</span></div>`;
+            return `<div class="math-fraction"><span class="border-b border-slate-400 px-1">${num}</span><span class="px-1">${den}</span></div>`;
         }
 
-        // 컨테이너 초기화 및 가이드 표시
         function showContainer() {
             document.getElementById('guide-msg').classList.remove('hidden');
             document.getElementById('problem-container').classList.remove('hidden');
@@ -135,13 +128,9 @@
             document.getElementById('action-buttons').classList.add('flex');
         }
 
-        // 채점 및 상태 초기화 관련 함수
         function resetInputs() {
             const inputs = document.querySelectorAll('.ans-input');
-            inputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('ans-correct', 'ans-wrong');
-            });
+            inputs.forEach(input => { input.value = ''; input.classList.remove('ans-correct', 'ans-wrong'); });
         }
 
         function checkAnswers() {
@@ -149,202 +138,151 @@
             let allCorrect = true;
             inputs.forEach(input => {
                 const ans = input.dataset.answer;
-                // 공백 제거하여 비교
                 const val = input.value.trim().replace(/\s/g, '');
                 input.classList.remove('ans-correct', 'ans-wrong');
-                
-                if (val === ans) {
-                    input.classList.add('ans-correct');
-                } else if (val !== '') {
-                    input.classList.add('ans-wrong');
-                    allCorrect = false;
-                } else {
-                    allCorrect = false; // 빈칸 있음
-                }
+                if (val === ans) input.classList.add('ans-correct');
+                else if (val !== '') { input.classList.add('ans-wrong'); allCorrect = false; }
+                else allCorrect = false;
             });
         }
 
         function showAnswers() {
             const inputs = document.querySelectorAll('.ans-input');
-            inputs.forEach(input => {
-                input.value = input.dataset.answer;
-                input.classList.remove('ans-wrong');
-                input.classList.add('ans-correct');
-            });
+            inputs.forEach(input => { input.value = input.dataset.answer; input.classList.remove('ans-wrong'); input.classList.add('ans-correct'); });
         }
 
         function generateParabola() {
-            // 변수 생성 (0이 아닌 p)
-            let p = 0;
-            while(p === 0) p = getRandomInt(-4, 4);
-            const m = getRandomInt(-5, 5);
-            const n = getRandomInt(-5, 5);
-            const isY2 = Math.random() > 0.5; // y^2 = 4px 형태인지 x^2 = 4py 형태인지
+            let p = 0; while(p === 0) p = getRandomInt(-4, 4);
+            const m = getRandomInt(-5, 5); const n = getRandomInt(-5, 5);
+            const isY2 = Math.random() > 0.5; 
 
             let eqHTML = '';
-            if (isY2) {
-                // (y-n)^2 = 4p(x-m)
-                eqHTML = `${formatTerm('y', n, true)} = ${4*p}${m === 0 ? 'x' : formatTerm('x', m)}`;
-            } else {
-                // (x-m)^2 = 4p(y-n)
-                eqHTML = `${formatTerm('x', m, true)} = ${4*p}${n === 0 ? 'y' : formatTerm('y', n)}`;
-            }
+            if (isY2) eqHTML = `${formatTerm('y', n, true)} = ${4*p}${m === 0 ? 'x' : formatTerm('x', m)}`;
+            else eqHTML = `${formatTerm('x', m, true)} = ${4*p}${n === 0 ? 'y' : formatTerm('y', n)}`;
 
             const headerHTML = `
-                <div class="bg-slate-800 text-white p-5 rounded-t-2xl font-bold text-lg md:text-xl border-b-4 border-emerald-500 flex items-center flex-wrap gap-2">
-                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm mr-2">문제</span>
-                    포물선 <span class="math-font text-2xl text-emerald-300 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
+                <div class="bg-white/80 p-5 font-bold text-lg md:text-xl border-b border-pink-100 flex items-center flex-wrap gap-2 text-slate-700">
+                    <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-sm mr-2 border border-pink-200">문제</span>
+                    포물선 <span class="math-font text-2xl text-pink-500 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
                 </div>
             `;
 
             let tableRows = '';
             if (isY2) {
                 tableRows = `
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">방정식</td>
-                        <td class="p-4 border-r border-slate-200 math-font text-lg">y<sup>2</sup> = <input type="text" class="ans-input" data-answer="${4*p}"> x</td>
-                        <td rowspan="4" class="p-4 border-r border-slate-200 bg-emerald-50/30 align-middle">
-                            <div class="flex flex-col gap-3 items-center font-medium text-slate-700">
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">방정식</td>
+                        <td class="p-4 border-r border-pink-50 math-font text-lg">y<sup>2</sup> = <input type="text" class="ans-input" data-answer="${4*p}"> x</td>
+                        <td rowspan="4" class="p-4 border-r border-pink-50 bg-white/30 align-middle">
+                            <div class="flex flex-col gap-3 items-center font-medium text-slate-600">
                                 <div>x축 방향 <input type="text" class="ans-input" data-answer="${m}"> 만큼</div>
                                 <div>y축 방향 <input type="text" class="ans-input" data-answer="${n}"> 만큼</div>
-                                <div class="text-emerald-700 font-bold mt-2 border-t border-emerald-200 pt-2 w-full text-center">평행이동 ⬇</div>
+                                <div class="text-pink-400 font-bold mt-2 border-t border-pink-100 pt-2 w-full text-center">평행이동 ⬇</div>
                             </div>
                         </td>
-                        <td class="p-4 bg-slate-50/50 math-font font-bold text-slate-800 text-xl">${eqHTML}</td>
+                        <td class="p-4 bg-pink-50/30 math-font font-bold text-slate-700 text-xl">${eqHTML}</td>
                     </tr>
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">꼭짓점의 좌표</td>
-                        <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">꼭짓점의 좌표</td>
+                        <td class="p-4 border-r border-pink-50 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
                         <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td>
                     </tr>
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">초점의 좌표</td>
-                        <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="${p}">, <input type="text" class="ans-input" data-answer="0"> )</td>
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">초점의 좌표</td>
+                        <td class="p-4 border-r border-pink-50 text-lg">( <input type="text" class="ans-input" data-answer="${p}">, <input type="text" class="ans-input" data-answer="0"> )</td>
                         <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${p+m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td>
                     </tr>
-                    <tr class="bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">준선의 방정식</td>
-                        <td class="p-4 border-r border-slate-200 math-font text-lg">x = <input type="text" class="ans-input" data-answer="${-p}"></td>
+                    <tr class="bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">준선의 방정식</td>
+                        <td class="p-4 border-r border-pink-50 math-font text-lg">x = <input type="text" class="ans-input" data-answer="${-p}"></td>
                         <td class="p-4 math-font text-lg">x = <input type="text" class="ans-input" data-answer="${-p+m}"></td>
                     </tr>
                 `;
             } else {
                 tableRows = `
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">방정식</td>
-                        <td class="p-4 border-r border-slate-200 math-font text-lg">x<sup>2</sup> = <input type="text" class="ans-input" data-answer="${4*p}"> y</td>
-                        <td rowspan="4" class="p-4 border-r border-slate-200 bg-emerald-50/30 align-middle">
-                            <div class="flex flex-col gap-3 items-center font-medium text-slate-700">
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">방정식</td>
+                        <td class="p-4 border-r border-pink-50 math-font text-lg">x<sup>2</sup> = <input type="text" class="ans-input" data-answer="${4*p}"> y</td>
+                        <td rowspan="4" class="p-4 border-r border-pink-50 bg-white/30 align-middle">
+                            <div class="flex flex-col gap-3 items-center font-medium text-slate-600">
                                 <div>x축 방향 <input type="text" class="ans-input" data-answer="${m}"> 만큼</div>
                                 <div>y축 방향 <input type="text" class="ans-input" data-answer="${n}"> 만큼</div>
-                                <div class="text-emerald-700 font-bold mt-2 border-t border-emerald-200 pt-2 w-full text-center">평행이동 ⬇</div>
+                                <div class="text-pink-400 font-bold mt-2 border-t border-pink-100 pt-2 w-full text-center">평행이동 ⬇</div>
                             </div>
                         </td>
-                        <td class="p-4 bg-slate-50/50 math-font font-bold text-slate-800 text-xl">${eqHTML}</td>
+                        <td class="p-4 bg-pink-50/30 math-font font-bold text-slate-700 text-xl">${eqHTML}</td>
                     </tr>
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">꼭짓점의 좌표</td>
-                        <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">꼭짓점의 좌표</td>
+                        <td class="p-4 border-r border-pink-50 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
                         <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td>
                     </tr>
-                    <tr class="border-b border-slate-200 bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">초점의 좌표</td>
-                        <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="${p}"> )</td>
+                    <tr class="border-b border-pink-50/50 bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">초점의 좌표</td>
+                        <td class="p-4 border-r border-pink-50 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="${p}"> )</td>
                         <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${p+n}"> )</td>
                     </tr>
-                    <tr class="bg-white">
-                        <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">준선의 방정식</td>
-                        <td class="p-4 border-r border-slate-200 math-font text-lg">y = <input type="text" class="ans-input" data-answer="${-p}"></td>
+                    <tr class="bg-white/50">
+                        <td class="p-4 font-bold text-pink-600 bg-pink-50/50 border-r border-pink-50">준선의 방정식</td>
+                        <td class="p-4 border-r border-pink-50 math-font text-lg">y = <input type="text" class="ans-input" data-answer="${-p}"></td>
                         <td class="p-4 math-font text-lg">y = <input type="text" class="ans-input" data-answer="${-p+n}"></td>
                     </tr>
                 `;
             }
-
             renderTable(headerHTML, tableRows);
         }
 
         function generateEllipse() {
-            // 정수 피타고라스 쌍 활용
-            const triples = [
-                {a: 5, b: 3, c: 4}, {a: 5, b: 4, c: 3},
-                {a: 13, b: 5, c: 12}, {a: 13, b: 12, c: 5},
-                {a: 10, b: 6, c: 8}, {a: 10, b: 8, c: 6}
-            ];
+            const triples = [{a: 5, b: 3, c: 4}, {a: 5, b: 4, c: 3}, {a: 13, b: 5, c: 12}, {a: 13, b: 12, c: 5}, {a: 10, b: 6, c: 8}, {a: 10, b: 8, c: 6}];
             const t = triples[Math.floor(Math.random() * triples.length)];
-            const m = getRandomInt(-5, 5);
-            const n = getRandomInt(-5, 5);
-            
-            // a>b 인지 b>a 인지 무작위 결정
-            let a = t.a; let b = t.b; let c = t.c;
-            let isVertical = false; // 세로로 긴 타원 여부
-            if (Math.random() > 0.5) {
-                a = t.b; b = t.a; isVertical = true;
-            }
-
+            const m = getRandomInt(-5, 5); const n = getRandomInt(-5, 5);
+            let a = t.a; let b = t.b; let c = t.c; let isVertical = false;
+            if (Math.random() > 0.5) { a = t.b; b = t.a; isVertical = true; }
             const eqHTML = `${frac(formatTerm('x', m, true), a*a)} + ${frac(formatTerm('y', n, true), b*b)} = 1`;
 
             const headerHTML = `
-                <div class="bg-slate-800 text-white p-5 rounded-t-2xl font-bold text-lg md:text-xl border-b-4 border-blue-500 flex items-center flex-wrap gap-2">
-                    <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm mr-2">문제</span>
-                    타원 <span class="math-font text-2xl text-blue-300 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
+                <div class="bg-white/80 p-5 font-bold text-lg md:text-xl border-b border-indigo-100 flex items-center flex-wrap gap-2 text-slate-700">
+                    <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm mr-2 border border-indigo-200">문제</span>
+                    타원 <span class="math-font text-2xl text-indigo-500 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
                 </div>
             `;
 
             let tableRows = `
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">방정식</td>
-                    <td class="p-4 border-r border-slate-200 math-font text-lg">
-                        ${frac(`x<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${a*a}">`)} + 
-                        ${frac(`y<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${b*b}">`)} = 1
+                <tr class="border-b border-indigo-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-indigo-600 bg-indigo-50/50 border-r border-indigo-50">방정식</td>
+                    <td class="p-4 border-r border-indigo-50 math-font text-lg">
+                        ${frac(`x<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${a*a}">`)} + ${frac(`y<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${b*b}">`)} = 1
                     </td>
-                    <td rowspan="4" class="p-4 border-r border-slate-200 bg-blue-50/30 align-middle">
-                        <div class="flex flex-col gap-3 items-center font-medium text-slate-700">
+                    <td rowspan="4" class="p-4 border-r border-indigo-50 bg-white/30 align-middle">
+                        <div class="flex flex-col gap-3 items-center font-medium text-slate-600">
                             <div>x축 방향 <input type="text" class="ans-input" data-answer="${m}"> 만큼</div>
                             <div>y축 방향 <input type="text" class="ans-input" data-answer="${n}"> 만큼</div>
-                            <div class="text-blue-700 font-bold mt-2 border-t border-blue-200 pt-2 w-full text-center">평행이동 ⬇</div>
+                            <div class="text-indigo-400 font-bold mt-2 border-t border-indigo-100 pt-2 w-full text-center">평행이동 ⬇</div>
                         </div>
                     </td>
-                    <td class="p-4 bg-slate-50/50 math-font font-bold text-slate-800 text-xl">${eqHTML}</td>
+                    <td class="p-4 bg-indigo-50/30 math-font font-bold text-slate-700 text-xl">${eqHTML}</td>
                 </tr>
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">중심의 좌표</td>
-                    <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
+                <tr class="border-b border-indigo-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-indigo-600 bg-indigo-50/50 border-r border-indigo-50">중심의 좌표</td>
+                    <td class="p-4 border-r border-indigo-50 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
                     <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td>
                 </tr>
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">
-                        초점의 좌표<br><span class="text-xs font-normal text-slate-500">(큰 좌표 먼저 입력)</span>
-                    </td>
+                <tr class="border-b border-indigo-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-indigo-600 bg-indigo-50/50 border-r border-indigo-50">초점의 좌표<br><span class="text-xs font-normal text-slate-400">(큰 좌표 먼저)</span></td>
             `;
 
             if (!isVertical) {
-                tableRows += `
-                    <td class="p-4 border-r border-slate-200 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${c}">, 0 ), ( <input type="text" class="ans-input" data-answer="${-c}">, 0 )
-                    </td>
-                    <td class="p-4 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${c+m}">, <input type="text" class="ans-input" data-answer="${n}"> ), 
-                        ( <input type="text" class="ans-input" data-answer="${-c+m}">, <input type="text" class="ans-input" data-answer="${n}"> )
-                    </td>
-                </tr>`;
+                tableRows += `<td class="p-4 border-r border-indigo-50 text-lg">( <input type="text" class="ans-input" data-answer="${c}">, 0 ), ( <input type="text" class="ans-input" data-answer="${-c}">, 0 )</td>
+                    <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${c+m}">, <input type="text" class="ans-input" data-answer="${n}"> ), ( <input type="text" class="ans-input" data-answer="${-c+m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td></tr>`;
             } else {
-                tableRows += `
-                    <td class="p-4 border-r border-slate-200 text-lg">
-                        ( 0, <input type="text" class="ans-input" data-answer="${c}"> ), ( 0, <input type="text" class="ans-input" data-answer="${-c}"> )
-                    </td>
-                    <td class="p-4 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${c+n}"> ), 
-                        ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${-c+n}"> )
-                    </td>
-                </tr>`;
+                tableRows += `<td class="p-4 border-r border-indigo-50 text-lg">( 0, <input type="text" class="ans-input" data-answer="${c}"> ), ( 0, <input type="text" class="ans-input" data-answer="${-c}"> )</td>
+                    <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${c+n}"> ), ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${-c+n}"> )</td></tr>`;
             }
 
             tableRows += `
-                <tr class="bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">
-                        꼭짓점의 좌표<br><span class="text-xs font-normal text-slate-500">(양수/큰 좌표 먼저 입력)</span>
-                    </td>
-                    <td class="p-4 border-r border-slate-200 text-base leading-relaxed">
+                <tr class="bg-white/50">
+                    <td class="p-4 font-bold text-indigo-600 bg-indigo-50/50 border-r border-indigo-50">꼭짓점의 좌표<br><span class="text-xs font-normal text-slate-400">(양수 먼저)</span></td>
+                    <td class="p-4 border-r border-indigo-50 text-base leading-relaxed">
                         x축: ( <input type="text" class="ans-input" data-answer="${a}">, 0 ), ( <input type="text" class="ans-input" data-answer="${-a}">, 0 )<br>
                         y축: ( 0, <input type="text" class="ans-input" data-answer="${b}"> ), ( 0, <input type="text" class="ans-input" data-answer="${-b}"> )
                     </td>
@@ -354,86 +292,60 @@
                     </td>
                 </tr>
             `;
-
             renderTable(headerHTML, tableRows);
         }
 
         function generateHyperbola() {
-            const hypTriples = [
-                {a: 4, b: 3, c: 5}, {a: 3, b: 4, c: 5},
-                {a: 12, b: 5, c: 13}, {a: 5, b: 12, c: 13},
-                {a: 8, b: 6, c: 10}, {a: 6, b: 8, c: 10}
-            ];
+            const hypTriples = [{a: 4, b: 3, c: 5}, {a: 3, b: 4, c: 5}, {a: 12, b: 5, c: 13}, {a: 5, b: 12, c: 13}, {a: 8, b: 6, c: 10}, {a: 6, b: 8, c: 10}];
             const t = hypTriples[Math.floor(Math.random() * hypTriples.length)];
-            const m = getRandomInt(-5, 5);
-            const n = getRandomInt(-5, 5);
-            const isUpDown = Math.random() > 0.5; // 우변이 -1인지 1인지
-            const rhs = isUpDown ? -1 : 1;
-            
+            const m = getRandomInt(-5, 5); const n = getRandomInt(-5, 5);
+            const isUpDown = Math.random() > 0.5; const rhs = isUpDown ? -1 : 1;
             const a = t.a; const b = t.b; const c = t.c;
-
             const eqHTML = `${frac(formatTerm('x', m, true), a*a)} - ${frac(formatTerm('y', n, true), b*b)} = ${rhs}`;
 
             const headerHTML = `
-                <div class="bg-slate-800 text-white p-5 rounded-t-2xl font-bold text-lg md:text-xl border-b-4 border-purple-500 flex items-center flex-wrap gap-2">
-                    <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm mr-2">문제</span>
-                    쌍곡선 <span class="math-font text-2xl text-purple-300 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
+                <div class="bg-white/80 p-5 font-bold text-lg md:text-xl border-b border-purple-100 flex items-center flex-wrap gap-2 text-slate-700">
+                    <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm mr-2 border border-purple-200">문제</span>
+                    쌍곡선 <span class="math-font text-2xl text-purple-500 mx-2 tracking-wide">${eqHTML}</span> 의 각 요소를 구하시오.
                 </div>
             `;
 
             let tableRows = `
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">방정식</td>
-                    <td class="p-4 border-r border-slate-200 math-font text-lg">
-                        ${frac(`x<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${a*a}">`)} - 
-                        ${frac(`y<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${b*b}">`)} = ${rhs}
+                <tr class="border-b border-purple-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-purple-600 bg-purple-50/50 border-r border-purple-50">방정식</td>
+                    <td class="p-4 border-r border-purple-50 math-font text-lg">
+                        ${frac(`x<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${a*a}">`)} - ${frac(`y<sup>2</sup>`, `<input type="text" class="ans-input" data-answer="${b*b}">`)} = ${rhs}
                     </td>
-                    <td rowspan="4" class="p-4 border-r border-slate-200 bg-purple-50/30 align-middle">
-                        <div class="flex flex-col gap-3 items-center font-medium text-slate-700">
+                    <td rowspan="4" class="p-4 border-r border-purple-50 bg-white/30 align-middle">
+                        <div class="flex flex-col gap-3 items-center font-medium text-slate-600">
                             <div>x축 방향 <input type="text" class="ans-input" data-answer="${m}"> 만큼</div>
                             <div>y축 방향 <input type="text" class="ans-input" data-answer="${n}"> 만큼</div>
-                            <div class="text-purple-700 font-bold mt-2 border-t border-purple-200 pt-2 w-full text-center">평행이동 ⬇</div>
+                            <div class="text-purple-400 font-bold mt-2 border-t border-purple-100 pt-2 w-full text-center">평행이동 ⬇</div>
                         </div>
                     </td>
-                    <td class="p-4 bg-slate-50/50 math-font font-bold text-slate-800 text-xl">${eqHTML}</td>
+                    <td class="p-4 bg-purple-50/30 math-font font-bold text-slate-700 text-xl">${eqHTML}</td>
                 </tr>
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">중심의 좌표</td>
-                    <td class="p-4 border-r border-slate-200 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
+                <tr class="border-b border-purple-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-purple-600 bg-purple-50/50 border-r border-purple-50">중심의 좌표</td>
+                    <td class="p-4 border-r border-purple-50 text-lg">( <input type="text" class="ans-input" data-answer="0">, <input type="text" class="ans-input" data-answer="0"> )</td>
                     <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td>
                 </tr>
-                <tr class="border-b border-slate-200 bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">
-                        초점의 좌표<br><span class="text-xs font-normal text-slate-500">(큰 좌표 먼저 입력)</span>
-                    </td>
+                <tr class="border-b border-purple-50/50 bg-white/50">
+                    <td class="p-4 font-bold text-purple-600 bg-purple-50/50 border-r border-purple-50">초점의 좌표<br><span class="text-xs font-normal text-slate-400">(큰 좌표 먼저)</span></td>
             `;
 
-            if (!isUpDown) { // 좌우 쌍곡선
-                tableRows += `
-                    <td class="p-4 border-r border-slate-200 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${c}">, 0 ), ( <input type="text" class="ans-input" data-answer="${-c}">, 0 )
-                    </td>
-                    <td class="p-4 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${c+m}">, <input type="text" class="ans-input" data-answer="${n}"> ), 
-                        ( <input type="text" class="ans-input" data-answer="${-c+m}">, <input type="text" class="ans-input" data-answer="${n}"> )
-                    </td>
-                </tr>`;
-            } else { // 상하 쌍곡선
-                tableRows += `
-                    <td class="p-4 border-r border-slate-200 text-lg">
-                        ( 0, <input type="text" class="ans-input" data-answer="${c}"> ), ( 0, <input type="text" class="ans-input" data-answer="${-c}"> )
-                    </td>
-                    <td class="p-4 text-lg">
-                        ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${c+n}"> ), 
-                        ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${-c+n}"> )
-                    </td>
-                </tr>`;
+            if (!isUpDown) { 
+                tableRows += `<td class="p-4 border-r border-purple-50 text-lg">( <input type="text" class="ans-input" data-answer="${c}">, 0 ), ( <input type="text" class="ans-input" data-answer="${-c}">, 0 )</td>
+                    <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${c+m}">, <input type="text" class="ans-input" data-answer="${n}"> ), ( <input type="text" class="ans-input" data-answer="${-c+m}">, <input type="text" class="ans-input" data-answer="${n}"> )</td></tr>`;
+            } else { 
+                tableRows += `<td class="p-4 border-r border-purple-50 text-lg">( 0, <input type="text" class="ans-input" data-answer="${c}"> ), ( 0, <input type="text" class="ans-input" data-answer="${-c}"> )</td>
+                    <td class="p-4 text-lg">( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${c+n}"> ), ( <input type="text" class="ans-input" data-answer="${m}">, <input type="text" class="ans-input" data-answer="${-c+n}"> )</td></tr>`;
             }
 
             tableRows += `
-                <tr class="bg-white">
-                    <td class="p-4 font-bold bg-slate-50 border-r border-slate-200">점근선의 방정식</td>
-                    <td class="p-4 border-r border-slate-200 math-font text-lg whitespace-nowrap">
+                <tr class="bg-white/50">
+                    <td class="p-4 font-bold text-purple-600 bg-purple-50/50 border-r border-purple-50">점근선의 방정식</td>
+                    <td class="p-4 border-r border-purple-50 math-font text-lg whitespace-nowrap">
                         y = ± ${frac(`<input type="text" class="ans-input" data-answer="${b}">`, `<input type="text" class="ans-input" data-answer="${a}">`)} x
                     </td>
                     <td class="p-4 math-font text-lg whitespace-nowrap">
@@ -442,7 +354,6 @@
                     </td>
                 </tr>
             `;
-
             renderTable(headerHTML, tableRows);
         }
 
@@ -453,14 +364,14 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-center border-collapse min-w-[750px]">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                                <th class="p-4 font-bold w-1/5 border-r border-slate-200">구분</th>
-                                <th class="p-4 font-bold w-1/4 border-r border-slate-200">평행이동 전 (기본형)</th>
-                                <th class="p-4 font-bold w-1/4 border-r border-slate-200">평행이동 조건</th>
+                            <tr class="bg-white/80 text-slate-500 border-b border-slate-200">
+                                <th class="p-4 font-bold w-1/5 border-r border-slate-100">구분</th>
+                                <th class="p-4 font-bold w-1/4 border-r border-slate-100">평행이동 전 (기본형)</th>
+                                <th class="p-4 font-bold w-1/4 border-r border-slate-100">평행이동 조건</th>
                                 <th class="p-4 font-bold w-1/4">평행이동 후 (결과)</th>
                             </tr>
                         </thead>
-                        <tbody class="text-slate-800">
+                        <tbody class="text-slate-700">
                             ${tableRows}
                         </tbody>
                     </table>
@@ -469,11 +380,7 @@
             showContainer();
         }
 
-        // 초기 시작 시 기본적으로 포물선 하나 보여주기
-        window.onload = () => {
-            generateParabola();
-        };
-
+        window.onload = () => { generateParabola(); };
     </script>
 </body>
 </html>
