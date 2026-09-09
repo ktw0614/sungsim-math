@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 34p 스스로 확인하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 쌍곡선 단원은 붉은색/로즈 톤 그라데이션 */
+            background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-400 via-rose-500 to-orange-500"></div>
+            <div class="mb-3">
+                <span class="bg-rose-100 text-rose-700 border border-rose-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 34페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 이차곡선</h1>
+            <p class="text-lg text-gray-600 font-medium">스스로 확인하기 & 수학으로 생각 넓히기 문제 풀이 (쌍곡선)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">초점, 꼭짓점, 주축</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    다음 쌍곡선의 초점, 꼭짓점의 좌표와 주축의 길이를 구하시오. (필기 기준 2번 풀이)<br>
+                    (2) \( x^2 - 4y^2 = -4 \)
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">양변을 -4로 나누면 \( \frac{x^2}{4} - y^2 = -1 \) 입니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm space-y-2 mb-3">
+                        <p>\( a^2 = 4 \implies a = 2 \)</p>
+                        <p>\( b^2 = 1 \implies b = 1 \)</p>
+                        <p>\( c^2 = 4 + 1 = 5 \implies c = \sqrt{5} \)</p>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-gray-800 font-semibold">
+                        <li><span class="text-rose-600">초점:</span> \( (0, \sqrt{5}), (0, -\sqrt{5}) \)</li>
+                        <li><span class="text-rose-600">꼭짓점:</span> \( (0, 1), (0, -1) \)</li>
+                        <li><span class="text-rose-600">주축:</span> \( 2b = 2 \times 1 = 2 \)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">점근선의 방정식</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    다음 쌍곡선의 점근선의 방정식을 구하시오. (필기 기준 2번 풀이)<br>
+                    (2) \( 2x^2 - y^2 = -2 \)
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">양변을 -2로 나누어 표준형으로 만듭니다.</p>
+                    <p class="text-center bg-white p-2 rounded-lg font-bold mb-2">\( x^2 - \frac{y^2}{2} = -1 \)</p>
+                    <p class="mb-2">여기서 \( a^2 = 1 \implies a = 1 \), \( b^2 = 2 \implies b = \sqrt{2} \) 입니다.</p>
+                    <p class="mb-2">점근선의 방정식 공식은 \( y = \pm\frac{b}{a}x \) 이므로,</p>
+                    <p class="text-center mt-3 text-xl font-black text-rose-600">
+                        \( \therefore y = \pm\sqrt{2}x \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">조건이 주어진 점근선</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    두 점 \( (-4, 0), (4, 0) \)을 초점으로 하고 주축의 길이가 4인 쌍곡선의 점근선의 방정식을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">초점의 좌표에서 \( c = 4 \implies c^2 = 16 \)</p>
+                    <p class="mb-2">주축의 길이가 4이므로 \( 2a = 4 \implies a = 2 \implies a^2 = 4 \)</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3 text-center">
+                        <p>\( b^2 = c^2 - a^2 = 16 - 4 = 12 \)</p>
+                        <p class="font-semibold text-rose-600">\( \therefore b = \sqrt{12} = 2\sqrt{3} \)</p>
+                    </div>
+                    <p class="mb-2">따라서 점근선의 방정식은 \( y = \pm\frac{b}{a}x = \pm\frac{2\sqrt{3}}{2}x \) 입니다.</p>
+                    <p class="text-center mt-2 text-xl font-black text-rose-600">
+                        \( \therefore y = \pm\sqrt{3}x \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">쌍곡선 위의 직각삼각형</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    두 초점이 \( F, F' \)인 쌍곡선 \( 24x^2 - y^2 = 24 \) 위의 제1사분면의 점 P에 대하여 \( \angle FPF' = 90^\circ \)일 때, 삼각형 \( PF'F \)의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">쌍곡선의 방정식을 정리하면 \( x^2 - \frac{y^2}{24} = 1 \)</p>
+                    <p class="mb-2">\( a^2 = 1 \implies a = 1 \) (주축: 2), \( c^2 = 1 + 24 = 25 \implies c = 5 \)</p>
+                    <p class="mb-2 font-bold text-rose-600">초점 사이의 거리: \( \overline{FF'} = 10 \)</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm my-3">
+                        <p class="mb-2">점 P는 1사분면에 있으므로 \( \overline{PF'} > \overline{PF} \) 입니다.</p>
+                        <p class="mb-2">쌍곡선의 정의에 의해 \( \overline{PF'} - \overline{PF} = 2 \)</p>
+                        <p class="mb-2">\( \overline{PF} = k \) 라고 하면, \( \overline{PF'} = k + 2 \) 입니다.</p>
+                        <p class="mt-2 pt-2 border-t border-gray-200">
+                            직각삼각형이므로 피타고라스 정리 적용: <br>
+                            \( k^2 + (k+2)^2 = 10^2 \implies k^2 + k^2 + 4k + 4 = 100 \)<br>
+                            \( 2k^2 + 4k - 96 = 0 \implies k^2 + 2k - 48 = 0 \)<br>
+                            \( (k+8)(k-6) = 0 \implies \mathbf{k = 6} \) (k>0)
+                        </p>
+                    </div>
+                    <p class="mb-2">밑변이 8, 높이가 6인 직각삼각형이 됩니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-rose-600">
+                        \( S = \frac{1}{2} \times 6 \times 8 = 24 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">05</span>
+                    <h2 class="text-xl font-bold text-gray-800">정의를 이용한 둘레</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    쌍곡선 \( \frac{x^2}{25} - \frac{y^2}{11} = 1 \)의 두 초점 \( F, F' \)과 쌍곡선 위의 점 P에 대하여 \( \overline{PF'} = 2\overline{PF} \)가 성립할 때, 삼각형 \( PF'F \)의 둘레의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol5')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol5" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">\( a^2 = 25 \implies a = 5 \implies \) 주축의 길이는 \( 2 \times 5 = 10 \)</p>
+                    <p class="mb-2">\( c^2 = 25 + 11 = 36 \implies c = 6 \implies \) 초점 거리 \( 2c = 12 \)</p>
+                    
+                    <div class="bg-white p-3 rounded-lg shadow-sm my-3">
+                        <p class="mb-1">\( \overline{PF} = k \) 라고 하면, 조건에 의해 \( \overline{PF'} = 2k \)</p>
+                        <p class="mb-1">쌍곡선의 정의(거리의 차 = 주축):</p>
+                        <p class="text-center font-bold text-lg">\( 2k - k = 10 \implies k = 10 \)</p>
+                    </div>
+                    <p class="mb-2">따라서 삼각형의 세 변의 길이는 10, 20, 12 입니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-rose-600">
+                        \( 10 + 20 + 12 = 42 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 mt-8 border-2 border-orange-300 lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-bold tracking-wide">수학으로 생각 넓히기</span>
+                    <h2 class="text-2xl font-bold text-gray-800">거리의 차와 쌍곡선 (기지국)</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    두 기지국 A(50, 0), B(-50, 0)에서 배까지의 **거리의 차가 항상 60 km**일 때, 이 배가 위치할 수 있는 점들로 이루어진 곡선의 방정식을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol_ext')" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol_ext" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-orange-400">
+                    <div class="font-semibold text-orange-600 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">거리의 차가 일정하므로 배의 자취는 **쌍곡선**이 됩니다.</p>
+                    <p class="mb-2">기본형을 \( \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \) 이라 둡니다.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">1) c 구하기</p>
+                            <p>두 초점이 기지국 A, B 이므로<br> \( c = 50 \implies \mathbf{c^2 = 2500} \)</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">2) a 구하기</p>
+                            <p>거리의 차가 주축의 길이(2a)이므로<br> \( 2a = 60 \implies a = 30 \implies \mathbf{a^2 = 900} \)</p>
+                        </div>
+                    </div>
+                    <p class="mb-3 text-center text-lg">초점 관계식 \( c^2 = a^2 + b^2 \) 에서 \( b^2 = 2500 - 900 = \mathbf{1600} \)</p>
+                    <p class="text-center mt-4 text-2xl font-black text-orange-600">
+                        답 : \( \frac{x^2}{900} - \frac{y^2}{1600} = 1 \)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>

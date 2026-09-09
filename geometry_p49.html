@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 49p 스스로 마무리하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 대단원 마무리는 차분한 블루/시안 톤 그라데이션 */
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
+            <div class="mb-3">
+                <span class="bg-blue-100 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 49페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 이차곡선</h1>
+            <p class="text-lg text-gray-600 font-medium">대단원 스스로 마무리하기 문제 풀이</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">포물선의 정의</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    초점이 \( F \)인 포물선 \( y^2=8x \) 위의 점 \( P(a, b) \)에 대하여 \( \overline{PF}=6 \)일 때, \( a^2+b^2 \)의 값은?
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">\( y^2 = 8x \implies 4p = 8 \implies p = 2 \)</p>
+                    <p class="mb-2">초점 \( F(2, 0) \), 준선 \( x = -2 \)</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm my-3">
+                        <p class="mb-1">포물선의 정의에 의해 점 P에서 준선에 내린 수선의 발을 H라 하면:</p>
+                        <p class="text-center font-bold">\( \overline{PF} = \overline{PH} = 6 \)</p>
+                        <p class="text-center mt-2">\( a - (-2) = a + 2 = 6 \implies \mathbf{a = 4} \implies a^2 = 16 \)</p>
+                    </div>
+                    <p class="mb-2">점 P가 포물선 위의 점이므로 대입하면 \( b^2 = 8 \times 4 = 32 \)</p>
+                    <p class="text-center mt-3 text-xl font-black text-blue-600">
+                        \( \therefore a^2 + b^2 = 16 + 32 = 48 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">준선이 일치하는 포물선</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    두 포물선 \( y^2=12(x-a) \), \( y^2=-4x-8 \)의 준선이 일치할 때, 상수 \( a \)의 값은?
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold mb-1">1) \( y^2 = 12(x-a) \)</p>
+                            <p>\( y^2 = 12x \) (준선 \( x = -3 \)) 를 x축 방향으로 \( a \)만큼 평행이동</p>
+                            <p class="text-blue-600 font-semibold mt-1">\(\implies\) 준선: \( x = -3 + a \)</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold mb-1">2) \( y^2 = -4x-8 \implies y^2 = -4(x+2) \)</p>
+                            <p>\( y^2 = -4x \) (준선 \( x = 1 \)) 를 x축 방향으로 -2만큼 평행이동</p>
+                            <p class="text-blue-600 font-semibold mt-1">\(\implies\) 준선: \( x = 1 - 2 = -1 \)</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-lg">준선이 일치하므로 \( -3 + a = -1 \)</p>
+                    <p class="text-center mt-2 text-2xl font-black text-blue-600">
+                        \( \therefore a = 2 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">평행이동과 삼각형의 넓이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    점 \( F(4, 3) \)을 초점으로 하고 점 \( A(1, 3) \)을 꼭짓점으로 하는 포물선 위의 점 P에서 y축에 내린 수선의 발을 H라 하자. \( \overline{PF}=15 \)일 때, \( \Delta PHF \)의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3 text-sm lg:text-base">
+                        <p class="mb-1">꼭짓점: \( (0,0) \to (1,3) \) (x축 방향 1, y축 방향 3 평행이동)</p>
+                        <p class="mb-1">초점: \( (3,0) \to (4,3) \implies p = 3 \)</p>
+                        <p class="mb-1">방정식: \( y^2 = 12x \to (y-3)^2 = 12(x-1) \)</p>
+                        <p class="font-semibold text-blue-600 mt-2">준선: \( x = -3 \to x = -2 \)</p>
+                    </div>
+                    <p class="mb-2">점 \( P(a,b) \)라 하면, 정의에 의해 \( \overline{PF} = \overline{PH'} = a - (-2) = a + 2 = 15 \)</p>
+                    <p class="mb-2 text-center font-bold bg-gray-50 py-1 rounded">\( \therefore a = 13 \)</p>
+                    <p class="mb-2">방정식에 대입: \( (b-3)^2 = 12(13-1) = 144 \implies b-3 = 12 \) (1사분면)</p>
+                    <p class="mb-3 text-center font-bold bg-gray-50 py-1 rounded">\( \therefore b = 15 \implies P(13, 15) \)</p>
+                    
+                    <p class="mb-2">점 P에서 y축에 내린 수선의 발 H는 \( (0, 15) \). 초점은 F(4,3).</p>
+                    <p class="mb-2 text-sm text-gray-600">삼각형 PHF를 그리면 밑변 \( \overline{PH} = 13 \), 높이는 y좌표의 차이 \( 15 - 3 = 12 \) 입니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        \( S = \frac{1}{2} \times 13 \times 12 = 78 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">중점과 거리의 합</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    초점이 F인 포물선 \( y^2=ax \) 위의 서로 다른 두 점 P, Q의 중점에서 x축에 내린 수선의 발이 점 F이고 \( \overline{PF}+\overline{QF}=10 \) 일 때, 양수 \( a \)의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 단서 보기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">초점 \( F(\frac{a}{4}, 0) \). 두 점을 \( P(x_1, y_1), Q(x_2, y_2) \)라 합시다.</p>
+                    <p class="mb-2">중점에서 x축에 내린 수선의 발이 F이므로, 중점의 x좌표는 \( \frac{a}{4} \) 입니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="text-center font-bold">\( \frac{x_1 + x_2}{2} = \frac{a}{4} \implies x_1 + x_2 = \frac{a}{2} \)</p>
+                    </div>
+                    <p class="mb-2">준선은 \( x = -\frac{a}{4} \) 입니다. 거리의 합 \( \overline{PF} + \overline{QF} = 10 \) 이므로 준선까지의 거리와 같습니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm">
+                        <p class="text-center mb-1">\( \overline{PH_1} + \overline{QH_2} = 10 \)</p>
+                        <p class="text-center">\( (x_1 + \frac{a}{4}) + (x_2 + \frac{a}{4}) = 10 \)</p>
+                        <p class="text-center mt-2 text-blue-600 font-semibold">\( (x_1 + x_2) + \frac{a}{2} = 10 \)</p>
+                    </div>
+                    <p class="mt-3 text-center">대입하면 \( \frac{a}{2} + \frac{a}{2} = a \)</p>
+                    <p class="text-center mt-2 text-2xl font-black text-blue-600">
+                        \( \therefore a = 10 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">05</span>
+                    <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs font-bold mr-2 shadow-sm">사고력</span>
+                    <h2 class="text-xl font-bold text-gray-800">닮음비를 활용한 기울기</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    포물선 \( y^2=4x \)의 초점을 F, 준선이 x축과 만나는 점을 P. 점 P를 지나고 기울기가 양수인 직선 l이 포물선과 만나는 두 점을 각각 A, B라 하자.<br>
+                    \( \overline{PA} : \overline{PB} = 1 : 2 \) 일 때, 직선 l의 기울기를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol5')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol5" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <p class="mb-2">초점 \( F(1, 0) \), 준선 \( x = -1 \). 따라서 점 \( P(-1, 0) \).</p>
+                            <p class="mb-2">\( \overline{PA} : \overline{PB} = 1 : 2 \) 이므로, A, B에서 준선에 내린 수선(x축에 평행)으로 직각삼각형을 만들면 닮음비도 1:2 입니다.</p>
+                            <p class="mb-2">점 A의 y좌표를 \( k \) 라 하면, 점 B의 y좌표는 \( 2k \) 가 됩니다.</p>
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                                <p class="mb-1 text-sm text-gray-600">포물선 \( y^2 = 4x \implies x = \frac{y^2}{4} \) 에 대입:</p>
+                                <p class="font-bold text-center">\( A(\frac{k^2}{4}, k) \), \( B(k^2, 2k) \)</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="mb-2">x좌표의 차이(수평 거리)도 1:2 비례식 성립:</p>
+                            <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mb-3 text-center">
+                                <p>\( (A_x - P_x) : (B_x - P_x) = 1 : 2 \)</p>
+                                <p class="mt-2">\( (\frac{k^2}{4} + 1) : (k^2 + 1) = 1 : 2 \)</p>
+                                <p class="mt-2">\( 2(\frac{k^2}{4} + 1) = k^2 + 1 \)</p>
+                                <p class="mt-1">\( \frac{k^2}{2} + 2 = k^2 + 1 \implies \frac{k^2}{2} = 1 \)</p>
+                                <p class="text-blue-600 font-bold mt-1">\( k^2 = 2 \implies k = \sqrt{2} \)</p>
+                            </div>
+                            <p class="mb-2">점 A의 좌표는 \( (\frac{2}{4}, \sqrt{2}) = (\frac{1}{2}, \sqrt{2}) \) 입니다.</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center">직선 l의 기울기는 P와 A를 지나는 기울기입니다.</p>
+                    <p class="text-center mt-2 text-2xl font-black text-blue-600">
+                        기울기 = \( \frac{\sqrt{2} - 0}{\frac{1}{2} - (-1)} = \frac{\sqrt{2}}{\frac{3}{2}} = \frac{2\sqrt{2}}{3} \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">06</span>
+                    <h2 class="text-xl font-bold text-gray-800">타원의 기본 성질</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    초점이 x축 위에 있고, 장축의 길이가 8인 타원 \( \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \)의 한 초점과 원점 사이의 거리가 \( \sqrt{10} \)일 때, \( a^2+b^2 \)의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol6')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol6" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="flex flex-col md:flex-row justify-center gap-6 mb-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm text-center flex-1">
+                            <p class="text-sm text-gray-500 mb-1">장축의 길이</p>
+                            <p class="font-bold">\( 2a = 8 \)</p>
+                            <p class="font-semibold text-blue-600">\( a = 4 \implies a^2 = 16 \)</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm text-center flex-1">
+                            <p class="text-sm text-gray-500 mb-1">초점과 원점 사이 거리</p>
+                            <p class="font-bold">\( c = \sqrt{10} \)</p>
+                            <p class="font-semibold text-blue-600">\( \implies c^2 = 10 \)</p>
+                        </div>
+                    </div>
+                    <p class="text-center mb-2">타원의 초점 공식: \( c^2 = a^2 - b^2 \)</p>
+                    <p class="text-center mb-4 font-semibold text-lg bg-gray-50 py-2 rounded">
+                        \( 10 = 16 - b^2 \implies b^2 = 6 \)
+                    </p>
+                    <p class="text-center text-2xl font-black text-blue-600">
+                        \( \therefore a^2 + b^2 = 16 + 6 = 22 \)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
