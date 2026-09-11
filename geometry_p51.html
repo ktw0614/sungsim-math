@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 51p 스스로 마무리하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
+            <div class="mb-3">
+                <span class="bg-blue-100 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 51페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 이차곡선</h1>
+            <p class="text-lg text-gray-600 font-medium">대단원 스스로 마무리하기 문제 풀이 (13번 ~ 15번)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">13</span>
+                    <h2 class="text-xl font-bold text-gray-800">점근선과 삼각형의 넓이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    쌍곡선 \( x^2 - y^2 + 6y = 0 \)의 두 점근선과 직선 \( x=1 \)로 둘러싸인 삼각형의 넓이는?
+                </div>
+                <button onclick="toggleSolution('sol13')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol13" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">완전제곱식으로 식을 변형합니다.</p>
+                    <p class="text-center font-semibold mb-2 bg-white p-2 rounded">\( x^2 - (y-3)^2 = -9 \implies \frac{x^2}{9} - \frac{(y-3)^2}{9} = -1 \)</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="mb-1 text-sm text-gray-600">점근선의 방정식 유도:</p>
+                        <p class="text-center font-bold">\( \frac{x^2}{9} - \frac{(y-3)^2}{9} = 0 \implies (y-3)^2 = x^2 \)</p>
+                        <p class="text-center text-blue-600 font-bold mt-1">\( y-3 = \pm x \implies \mathbf{y = x+3, \quad y = -x+3} \)</p>
+                    </div>
+                    <p class="mb-2">점근선의 교점은 \( (0, 3) \) 입니다.</p>
+                    <p class="mb-2">직선 \( x=1 \) 과 두 점근선의 교점: \( y = 1+3 = 4 \), \( y = -1+3 = 2 \). 즉 \( (1, 4), (1, 2) \) 입니다.</p>
+                    <p class="mb-2 text-gray-700 text-sm">이 삼각형은 밑변이 y축에 평행하고 길이가 \( 4-2=2 \), 높이가 x좌표의 차이인 \( 1-0=1 \) 입니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        넓이 \( S = \frac{1}{2} \times 2 \times 1 = 1 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">14</span>
+                    <h2 class="text-xl font-bold text-gray-800">타원과 쌍곡선의 공유 초점</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    두 초점 \( F(4, 0), F'(-4, 0) \)을 공유하는 타원과 쌍곡선이 있다. 이 타원과 쌍곡선이 1사분면에서 만나는 점을 \( P(4, 6) \), x축과 만나는 양수 x좌표 점을 각각 A, B라 할 때, 선분 AB의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol14')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol14" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">점 \( P(4, 6) \)과 초점 \( F(4, 0) \)은 x좌표가 같습니다. 즉 수직선 상에 위치하므로 \( \mathbf{\overline{PF} = 6} \) 입니다.</p>
+                    <p class="mb-3">다른 초점과의 거리: \( \overline{PF'} = \sqrt{(4 - (-4))^2 + (6 - 0)^2} = \sqrt{64+36} = \mathbf{10} \)</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-indigo-100">
+                            <p class="font-bold text-indigo-700 mb-1">1) 타원의 경우</p>
+                            <p class="text-sm mb-1">장축 \( 2a_1 = \overline{PF} + \overline{PF'} \)</p>
+                            <p class="text-center font-bold">\( 2a_1 = 16 \implies a_1 = 8 \)</p>
+                            <p class="text-center mt-1">따라서 점 \( \mathbf{A(8, 0)} \)</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-rose-100">
+                            <p class="font-bold text-rose-700 mb-1">2) 쌍곡선의 경우</p>
+                            <p class="text-sm mb-1">주축 \( 2a_2 = \overline{PF'} - \overline{PF} \)</p>
+                            <p class="text-center font-bold">\( 2a_2 = 4 \implies a_2 = 2 \)</p>
+                            <p class="text-center mt-1">따라서 점 \( \mathbf{B(2, 0)} \)</p>
+                        </div>
+                    </div>
+                    <p class="text-center mt-4 text-2xl font-black text-blue-600">
+                        \( \therefore \overline{AB} = 8 - 2 = 6 \)
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">15</span>
+                    <span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs font-bold mr-2 shadow-sm">사고력</span>
+                    <h2 class="text-xl font-bold text-gray-800">조건을 만족하는 쌍곡선의 주축</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    점근선의 방정식이 \( y=\pm\frac{3}{4}x \)이고 두 초점이 \( F(c, 0), F'(-c, 0) \)인 쌍곡선이 다음 조건을 만족한다.<br>
+                    (가) 쌍곡선 위 점 P: \( \overline{PF'} = 30 \), \( 10 \le \overline{PF} \le 20 \)<br>
+                    (나) x좌표가 양수인 꼭짓점 A에 대하여 선분 AF의 길이는 자연수이다.<br>
+                    이 쌍곡선의 주축의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol15')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol15" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">점근선 기울기가 \( \pm\frac{3}{4} \)이므로 \( \frac{b}{a} = \frac{3}{4} \implies \mathbf{b = \frac{3}{4}a} \)</p>
+                    <p class="mb-3 text-center bg-white p-2 rounded">
+                        초점 식: \( c = \sqrt{a^2 + b^2} = \sqrt{a^2 + \frac{9}{16}a^2} = \sqrt{\frac{25}{16}a^2} \implies \mathbf{c = \frac{5}{4}a} \)
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-indigo-400">
+                            <p class="font-bold text-indigo-700 mb-2">조건 (가) 분석</p>
+                            <p class="text-sm mb-1">정의에 의해 \( \overline{PF'} - \overline{PF} = 2a \)</p>
+                            <p class="text-sm mb-2">\( 30 - \overline{PF} = 2a \implies \overline{PF} = 30 - 2a \)</p>
+                            <p class="text-sm font-semibold">범위에 대입:</p>
+                            <p class="text-center font-bold">\( 10 \le 30 - 2a \le 20 \)</p>
+                            <p class="text-center font-bold text-blue-600 mt-1">\( 10 \le 2a \le 20 \implies \mathbf{5 \le a \le 10} \)</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-pink-400">
+                            <p class="font-bold text-pink-700 mb-2">조건 (나) 분석</p>
+                            <p class="text-sm mb-1">선분 AF의 길이는 \( \overline{AF} = c - a \)</p>
+                            <p class="text-center font-bold mb-2">\( \overline{AF} = \frac{5}{4}a - a = \mathbf{\frac{a}{4}} \)</p>
+                            <p class="text-sm mb-1">이 값이 **자연수**가 되어야 하므로, \( a \)는 **4의 배수**여야 합니다.</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center text-lg mb-2">조건 (가)의 범위 \( 5 \le a \le 10 \) 내에서 조건 (나)를 만족하는 4의 배수는 **\( a = 8 \)** 뿐입니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        주축의 길이 \( 2a = 16 \)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
