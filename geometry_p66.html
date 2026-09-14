@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 66p 스스로 확인하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 공간도형 - 우주를 연상시키는 스카이블루/인디고 그라데이션 */
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #4338ca 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500"></div>
+            <div class="mb-3">
+                <span class="bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 66페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 공간도형과 공간좌표</h1>
+            <p class="text-lg text-gray-600 font-medium">스스로 확인하기 & 수학으로 생각 넓히기 문제 풀이</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">삼각기둥의 평면과 직선</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    그림과 같은 삼각기둥에서 다음을 구하시오.<br>
+                    (1) 직선 $AD$와 수직인 모서리<br>
+                    (2) 평면 $BEFC$와 평면 $ADFC$의 교선<br>
+                    (3) 평면 $ABC$와 평행한 평면
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <ul class="space-y-4">
+                        <li class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">(1) 직선 AD와 수직인 모서리</p>
+                            <p class="text-indigo-600 font-bold">답: $\overline{AB}, \overline{AC}, \overline{BC}, \overline{DE}, \overline{EF}, \overline{DF}$</p>
+                            <p class="text-sm text-gray-500 mt-1">기둥의 옆모서리는 두 밑면의 모든 직선과 수직입니다.</p>
+                        </li>
+                        <li class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">(2) 두 평면의 교선</p>
+                            <p class="text-indigo-600 font-bold">답: $\overline{CF}$</p>
+                        </li>
+                        <li class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">(3) 평행한 평면</p>
+                            <p class="text-indigo-600 font-bold">답: 평면 DEF</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">정육면체의 꼬인 위치</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같은 정육면체에서 직선 $AB$와 평행한 모서리의 개수를 $a$, 직선 $EF$와 꼬인 위치에 있는 모서리의 개수를 $b$라 할 때, $a+b$의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold mb-1">1) 평행한 모서리 ($a$)</p>
+                        <p class="text-sm">직선 AB와 평행한 것은 $\overline{DC}, \overline{EF}, \overline{HG}$ 입니다.</p>
+                        <p class="text-indigo-600 font-bold mt-1">$\therefore a = 3$</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold mb-1">2) 꼬인 위치에 있는 모서리 ($b$)</p>
+                        <p class="text-sm">직선 EF와 만나지도 않고 평행하지도 않은 것은 $\overline{AD}, \overline{BC}, \overline{CG}, \overline{DH}$ 입니다.</p>
+                        <p class="text-indigo-600 font-bold mt-1">$\therefore b = 4$</p>
+                    </div>
+                    <p class="text-center mt-3 text-2xl font-black text-indigo-600">
+                        답: $a + b = 7$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">꼬인 두 직선이 이루는 각</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같은 정육면체에서 대각선 $AG$와 직선 $BD$가 이루는 각의 크기를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">정육면체에서 두 직선이 이루는 각을 찾기 위해 직선과 평면의 수직 관계를 이용합니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="text-sm mb-1">직선 $BD$는 정사각형 $ABCD$의 대각선 $AC$와 수직이고, 세로 모서리인 $CG$와도 수직입니다.</p>
+                        <p class="font-bold text-indigo-700 text-center">즉, 직선 $BD$는 평면 $ACGE$ 전체와 수직입니다.</p>
+                    </div>
+                    <p class="mb-2">대각선 $AG$는 평면 $ACGE$에 포함되어 있는 직선입니다.</p>
+                    <p class="mb-2">직선이 평면과 수직이면, 평면 위의 모든 직선과 수직이 됩니다.</p>
+                    <p class="text-center mt-3 text-2xl font-black text-indigo-600">
+                        답: $90^\circ$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">정사면체의 중점 연결 선분</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    한 모서리의 길이가 6인 정사면체 $ABCD$에서 두 모서리 $AB, CD$의 중점을 각각 $M, N$이라 할 때, 선분 $MN$의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">점 $A$와 $B$에서 $CD$에 내린 수선(중선)은 이등변삼각형을 만듭니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="text-center font-bold">$\overline{BN} = \overline{AN} = \frac{\sqrt{3}}{2} \times 6 = 3\sqrt{3}$</p>
+                        <p class="text-sm text-gray-600 text-center mt-1">($\triangle ACD, \triangle BCD$가 정삼각형이므로)</p>
+                    </div>
+                    <p class="mb-2">따라서 $\triangle ABN$은 $\overline{AN}=\overline{BN}$인 이등변삼각형입니다.</p>
+                    <p class="mb-2">점 $N$에서 밑변 $AB$에 수선을 내리면 중점 $M$을 지납니다. ($\overline{AM} = 3$)</p>
+                    <p class="mb-1 font-semibold text-indigo-700">피타고라스 정리 적용:</p>
+                    <p class="text-center">$\overline{MN}^2 = \overline{AN}^2 - \overline{AM}^2 = (3\sqrt{3})^2 - 3^2 = 27 - 9 = 18$</p>
+                    <p class="text-center mt-3 text-2xl font-black text-indigo-600">
+                        $\therefore \overline{MN} = \sqrt{18} = 3\sqrt{2}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">05</span>
+                    <h2 class="text-xl font-bold text-gray-800">정사면체의 수선의 길이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    한 모서리의 길이가 4인 정사면체 $ABCD$에서 선분 $AD$의 중점을 $M$, 점 $C$에서 선분 $BM$에 내린 수선의 발을 $H$라 할 때, 선분 $CH$의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol5')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol5" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">정사면체에서 두 면 $\triangle ABD, \triangle ACD$는 정삼각형이므로, $\overline{AM}=\overline{MD}=2$ 입니다.</p>
+                    <p class="mb-2">$\triangle BCM$은 $\overline{BM}=\overline{CM}$인 이등변삼각형입니다.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-indigo-100">
+                            <p class="mb-1 font-bold text-indigo-700">1) 변의 길이 구하기</p>
+                            <p>$\overline{BM} = \sqrt{4^2 - 2^2} = \sqrt{16 - 4} = 2\sqrt{3}$</p>
+                            <p>$\overline{CM} = 2\sqrt{3}$, $\overline{BC} = 4$</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-sky-100">
+                            <p class="mb-1 font-bold text-sky-700">2) 삼각형 BCM의 넓이 2가지로 구하기</p>
+                            <p class="text-sm text-gray-600 mb-2">꼭짓점 M에서 BC에 내린 수선의 발을 N이라 하면 $\overline{BN}=2$, $\overline{MN} = \sqrt{12 - 4} = 2\sqrt{2}$</p>
+                            <p>방법 A (밑변 BC): $S = \frac{1}{2} \times 4 \times 2\sqrt{2}$</p>
+                            <p>방법 B (밑변 BM): $S = \frac{1}{2} \times 2\sqrt{3} \times \overline{CH}$</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-semibold bg-gray-50 py-2 rounded mb-2">
+                        $\frac{1}{2} \times 4 \times 2\sqrt{2} = \frac{1}{2} \times 2\sqrt{3} \times \overline{CH}$
+                    </p>
+                    <p class="text-center text-gray-700">
+                        $4\sqrt{2} = \sqrt{3} \times \overline{CH} \implies \overline{CH} = \frac{4\sqrt{2}}{\sqrt{3}}$
+                    </p>
+                    <p class="text-center mt-3 text-2xl font-black text-indigo-600">
+                        $\therefore \overline{CH} = \frac{4\sqrt{6}}{3}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 mt-8 border-2 border-rose-300 lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-sm font-bold tracking-wide">수학으로 생각 넓히기</span>
+                    <h2 class="text-2xl font-bold text-gray-800">사면체의 넓이와 부피 (공간지각력)</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같이 $\overline{AD} \perp \overline{BC}, \overline{AD}=8, \overline{BC}=10$인 사면체 $ABCD$에서 두 선분 $AD, BC$의 중점을 각각 $M, N$이라 하자. $\overline{MN}=9$이고 $\overline{AD} \perp \overline{MN}, \overline{BC} \perp \overline{MN}$일 때, 다음을 구해 보자.<br>
+                    (1) 삼각형 $BCM$의 넓이<br>
+                    (2) 사면체 $ABCD$의 부피
+                </div>
+                <button onclick="toggleSolution('sol_ext')" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold py-2 px-6 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol_ext" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-rose-400">
+                    <div class="font-semibold text-rose-600 text-lg mb-3">선생님의 판서 풀이</div>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                        <p class="font-bold text-rose-700 mb-2">(1) 삼각형 BCM의 넓이</p>
+                        <p class="mb-2 text-sm text-gray-700">$\overline{BC} \perp \overline{MN}$ 이므로, $\triangle BCM$에서 $BC$를 밑변으로 하면 $MN$이 높이가 됩니다.</p>
+                        <p class="text-center font-bold text-xl">$\frac{1}{2} \times 10 \times 9 = 45$</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="font-bold text-rose-700 mb-2">(2) 사면체 ABCD의 부피 (부피 분할)</p>
+                        <p class="mb-2 text-sm text-gray-700">조건에서 $\overline{AD} \perp \overline{BC}$ 이고 $\overline{AD} \perp \overline{MN}$ 입니다.</p>
+                        <p class="mb-3 font-semibold text-indigo-600 bg-indigo-50 p-2 rounded text-center">직선 $AD$가 평면 $BCM$에 포함된 꼬인 두 직선 $BC, MN$과 모두 수직이므로,<br>직선 $AD$는 평면 $BCM$ 전체와 수직입니다.</p>
+                        <p class="mb-2">즉, 평면 $BCM \perp \overline{AM}$, 평면 $BCM \perp \overline{MD}$ 가 성립합니다.</p>
+                        <p class="mb-2">사면체 $ABCD$를 평면 $BCM$을 기준으로 두 개의 삼각뿔 $A-BCM$과 $D-BCM$으로 나누면,<br>각각의 높이는 $\overline{AM}=4$, $\overline{MD}=4$ 가 됩니다.</p>
+                        
+                        <p class="text-center font-semibold mt-3 bg-gray-50 py-2 rounded">
+                            부피 = $(\frac{1}{3} \times 45 \times 4) + (\frac{1}{3} \times 45 \times 4)$
+                        </p>
+                        <p class="text-center mt-3 text-2xl font-black text-rose-600">
+                            $= 60 + 60 = 120$
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
