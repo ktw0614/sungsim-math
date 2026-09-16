@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 78p 스스로 확인하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 정사영은 그림자와 면적을 나타내는 상쾌한 민트/테일 그라데이션 */
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
+            <div class="mb-3">
+                <span class="bg-teal-100 text-teal-700 border border-teal-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 78페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 공간도형과 공간좌표</h1>
+            <p class="text-lg text-gray-600 font-medium">스스로 확인하기 & 수학으로 생각 넓히기 문제 풀이 (정사영)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">정사영 찾기</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    정육면체에서 모서리 AE의 중점이 M일 때, 다음을 구하시오.<br>
+                    (1) 선분 BD의 평면 DHGC 위로의 정사영<br>
+                    (2) 삼각형 DMB의 평면 EFGH 위로의 정사영
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-teal-400">
+                    <div class="font-semibold text-teal-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <ul class="space-y-4">
+                        <li class="bg-white p-3 rounded-lg shadow-sm border border-emerald-100">
+                            <p class="font-bold text-gray-800 mb-1">(1) 선분 BD의 정사영</p>
+                            <p class="text-sm text-gray-600">점 B는 평면 DHGC에 수선을 내리면 점 C로 가고, 점 D는 평면 위의 점이므로 자기 자신(D)입니다.</p>
+                            <p class="text-center font-bold text-teal-600 mt-2 text-xl">답: $\overline{DC}$</p>
+                        </li>
+                        <li class="bg-white p-3 rounded-lg shadow-sm border border-cyan-100">
+                            <p class="font-bold text-gray-800 mb-1">(2) $\triangle DMB$의 정사영</p>
+                            <p class="text-sm text-gray-600 mb-1">각 꼭짓점을 밑면 EFGH로 수직으로 떨어뜨립니다.</p>
+                            <p class="text-sm text-gray-600">D $\rightarrow$ H, M $\rightarrow$ E, B $\rightarrow$ F</p>
+                            <p class="text-center font-bold text-teal-600 mt-2 text-xl">답: $\triangle EFH$</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">선분의 정사영 길이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    선분 AB의 평면 $\alpha$ 위로의 정사영이 선분 A'B'이고 이루는 각의 크기가 $\theta$일 때, 다음을 구하시오.<br>
+                    (1) $\overline{AB}=16, \theta=45^\circ$일 때, $\overline{A'B'}$의 길이<br>
+                    (2) $\overline{A'B'} = \frac{1}{2}\overline{AB}$일 때, $\theta$의 값
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-teal-400">
+                    <div class="font-semibold text-teal-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-3 text-center bg-teal-50 p-2 rounded font-bold text-teal-800">
+                        공식: $l' = l \cos\theta$
+                    </p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold text-gray-800 mb-1">(1) $\overline{A'B'}$의 길이</p>
+                        <p class="text-center font-semibold">$16 \times \cos 45^\circ = 16 \times \frac{\sqrt{2}}{2} = \mathbf{8\sqrt{2}}$</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm">
+                        <p class="font-bold text-gray-800 mb-1">(2) $\theta$의 값</p>
+                        <p class="text-center font-semibold">$\frac{1}{2}\overline{AB} = \overline{AB} \cos\theta \implies \cos\theta = \frac{1}{2}$</p>
+                        <p class="text-center text-teal-600 font-bold mt-1 text-lg">$\therefore \theta = 60^\circ$</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">평면의 정사영 넓이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    모든 모서리의 길이가 같은 삼각기둥에서 점 M은 모서리 BE의 중점이다. 평면 ACM 위에 있는 반지름의 길이가 4인 원의 평면 DEF 위로의 정사영의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-teal-400">
+                    <div class="font-semibold text-teal-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">두 평면이 이루는 각 $\theta$를 찾기 위해 삼각형 넓이 비를 이용합니다.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 text-sm">
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold text-teal-700 mb-1">1) $\triangle ACM$ 넓이</p>
+                            <p>모서리를 $a$라 하면, $\triangle ACM$의 높이 $\overline{MN}=a$ 입니다.</p>
+                            <p class="text-center font-bold mt-1">$S = \frac{1}{2} \times a \times a = \mathbf{\frac{1}{2}a^2}$</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm">
+                            <p class="font-bold text-cyan-700 mb-1">2) 정사영 $\triangle ABC$ 넓이</p>
+                            <p>밑면 정삼각형이므로</p>
+                            <p class="text-center font-bold mt-3">$S' = \mathbf{\frac{\sqrt{3}}{4}a^2}$</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-semibold bg-gray-50 py-1 rounded mb-3">
+                        $\frac{1}{2}a^2 \times \cos\theta = \frac{\sqrt{3}}{4}a^2 \implies \mathbf{\cos\theta = \frac{\sqrt{3}}{2}}$
+                    </p>
+                    <p class="mb-1 text-gray-700">반지름 4인 원의 넓이는 $16\pi$ 이므로, 정사영의 넓이 $S'$는</p>
+                    <p class="text-center mt-2 text-2xl font-black text-teal-600">
+                        $S' = 16\pi \times \frac{\sqrt{3}}{2} = 8\sqrt{3}\pi$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">정사면체 이면각의 비밀</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같은 정사면체에서 모서리 AD의 중점을 M이라 하자. 두 평면 MBC, DBC가 이루는 각의 크기를 $\theta$라 할 때, $\cos\theta$의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-teal-400">
+                    <div class="font-semibold text-teal-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">교선 BC에 내린 수선의 발을 N이라 하면, 이면각은 $\angle MND = \theta$ 입니다.</p>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <ul class="text-sm space-y-1">
+                            <li>$\overline{MD} = \frac{a}{2}$ (모서리 절반)</li>
+                            <li>$\overline{ND} = \frac{\sqrt{3}}{2}a$ (정삼각형의 높이)</li>
+                            <li>$\overline{MN} = \frac{\sqrt{2}}{2}a$ (이등변삼각형 MBC의 높이)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-lg shadow-inner mb-3 text-sm border border-teal-100">
+                        <p class="font-bold text-teal-700 mb-1">💡 직각삼각형 발견</p>
+                        <p>$\overline{MD}^2 + \overline{MN}^2 = \frac{a^2}{4} + \frac{2a^2}{4} = \frac{3a^2}{4} = \overline{ND}^2$ 가 성립합니다.</p>
+                        <p>즉, $\triangle DMN$은 $\angle DMN = 90^\circ$인 <strong>직각삼각형</strong>입니다!</p>
+                    </div>
+                    <p class="text-center text-gray-700">직각삼각형이므로 코사인 값은 빗변 분의 밑변으로 바로 나옵니다.</p>
+                    <p class="text-center mt-2 text-2xl font-black text-teal-600">
+                        $\cos\theta = \frac{\overline{MN}}{\overline{ND}} = \frac{\frac{\sqrt{2}}{2}a}{\frac{\sqrt{3}}{2}a} = \frac{\sqrt{6}}{3}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 mt-8 border-2 border-cyan-300 lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="bg-cyan-100 text-cyan-600 px-3 py-1 rounded-full text-sm font-bold tracking-wide">수학으로 생각 넓히기</span>
+                    <h2 class="text-2xl font-bold text-gray-800">기울어진 물기둥과 정사영</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    밑면 반지름 길이가 4cm, 높이가 9cm인 원기둥 모양의 그릇에 높이가 6cm가 되도록 물을 채운 후 물이 흘러내리기 직전까지 기울였다.<br>
+                    (1) 기울인 그릇의 밑면과 지면이 이루는 각의 크기를 $\theta$라 할 때, $\cos\theta$ 의 값을 구하시오.<br>
+                    (2) 기울인 그릇의 수면의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol_ext')" class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-6 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 단서 보기
+                </button>
+                <div id="sol_ext" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-cyan-400">
+                    <div class="font-semibold text-cyan-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                        <p class="font-bold text-teal-700 mb-2">(1) $\cos\theta$ 의 값 구하기</p>
+                        <p class="text-sm text-gray-700 mb-2">흘러내리기 직전이므로 가장 높은 수면은 높이 9에 닿아 있고, 빈 공간의 직각삼각형 ABC를 그립니다.</p>
+                        <p class="text-sm mb-2">밑면 지름 $\overline{BC} = 8$ 이고, 물기둥의 수위 차이 $\overline{AB} = 9 - 3 = 6$ 입니다. (판서 기준 $\overline{AB}=6$)</p>
+                        <p class="text-center font-bold bg-gray-50 py-1 rounded mb-2">
+                            피타고라스 정리: $\overline{AC} = \sqrt{8^2 + 6^2} = 10$
+                        </p>
+                        <p class="text-center font-bold text-lg text-teal-600">
+                            $\cos\theta = \frac{\overline{BC}}{\overline{AC}} = \frac{8}{10} = \mathbf{\frac{4}{5}}$
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="font-bold text-cyan-700 mb-2">(2) 수면의 넓이 구하기</p>
+                        <p class="mb-2 text-sm">타원 모양의 수면 넓이를 $S$라 하면, 이것을 지면에 정사영시킨 넓이는 반지름이 4인 원래 그릇의 밑면 넓이($16\pi$)와 같습니다.</p>
+                        <p class="text-center font-semibold bg-gray-50 py-2 rounded">
+                            $S \times \cos\theta = 16\pi \implies S \times \frac{4}{5} = 16\pi$
+                        </p>
+                        <p class="text-center mt-3 text-2xl font-black text-cyan-600">
+                            $\therefore S = 20\pi$
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>

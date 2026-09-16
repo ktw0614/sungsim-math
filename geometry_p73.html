@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 73p 스스로 확인하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 삼수선 정리는 우주를 연상시키는 퍼플/바이올렛 그라데이션 */
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500"></div>
+            <div class="mb-3">
+                <span class="bg-purple-100 text-purple-700 border border-purple-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 73페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 공간도형과 공간좌표</h1>
+            <p class="text-lg text-gray-600 font-medium">스스로 확인하기 & 수학으로 생각 넓히기 문제 풀이 (삼수선 정리)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">삼수선 정리와 피타고라스</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    평면 $\alpha$ 위에 있지 않은 점 P에서 평면 $\alpha$에 내린 수선의 발을 O, 점 O에서 평면 $\alpha$ 위의 직선 $l$에 내린 수선의 발을 H라 하자. $\overline{PO}=2, \overline{OH}=5$일 때, 점 P와 직선 $l$ 사이의 거리를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-purple-400">
+                    <div class="font-semibold text-purple-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">점 P에서 평면 $\alpha$에 내린 수선이 $\overline{PO}$이므로, 선분 PO는 평면 $\alpha$ 위의 모든 직선과 수직입니다.</p>
+                    <p class="mb-3 text-center font-bold text-purple-600 bg-purple-50 p-2 rounded">
+                        즉, $\triangle POH$는 $\angle POH = 90^\circ$ 인 직각삼각형입니다.
+                    </p>
+                    <p class="mb-2">점 P와 직선 $l$ 사이의 거리는 선분 PH의 길이와 같습니다. (삼수선 정리에 의해 $\overline{PH} \perp l$)</p>
+                    <p class="mb-2">직각삼각형 POH에서 피타고라스 정리를 적용하면,</p>
+                    <p class="text-center text-xl font-black text-purple-700 mt-2">
+                        $\overline{PH} = \sqrt{2^2 + 5^2} = \sqrt{29}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">사면체에서의 삼수선 정리</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    사면체에서 $\overline{OA} \perp \overline{OB}, \overline{OB} \perp \overline{OC}, \overline{OC} \perp \overline{OA}$ 이고 $\overline{OA}=1, \overline{OB}=2, \overline{OC}=1$ 일 때, 삼각형 ABC의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-purple-400">
+                    <div class="font-semibold text-purple-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold text-gray-800 mb-1">1) 밑면 $\triangle OAB$의 수선 구하기</p>
+                        <p class="text-sm mb-2">점 O에서 선분 AB에 내린 수선의 발을 H라 합니다. $\overline{AB} = \sqrt{1^2+2^2} = \sqrt{5}$.</p>
+                        <p class="text-center font-semibold bg-gray-50 py-1 rounded">
+                            $\frac{1}{2} \times 2 \times 1 = \frac{1}{2} \times \sqrt{5} \times \overline{OH} \implies \mathbf{\overline{OH} = \frac{2}{\sqrt{5}}}$
+                        </p>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold text-gray-800 mb-1">2) 삼수선 정리와 높이 $\overline{CH}$</p>
+                        <p class="text-sm mb-2">$\overline{CO} \perp (\text{평면 } OAB)$ 이고 $\overline{OH} \perp \overline{AB}$ 이므로, 삼수선 정리에 의해 $\mathbf{\overline{CH} \perp \overline{AB}}$ 입니다.</p>
+                        <p class="text-center font-semibold bg-gray-50 py-1 rounded">
+                            $\overline{CH} = \sqrt{1^2 + \left(\frac{2}{\sqrt{5}}\right)^2} = \sqrt{1 + \frac{4}{5}} = \mathbf{\frac{3}{\sqrt{5}}}$
+                        </p>
+                    </div>
+                    <p class="text-center font-bold mt-4 text-purple-700 text-lg">
+                        $\triangle ABC = \frac{1}{2} \times \sqrt{5} \times \frac{3}{\sqrt{5}} = \mathbf{\frac{3}{2}}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">두 평면이 이루는 각과 넓이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    $\overline{AB}=\overline{AD}=4, \overline{AE}=2$ 인 직육면체에서 평면 DEB와 평면 EFGH가 이루는 각의 크기를 $\theta$라 할 때, $\sin\theta$ 의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 단서 보기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-purple-400">
+                    <div class="font-semibold text-purple-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">평면 EFGH는 평면 DAB와 평행하므로, $\triangle DEB$를 밑면 DAB에 정사영한 넓이를 이용합니다.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-100">
+                            <p class="font-bold text-purple-700 mb-1">1) $\triangle DEB$ 넓이 ($S$)</p>
+                            <p class="text-sm">$\overline{BD} = 4\sqrt{2}$. 중점을 M이라 하면 $\overline{BM}=2\sqrt{2}$.</p>
+                            <p class="text-sm">$\overline{EB} = \sqrt{16+4} = \sqrt{20}$.</p>
+                            <p class="text-sm">$\overline{EM} = \sqrt{20 - 8} = 2\sqrt{3}$.</p>
+                            <p class="text-center font-bold mt-1">$S = \frac{1}{2} \times 4\sqrt{2} \times 2\sqrt{3} = \mathbf{4\sqrt{6}}$</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-indigo-100">
+                            <p class="font-bold text-indigo-700 mb-1">2) 정사영 넓이 ($S'$)</p>
+                            <p class="text-sm">정사영은 $\triangle DAB$ (또는 $\triangle EFH$) 입니다.</p>
+                            <p class="text-center font-bold mt-2">$S' = \frac{1}{2} \times 4 \times 4 = \mathbf{8}$</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-semibold bg-gray-50 py-2 rounded mb-2">
+                        $S \times \cos\theta = S' \implies 4\sqrt{6} \times \cos\theta = 8 \implies \cos\theta = \frac{2}{\sqrt{6}}$
+                    </p>
+                    <p class="text-center text-sm text-gray-600">$\sin^2\theta = 1 - \cos^2\theta = 1 - \frac{4}{6} = \frac{1}{3}$</p>
+                    <p class="text-center mt-2 text-2xl font-black text-purple-600">
+                        $\therefore \sin\theta = \frac{1}{\sqrt{3}} = \frac{\sqrt{3}}{3}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">원기둥 절단면의 이면각</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    밑면 반지름 1, 높이 3인 원기둥. 윗면 원주 위 점 P와 아랫면 중심 O. 선분 PO는 밑면의 지름 AB와 수직이다. 평면 PAB와 밑면이 이루는 각 $\theta$에 대해 $\cos\theta$ 는?
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-purple-400">
+                    <div class="font-semibold text-purple-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">점 P에서 아랫면에 내린 수선의 발을 H라 하면, $\triangle POH$는 직각삼각형입니다.</p>
+                    <p class="mb-2 text-center bg-white p-2 rounded">
+                        높이 $\overline{PH}=3$, 반지름 $\overline{OH}=1$ 이므로,<br>
+                        $\overline{OP} = \sqrt{1^2 + 3^2} = \mathbf{\sqrt{10}}$
+                    </p>
+                    <div class="bg-purple-50 p-3 rounded-lg shadow-inner mb-3 text-sm">
+                        <p class="font-bold text-purple-700 mb-1">💡 이면각 찾기</p>
+                        <p>평면 PAB와 밑면의 교선은 지름 AB입니다.</p>
+                        <p>조건에서 지름 $\overline{AB} \perp \overline{PO}$ 이고, 원의 성질상 지름 $\overline{AB} \perp \overline{HO}$ 입니다.</p>
+                        <p>따라서 교선 AB에 각각 수직인 두 선분이 이루는 각 $\angle POH$ 가 바로 이면각 $\theta$ 입니다.</p>
+                    </div>
+                    <p class="text-center mt-2 text-2xl font-black text-purple-600">
+                        $\therefore \cos\theta = \frac{\overline{OH}}{\overline{OP}} = \frac{1}{\sqrt{10}} = \frac{\sqrt{10}}{10}$
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl p-6 mt-8 border-2 border-indigo-300 lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-sm font-bold tracking-wide">수학으로 생각 넓히기</span>
+                    <h2 class="text-2xl font-bold text-gray-800">정사면체의 성질과 이면각</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    정사면체에서 물음에 답해 보자.<br>
+                    (1) 점 A에서 삼각형 BCD에 내린 수선의 발 G는 삼각형 BCD의 무게중심임을 설명하시오.<br>
+                    (2) 정사면체의 두 면이 이루는 각의 크기를 $\theta$라 할 때, $\cos\theta$ 의 값을 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol_ext')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-6 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol_ext" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-600 text-lg mb-3">선생님의 판서 풀이 요약</div>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                        <p class="font-bold text-indigo-700 mb-2">(1) 수선의 발 G의 위치</p>
+                        <p class="text-gray-700">점 G는 정삼각형 BCD의 외심이자 내심이며, 무게중심과 일치합니다.</p>
+                        <p class="text-sm text-gray-500 mt-1">($\triangle ABG \equiv \triangle ACG \equiv \triangle ADG$ 직각삼각형 합동으로 $\overline{BG}=\overline{CG}=\overline{DG}$ 증명 가능)</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <p class="font-bold text-indigo-700 mb-2">(2) 이면각 $\cos\theta$ 의 값</p>
+                        <p class="mb-2">모서리 CD의 중점을 M이라 하면, $\triangle ABM$에서 $\angle AMB = \theta$ 입니다.</p>
+                        <p class="mb-2 text-center bg-gray-50 py-2 rounded">
+                            $\overline{AM}, \overline{BM}$ 은 모두 정삼각형의 높이이므로 길이가 같습니다.
+                        </p>
+                        <p class="mb-2 text-sm text-gray-700">무게중심 G는 선분 BM을 2:1로 내분하므로 $\overline{GM} = \frac{1}{3}\overline{BM}$ 입니다.</p>
+                        <p class="text-center font-bold mt-2 text-xl text-indigo-600">
+                            직각삼각형 AGM에서 $\cos\theta = \frac{\overline{GM}}{\overline{AM}} = \frac{1}{3}$
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
