@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 95p 스스로 마무리하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 공간도형 마무리에 어울리는 차분한 블루/시안 톤 그라데이션 */
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
+            <div class="mb-3">
+                <span class="bg-blue-100 text-blue-700 border border-blue-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 95페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 공간도형과 공간좌표</h1>
+            <p class="text-lg text-gray-600 font-medium">대단원 스스로 마무리하기 (1번 ~ 6번)</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- 01번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">01</span>
+                    <h2 class="text-xl font-bold text-gray-800">정팔면체의 모서리 위치 관계</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같은 정팔면체에서 모서리 AB와 꼬인 위치에 있는 모서리의 개수를 $a$, 평행한 모서리의 개수를 $b$라 할 때, $a+b$의 값은?
+                </div>
+                <button onclick="toggleSolution('sol1')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                풀이 보기 / 숨기기
+            </button>
+            <div id="sol1" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                    <p class="font-bold text-gray-800 mb-1">1) 꼬인 위치 ($a$)</p>
+                    <p class="text-sm">모서리 AB와 만나지도 않고 평행하지도 않은 모서리는 $CD, CF, DE, EF$ 입니다.</p>
+                    <p class="text-blue-600 font-bold mt-1">$\therefore a = 4$</p>
+                </div>
+                <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                    <p class="font-bold text-gray-800 mb-1">2) 평행한 모서리 ($b$)</p>
+                    <p class="text-sm">모서리 AB와 평행한 모서리는 마주보는 $DF$ 하나 뿐입니다.</p>
+                    <p class="text-blue-600 font-bold mt-1">$\therefore b = 1$</p>
+                </div>
+                <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                    답: $a + b = 5$
+                </p>
+            </div>
+                    <div class="bg-white p-3 rounded-lg shadow-sm mb-3">
+                        <p class="font-bold text-gray-800 mb-1">2) 평행한 모서리 ($b$)</p>
+                        <p class="text-sm">모서리 AB와 평행한 모서리는 마주보는 $DE$ 하나 뿐입니다.</p>
+                        <p class="text-blue-600 font-bold mt-1">$\therefore b = 1$</p>
+                    </div>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        답: $a + b = 5$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 02번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">02</span>
+                    <h2 class="text-xl font-bold text-gray-800">꼬인 두 직선이 이루는 각</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    오른쪽 그림과 같은 정삼각기둥에서 직선 AB와 직선 EF가 이루는 각의 크기는?
+                </div>
+                <button onclick="toggleSolution('sol2')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol2" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">꼬인 위치에 있는 두 직선의 각을 구하기 위해 한 직선을 평행이동합니다.</p>
+                    <p class="mb-3 text-center bg-white p-2 rounded">
+                        직선 $EF$를 윗면으로 평행이동하면 <strong>직선 $BC$</strong>가 됩니다.
+                    </p>
+                    <p class="mb-2">따라서 직선 $AB$와 직선 $EF$가 이루는 각은 $\angle ABC$ 와 같습니다.</p>
+                    <p class="text-center text-sm text-gray-600">$\triangle ABC$는 정삼각형이므로 내각은 $60^\circ$ 입니다.</p>
+                    <p class="text-center mt-2 text-2xl font-black text-blue-600">
+                        답: $60^\circ$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 03번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">03</span>
+                    <h2 class="text-xl font-bold text-gray-800">정육면체와 두 직선이 이루는 각</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    정육면체 선분 AB 중점 M. 직선 MF와 DH가 이루는 각 $\alpha$, 직선 MF와 GH가 이루는 각 $\beta$라 할 때, $\cos\alpha \times \cos\beta$ 의 값은?
+                </div>
+                <button onclick="toggleSolution('sol3')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol3" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">모서리 길이를 $a$라 하면, $\overline{BF} = a$, $\overline{MB} = \frac{a}{2}$ 입니다.</p>
+                    <p class="mb-3 text-center bg-gray-50 py-1 rounded">
+                        피타고라스 정리: $\overline{MF} = \sqrt{a^2 + \left(\frac{a}{2}\right)^2} = \frac{\sqrt{5}}{2}a$
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-indigo-100">
+                            <p class="font-bold text-indigo-700 mb-1">1) $\cos\alpha$ 구하기</p>
+                            <p class="text-sm">직선 DH를 평행이동하면 BF입니다. 즉, $\alpha = \angle MFB$.</p>
+                            <p class="text-center font-bold mt-1">$\cos\alpha = \frac{\overline{BF}}{\overline{MF}} = \frac{a}{\frac{\sqrt{5}}{2}a} = \frac{2}{\sqrt{5}} = \frac{2\sqrt{5}}{5}$</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-cyan-100">
+                            <p class="font-bold text-cyan-700 mb-1">2) $\cos\beta$ 구하기</p>
+                            <p class="text-sm">직선 GH를 평행이동하면 AB입니다. 즉, $\beta = \angle FMB$.</p>
+                            <p class="text-center font-bold mt-1">$\cos\beta = \frac{\overline{MB}}{\overline{MF}} = \frac{a/2}{\frac{\sqrt{5}}{2}a} = \frac{1}{\sqrt{5}} = \frac{\sqrt{5}}{5}$</p>
+                        </div>
+                    </div>
+                    <p class="text-center mt-4 text-2xl font-black text-blue-600">
+                        답: $\frac{2\sqrt{5}}{5} \times \frac{\sqrt{5}}{5} = \frac{2}{5}$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 04번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">04</span>
+                    <h2 class="text-xl font-bold text-gray-800">삼수선 정리의 연속 적용</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    평면 $\alpha$ 밖의 점 P에서 내린 수선의 발 H, H에서 선분 AB에 내린 수선의 발 R. $\overline{PH}=\sqrt{11}, \overline{AR}=8, \overline{AP}=10$ 일 때, $\overline{PR}+\overline{HR}$ 의 값은?
+                </div>
+                <button onclick="toggleSolution('sol4')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol4" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">삼수선 정리에 의해 $\overline{PR} \perp \overline{AB}$ 이므로 $\triangle PRA$는 직각삼각형입니다.</p>
+                    <p class="mb-2">$\overline{PO} \perp \alpha$ 이므로 $\triangle PHR$도 $\angle PHR=90^\circ$인 직각삼각형, $\triangle PHA$도 $\angle PHA=90^\circ$인 직각삼각형입니다.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg shadow-sm my-3 space-y-3">
+                        <p>1) 직각삼각형 PRA에서: $\overline{PR} = \sqrt{10^2 - 8^2} = \sqrt{36} = \mathbf{6}$</p>
+                        <hr class="border-gray-200">
+                        <p>2) 직각삼각형 PHR에서: $\overline{HR} = \sqrt{\overline{PR}^2 - \overline{PH}^2} = \sqrt{36 - 11} = \sqrt{25} = \mathbf{5}$</p>
+                        <p class="text-sm text-gray-500">* 판서에는 $\overline{AH} = \sqrt{100-11}=\sqrt{89}$ 를 먼저 구하고, 직각삼각형 AHR에서 $\overline{HR} = \sqrt{89-64}=5$ 로 구하는 방법도 제시되어 있습니다.</p>
+                    </div>
+                    
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        답: $\overline{PR} + \overline{HR} = 6 + 5 = 11$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 05번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">05</span>
+                    <h2 class="text-xl font-bold text-gray-800">삼각기둥에서의 수선과 넓이</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    삼각기둥에서 $\overline{AB}=1, \overline{AC}=\sqrt{2}, \overline{BE}=3, \angle BAC=90^\circ$. 점 A에서 EF에 내린 수선의 발을 H라 할 때, $\overline{AD} \times \overline{AH}^2$ 의 값은?
+                </div>
+                <button onclick="toggleSolution('sol5')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol5" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">$\overline{AD} = \overline{BE} = 3$ 입니다. 점 D에서 선분 EF에 내린 수선의 발이 동일하게 H가 됩니다. (삼수선 정리)</p>
+                    <p class="mb-2 bg-white p-2 rounded text-sm text-center">직각삼각형 $\triangle DEF$ 넓이를 두 가지 방법으로 구합니다. ($\overline{DE}=1, \overline{DF}=\sqrt{2}, \overline{EF}=\sqrt{3}$)</p>
+                    <p class="text-center font-bold mb-3">
+                        $S = \frac{1}{2} \times 1 \times \sqrt{2} = \frac{1}{2} \times \sqrt{3} \times \overline{DH} \implies \mathbf{\overline{DH} = \frac{\sqrt{6}}{3}}$
+                    </p>
+                    
+                    <p class="mb-2">직각삼각형 $\triangle ADH$ 에서 피타고라스 정리를 적용합니다.</p>
+                    <p class="text-center font-bold bg-gray-50 py-1 rounded mb-3">
+                        $\overline{AH}^2 = \overline{AD}^2 + \overline{DH}^2 = 3^2 + \left(\frac{\sqrt{6}}{3}\right)^2 = 9 + \frac{6}{9} = 9 + \frac{2}{3} = \mathbf{\frac{29}{3}}$
+                    </p>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        답: $\overline{AD} \times \overline{AH}^2 = 3 \times \frac{29}{3} = 29$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 06번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl lg:col-span-2">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">06</span>
+                    <h2 class="text-xl font-bold text-gray-800">직육면체의 이면각과 수직</h2>
+                </div>
+                <div class="text-gray-700 text-lg leading-relaxed mb-6">
+                    직육면체에서 $\overline{AB}=\overline{AD}=2$ 이다. 평면 AFH와 평면 CHF의 이면각의 크기가 $90^\circ$일 때, 선분 AE의 길이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol6')" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition shadow-md w-full sm:w-auto">
+                    풀이 보기 / 숨기기
+                </button>
+                <div id="sol6" class="solution-box mt-4 p-4 bg-white/70 rounded-xl border-l-4 border-blue-400">
+                    <div class="font-semibold text-blue-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-2">대각선 FH의 중점을 M이라 하면, $\triangle AFH$와 $\triangle CFH$는 모두 이등변삼각형입니다.</p>
+                    <p class="mb-2 text-sm text-gray-600">($\because \overline{AF}=\overline{AH}=\overline{CF}=\overline{CH} = \sqrt{2^2+\overline{AE}^2}$ 이므로 합동)</p>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
+                        <p class="mb-2">이면각이 $90^\circ$라는 것은, 교선 FH에 각각 내린 수선 AM과 CM이 이루는 각이 $90^\circ$임을 의미합니다.</p>
+                        <p class="mb-2 font-bold text-center text-blue-700">즉, $\angle AMC = 90^\circ$ 이므로 $\triangle AMC$는 직각이등변삼각형입니다.</p>
+                        <p class="mb-1 text-center bg-gray-50 py-2 rounded">
+                            $\overline{AC} = 2\sqrt{2}$ 이고, $\triangle AMC$에서 피타고라스 정리에 의해<br>
+                            $\overline{AM}^2 + \overline{CM}^2 = 2\overline{AM}^2 = (2\sqrt{2})^2 = 8 \implies \overline{AM}^2 = 4 \implies \mathbf{\overline{AM} = 2}$
+                        </p>
+                    </div>
+                    
+                    <p class="mb-2">이제 직각삼각형 $\triangle AEM$을 생각합니다. (수선의 발 E)</p>
+                    <p class="mb-2">밑면 대각선 절반 $\overline{EM} = \frac{1}{2} \times 2\sqrt{2} = \sqrt{2}$ 입니다.</p>
+                    <p class="text-center font-bold">$\overline{AE} = \sqrt{\overline{AM}^2 - \overline{EM}^2} = \sqrt{4 - (\sqrt{2})^2} = \sqrt{2}$</p>
+                    <p class="text-center mt-3 text-2xl font-black text-blue-600">
+                        $\therefore \overline{AE} = \sqrt{2}$
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
