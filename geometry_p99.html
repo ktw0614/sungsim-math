@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 교과서 99p 스스로 마무리하기</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- KaTeX for Math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            /* 심화 마무리에 어울리는 차분하고 깊이 있는 인디고/블루 톤 그라데이션 */
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .problem-number {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solution-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        
+        <header class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500"></div>
+            <div class="mb-3">
+                <span class="bg-indigo-100 text-indigo-800 border border-indigo-200 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide shadow-sm">교과서 99페이지</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-2">기하 - 공간도형과 공간좌표</h1>
+            <p class="text-lg text-gray-700 font-medium">대단원 스스로 마무리하기 심화 (27번, 28번)</p>
+        </header>
+
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+
+            <!-- 27번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl flex flex-col">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">27</span>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold shadow-sm">사고력</span>
+                    <h2 class="text-xl font-bold text-gray-800">원기둥의 정사영 넓이</h2>
+                </div>
+                <div class="text-gray-800 text-lg leading-relaxed mb-6 flex-grow">
+                    다음 그림과 같이 밑면의 반지름의 길이가 $1$이고 높이가 $2\sqrt{3}$인 원기둥이 평면 $\alpha$와 $30^\circ$의 각을 이루면서 기울어져 있다. 원기둥의 평면 $\alpha$ 위로의 정사영의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol27')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-4 rounded-xl transition shadow-md w-full">
+                    상세 풀이 보기
+                </button>
+                <div id="sol27" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <div class="bg-indigo-50 text-indigo-800 p-3 rounded-lg mb-4 text-sm border border-indigo-100">
+                        💡 <strong>핵심 포인트:</strong> 원기둥의 정사영은 <strong>옆면(직사각형)</strong>과 양 끝 <strong>밑면(원 $\rightarrow$ 타원)</strong> 두 부분으로 나누어 구합니다.
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">1) 옆면의 정사영 (직사각형 부분)</p>
+                            <p class="text-sm text-gray-600 mb-1">원기둥 옆면(축)이 평면 $\alpha$와 이루는 각은 $30^\circ$ 입니다.</p>
+                            <p class="text-sm text-gray-600 mb-1">높이 $2\sqrt{3}$이 정사영된 길이는 $2\sqrt{3} \times \cos 30^\circ = 2\sqrt{3} \times \frac{\sqrt{3}}{2} = 3$ 입니다.</p>
+                            <p class="text-center font-semibold bg-gray-50 py-1 rounded mt-2">
+                                (직사각형 넓이) $= 2 \times 3 = \mathbf{6}$
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <p class="font-bold text-gray-800 mb-1">2) 양 끝 밑면의 정사영 (타원 부분)</p>
+                            <p class="text-sm text-gray-600 mb-1">옆면이 $30^\circ$를 이루므로, 밑면(원)과 평면 $\alpha$가 이루는 각은 $90^\circ - 30^\circ = 60^\circ$ 입니다.</p>
+                            <p class="text-sm text-gray-600 mb-1">반지름이 1인 원 1개 분량(양 끝 반원 합체)의 넓이는 $\pi$ 입니다.</p>
+                            <p class="text-center font-semibold bg-gray-50 py-1 rounded mt-2">
+                                (타원 넓이) $= \pi \times \cos 60^\circ = \mathbf{\frac{\pi}{2}}$
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center font-bold mt-4 text-gray-700">전체 정사영 넓이 = (직사각형) + (타원)</p>
+                    <p class="text-center mt-2 text-2xl font-black text-indigo-600">
+                        답: $6 + \frac{\pi}{2}$
+                    </p>
+                </div>
+            </div>
+
+            <!-- 28번 문제 -->
+            <div class="glass-card rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-2xl flex flex-col">
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-3xl font-black problem-number">28</span>
+                    <h2 class="text-xl font-bold text-gray-800">삼수선 정리와 입체도형</h2>
+                </div>
+                <div class="text-gray-800 text-lg leading-relaxed mb-6 flex-grow">
+                    다음 그림과 같이 $\overline{BC}=\overline{CD}=6$이고 $\angle BCD=90^\circ$인 사면체 ABCD가 있다. 점 A에서 평면 BCD에 내린 수선의 발을 H라 할 때, H는 선분 BD를 1:2로 내분하는 점이다. 삼각형 ABC의 넓이가 24일 때, 삼각형 AHC의 넓이를 구하시오.
+                </div>
+                <button onclick="toggleSolution('sol28')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-3 px-4 rounded-xl transition shadow-md w-full">
+                    상세 풀이 보기
+                </button>
+                <div id="sol28" class="solution-box mt-4 p-5 bg-white/80 rounded-xl border-l-4 border-indigo-400">
+                    <div class="font-semibold text-indigo-700 text-lg mb-3">선생님의 판서 풀이</div>
+                    <p class="mb-3 text-sm text-gray-700">도형의 보조선을 긋고 <strong>직각삼각형의 닮음과 삼수선 정리</strong>를 활용하여 단계별로 길이를 구합니다.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                            <p class="font-bold text-gray-800 mb-1">1) 밑면 $\triangle BCD$와 점 H의 위치</p>
+                            <p class="text-sm">$\overline{BD} = \sqrt{6^2+6^2} = 6\sqrt{2}$. H가 1:2 내분점이므로 $\overline{BH}=2\sqrt{2}, \overline{HD}=4\sqrt{2}$ 입니다.</p>
+                            <p class="text-sm mt-1">점 H에서 선분 BC에 내린 수선의 발을 $H'$이라 하면, $\mathbf{\triangle HBH' \sim \triangle DBC}$ (닮음비 1:3)</p>
+                            <p class="text-center font-semibold mt-1 bg-gray-50 py-1 rounded">
+                                $\therefore \overline{BH'} = 2, \quad \overline{HH'} = 2$
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                            <p class="font-bold text-gray-800 mb-1">2) 선분 $\overline{HC}$의 길이</p>
+                            <p class="text-sm">$\overline{H'C} = \overline{BC} - \overline{BH'} = 6 - 2 = 4$</p>
+                            <p class="text-sm">직각삼각형 $HH'C$에서 피타고라스 정리를 적용하면,</p>
+                            <p class="text-center font-semibold mt-1">
+                                $\overline{HC} = \sqrt{2^2 + 4^2} = \sqrt{20} = \mathbf{2\sqrt{5}}$
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                            <p class="font-bold text-gray-800 mb-1">3) 삼수선 정리와 높이 $\overline{AH}$ 계산</p>
+                            <p class="text-sm mb-1">$\overline{AH} \perp (\text{평면 } BCD)$ 이고 $\overline{HH'} \perp \overline{BC}$ 이므로, 삼수선 정리에 의해 $\mathbf{\overline{AH'} \perp \overline{BC}}$ 입니다.</p>
+                            <p class="text-sm">$\triangle ABC$의 넓이 $= 24 = \frac{1}{2} \times 6 \times \overline{AH'} \implies \mathbf{\overline{AH'} = 8}$</p>
+                            <p class="text-sm mt-1">직각삼각형 $AHH'$에서 피타고라스 정리를 쓰면:</p>
+                            <p class="text-center font-semibold text-indigo-600">
+                                $\overline{AH} = \sqrt{\overline{AH'}^2 - \overline{HH'}^2} = \sqrt{64 - 4} = \sqrt{60} = \mathbf{2\sqrt{15}}$
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-4 text-center text-gray-800 font-bold">마지막으로 $\triangle AHC$의 넓이를 구합니다.</p>
+                    <p class="text-center text-sm text-gray-600">($\overline{AH} \perp (\text{평면 } BCD)$ 이므로 $\angle AHC = 90^\circ$ 인 직각삼각형)</p>
+                    <p class="text-center mt-2 text-2xl font-black text-indigo-600">
+                        $S = \frac{1}{2} \times 2\sqrt{5} \times 2\sqrt{15} = 10\sqrt{3}$
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSolution(id) {
+            const solBox = document.getElementById(id);
+            if (solBox.style.display === "none" || solBox.style.display === "") {
+                solBox.style.display = "block";
+            } else {
+                solBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError : false
+            });
+        });
+    </script>
+</body>
+</html>
