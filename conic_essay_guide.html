@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생성형 AI 답변 비판 및 교정 논술 가이드북 (웹 전용)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #fff0f5; 
+            /* 다이어리 감성의 도트(모눈) 배경 */
+            background-image: radial-gradient(#ffb6c1 1.5px, transparent 1.5px);
+            background-size: 28px 28px;
+            background-attachment: fixed;
+            color: #1e293b;
+        }
+        
+        /* 다꾸(다이어리 꾸미기) 감성의 형광펜 하이라이트 효과 */
+        .highlight-pink { background: linear-gradient(180deg, rgba(255,255,255,0) 55%, #fbcfe8 55%); }
+        .highlight-mint { background: linear-gradient(180deg, rgba(255,255,255,0) 55%, #a7f3d0 55%); }
+        
+        /* 예시 문장용 단정한 손글씨 폰트와 줄노트 배경 */
+        .handwriting { 
+            font-family: 'Gowun Dodum', sans-serif; 
+            line-height: 2.3em;
+        }
+        .notebook-paper {
+            background-color: #f8fafc;
+            background-image: linear-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 100% 2.3em;
+            padding-top: 0.6em;
+        }
+
+        /* 시각화된 빈칸(Skeleton) 귀여운 스티커 폼 */
+        .blank-box {
+            display: inline-flex;
+            align-items: center;
+            background-color: #ffffff;
+            border: 2px dashed;
+            padding: 2px 14px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin: 0 4px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            transform: translateY(-1px);
+        }
+        .blank-box:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        .blank-box-rose { border-color: #fb7185; color: #e11d48; background-color: #fff1f2; }
+        .blank-box-emerald { border-color: #34d399; color: #059669; background-color: #ecfdf5; }
+
+        /* 키워드 태그 호버 효과 */
+        .keyword-tag { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .keyword-tag:hover { 
+            transform: translateY(-5px) rotate(-1.5deg) scale(1.05); 
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.15); 
+            filter: brightness(1.05);
+            z-index: 10;
+        }
+
+        /* 통통 튀는 애니메이션 */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating { animation: float 4s ease-in-out infinite; }
+
+        /* 부드러운 스크롤바 */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; border: 3px solid #fff0f5; }
+        ::-webkit-scrollbar-thumb:hover { background: #f472b6; }
+        
+        /* 글래스모피즘 공통 클래스 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(244, 114, 182, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-pink-200 selection:text-pink-900">
+
+    <!-- 메인 레이아웃 래퍼: 사이드바 + 메인 콘텐츠 -->
+    <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex flex-col lg:flex-row gap-8 items-start">
+
+        <!-- 좌측 스티키(Sticky) 퀵 메뉴 바 -->
+        <aside class="lg:w-64 shrink-0 lg:sticky lg:top-12 z-40 w-full">
+            <div class="glass-panel rounded-[2rem] p-6 shadow-xl border border-white">
+                <div class="flex items-center gap-2 mb-6 pb-4 border-b border-pink-100">
+                    <span class="bg-pink-100 p-2 rounded-xl text-xl">🧭</span>
+                    <h2 class="font-black text-slate-800 text-lg tracking-tight">퀵 내비게이션</h2>
+                </div>
+                <nav class="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 scrollbar-hide">
+                    <a href="#sec-prompt" class="whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-indigo-700 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 hover:-translate-y-1 transition-all shadow-sm">
+                        <span>💬</span> AI 질문법 (프롬프트)
+                    </a>
+                    <a href="#sec-situation-a" class="whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-rose-700 bg-rose-50 border border-rose-100 hover:bg-rose-100 hover:-translate-y-1 transition-all shadow-sm">
+                        <span>🚨</span> 상황 A: AI 오류 교정
+                    </a>
+                    <a href="#sec-situation-b" class="whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 hover:-translate-y-1 transition-all shadow-sm">
+                        <span>✅</span> 상황 B: 수치 확증
+                    </a>
+                    <a href="#sec-keywords" class="whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-purple-700 bg-purple-50 border border-purple-100 hover:bg-purple-100 hover:-translate-y-1 transition-all shadow-sm">
+                        <span>🪄</span> 마법의 키워드 사전
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- 우측 메인 콘텐츠 영역 -->
+        <main class="flex-1 min-w-0 space-y-10">
+            
+            <!-- 와이드 타이틀 카드 -->
+            <header class="glass-panel rounded-[3rem] p-10 sm:p-14 text-center relative overflow-hidden">
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40"></div>
+                <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40"></div>
+                
+                <div class="relative z-10 flex flex-col items-center">
+                    <span class="inline-flex items-center gap-2 py-2 px-6 rounded-full border-2 border-pink-200 bg-gradient-to-r from-white to-pink-50 text-pink-600 text-sm font-black mb-6 tracking-wider shadow-sm">
+                        ✨ 전주성심여자고등학교 기하 수행평가
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                        생성형 AI 답변 비판 및 교정 논술
+                    </h1>
+                    <p class="text-slate-500 font-bold text-lg sm:text-xl max-w-2xl leading-relaxed">
+                        화면을 넓게 쓰고 스크롤은 줄였습니다!<br>
+                        자신의 상황에 맞는 템플릿의 빈칸을 채워 완벽한 세특을 완성하세요. 📝
+                    </p>
+                </div>
+                
+                <div class="absolute top-12 left-12 text-5xl transform -rotate-12 floating hidden sm:block">📐</div>
+                <div class="absolute bottom-12 right-12 text-5xl transform rotate-12 floating hidden sm:block" style="animation-delay: 1.5s;">💡</div>
+            </header>
+
+            <!-- 1. 프롬프트 추천 섹션 -->
+            <section id="sec-prompt" class="glass-panel rounded-[2.5rem] p-8 sm:p-12 border-2 border-indigo-100 relative scroll-mt-32 hover:shadow-[0_15px_40px_rgba(99,102,241,0.15)] transition-shadow duration-500">
+                <div class="absolute -top-5 left-10 bg-indigo-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider transform -rotate-2">STEP 01</div>
+                
+                <h2 class="text-2xl sm:text-3xl font-black text-indigo-900 mb-4 flex items-center gap-3 mt-2">
+                    <span class="text-4xl">💬</span> AI에게 똑똑하게 질문하기 (프롬프트 추천)
+                </h2>
+                <p class="text-slate-600 text-[17px] mb-8 font-bold leading-relaxed">
+                    AI에게 단순한 대답을 유도하지 말고, <span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md">기하학적 근거</span>를 구체적으로 요구해야 비판할 거리가 생겨요!
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white/80 p-8 rounded-[2rem] border border-indigo-50 shadow-sm relative hover:-translate-y-2 transition-transform duration-300">
+                        <div class="absolute -left-2 top-10 w-4 h-4 bg-white border-l border-t border-indigo-50 transform -rotate-45"></div>
+                        <span class="inline-block bg-indigo-50 text-indigo-600 text-xs font-black px-4 py-1.5 rounded-full border border-indigo-100 shadow-sm mb-4">추천 질문 1</span>
+                        <p class="text-[16px] font-bold text-slate-700 leading-relaxed">
+                            "이 사진 속 곡선을 포물선, 타원, 쌍곡선 중 하나로 분류해 줘. 그리고 그렇게 생각한 이유를 <span class="text-indigo-600 bg-indigo-50 px-1 rounded">기하학적 특징(초점, 점근선 등)</span>을 들어 수학적으로 설명해 볼래?"
+                        </p>
+                    </div>
+                    <div class="bg-white/80 p-8 rounded-[2rem] border border-indigo-50 shadow-sm relative hover:-translate-y-2 transition-transform duration-300">
+                        <div class="absolute -left-2 top-10 w-4 h-4 bg-white border-l border-t border-indigo-50 transform -rotate-45"></div>
+                        <span class="inline-block bg-indigo-50 text-indigo-600 text-xs font-black px-4 py-1.5 rounded-full border border-indigo-100 shadow-sm mb-4">추천 질문 2</span>
+                        <p class="text-[16px] font-bold text-slate-700 leading-relaxed">
+                            "이 건축물의 형태를 기하학의 관점에서 분석해 줘. 왜 원이 아니라 타원(또는 쌍곡선)이라고 생각하는지 <span class="text-indigo-600 bg-indigo-50 px-1 rounded">기하 교과서 개념을 포함</span>해서 알려줘."
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 공통 안내문 -->
+            <div class="text-center py-4">
+                <span class="inline-flex items-center gap-3 bg-slate-800 text-white px-8 py-4 text-base font-black rounded-full shadow-2xl transform hover:scale-105 transition-transform">
+                    <span class="text-2xl animate-bounce">👇</span> 
+                    AI의 답변을 받았다면, 아래의 두 가지 상황 중 내게 맞는 뼈대를 고르세요!
+                    <span class="text-2xl animate-bounce">👇</span> 
+                </span>
+            </div>
+
+            <!-- 2. 상황 A와 상황 B 좌우 나란히 배치 (CSS Grid 활용) -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                
+                <!-- [상황 A] 템플릿 -->
+                <section id="sec-situation-a" class="glass-panel rounded-[2.5rem] p-8 sm:p-10 border-2 border-rose-200 relative scroll-mt-32 flex flex-col hover:shadow-[0_15px_40px_rgba(244,63,94,0.15)] transition-shadow duration-500">
+                    <div class="absolute -top-5 left-10 bg-rose-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider transform -rotate-2">STEP 02 - 선택 1</div>
+
+                    <div class="mb-8 mt-2">
+                        <h2 class="text-2xl sm:text-3xl font-black text-rose-600 flex items-center gap-3">
+                            <span class="text-4xl">🚨</span> [상황 A] AI가 틀렸을 때
+                        </h2>
+                        <p class="text-slate-500 text-[15px] font-bold mt-3 ml-12 leading-relaxed">
+                            AI의 시각적 한계(할루시네이션)를 꼬집어내고,<br>나의 완벽한 모델링 수식으로 <span class="bg-rose-100 text-rose-700 px-2 rounded">교정</span>해 보세요.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/60 border border-rose-100 rounded-[2rem] p-6 sm:p-8 mb-8 flex-1">
+                        <h3 class="font-black text-rose-800 text-lg flex items-center gap-2 mb-6 border-b border-rose-100 pb-3">
+                            🧩 문장 뼈대 조립하기
+                        </h3>
+                        <div class="space-y-7 text-slate-700 text-[16px]">
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-400 text-white text-sm font-black mt-1 shadow-md shadow-rose-200">1</span>
+                                <p class="font-bold leading-loose">"AI는 이 사진을 <span class="blank-box blank-box-rose">AI가 말한 시각적 특징</span> (으)로 보고 이 사물을 <span class="blank-box blank-box-rose">AI의 오답</span> (이)라고 잘못 분석했다."</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-400 text-white text-sm font-black mt-1 shadow-md shadow-rose-200">2</span>
+                                <p class="font-bold leading-loose">"하지만 기하 교과서의 정의에 따르면 <span class="blank-box blank-box-rose">올바른 곡선의 수학적 성질</span> (이)어야 하므로, AI의 분석은 수학적 엄밀성이 부족하다."</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-400 text-white text-sm font-black mt-1 shadow-md shadow-rose-200">3</span>
+                                <p class="font-bold leading-loose">"실제로 직접 모델링하여 대수적으로 검증한 결과, 식이 <span class="blank-box blank-box-rose">내가 도출한 방정식</span> (으)로 나타나며 초점이 <span class="blank-box blank-box-rose">내가 계산한 좌표</span> 에 위치하므로, 이 사물은 <span class="blank-box blank-box-rose">올바른 곡선</span> (으)로 교정되어야 한다."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 완성 예시 -->
+                    <div class="notebook-paper border border-rose-200 rounded-[1.5rem] p-6 sm:p-8 relative shadow-inner mt-auto bg-white/80">
+                        <div class="absolute -top-4 right-6 bg-yellow-300 text-yellow-900 text-[11px] font-black px-4 py-1.5 rounded-md shadow-md transform rotate-3 z-10 border border-yellow-400">1등급 선배의 노트 훔쳐보기 👀</div>
+                        <p class="handwriting text-slate-700 text-[19px]">
+                            "AI는 이 사진을 <span class="highlight-pink">아랫부분이 둥글게 열려 있다는 특징</span>으로 보고 <span class="highlight-pink">포물선</span>이라고 잘못 분석했다. 하지만 기하 교과서의 정의에 따르면 <span class="highlight-pink">포물선은 초점과 준선에 이르는 거리가 같아야</span> 하므로 엄밀성이 부족하다. 실제로 내가 검증한 결과, 식이 <span class="highlight-pink">x²/16 - y²/9 = 1</span>로 나타나며 초점이 <span class="highlight-pink">(±5, 0)</span>에 위치하므로, 이 사물은 <span class="highlight-pink">쌍곡선</span>으로 교정되어야 한다."
+                        </p>
+                    </div>
+                </section>
+
+                <!-- [상황 B] 템플릿 -->
+                <section id="sec-situation-b" class="glass-panel rounded-[2.5rem] p-8 sm:p-10 border-2 border-emerald-200 relative scroll-mt-32 flex flex-col hover:shadow-[0_15px_40px_rgba(16,185,129,0.15)] transition-shadow duration-500">
+                    <div class="absolute -top-5 left-10 bg-emerald-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider transform 2">STEP 02 - 선택 2</div>
+
+                    <div class="mb-8 mt-2">
+                        <h2 class="text-2xl sm:text-3xl font-black text-emerald-600 flex items-center gap-3">
+                            <span class="text-4xl">✅</span> [상황 B] AI가 기특하게 맞았을 때!
+                        </h2>
+                        <p class="text-slate-500 text-[15px] font-bold mt-3 ml-12 leading-relaxed">
+                            억지로 비판할 필요 없습니다. 대신, 나의 정량적 수식으로<br>AI의 빈약한 주장을 <span class="bg-emerald-100 text-emerald-700 px-2 rounded">완벽히 확증(증명)</span>해 주면 됩니다.
+                        </p>
+                    </div>
+
+                    <div class="bg-white/60 border border-emerald-100 rounded-[2rem] p-6 sm:p-8 mb-8 flex-1">
+                        <h3 class="font-black text-emerald-800 text-lg flex items-center gap-2 mb-6 border-b border-emerald-100 pb-3">
+                            🧩 문장 뼈대 조립하기
+                        </h3>
+                        <div class="space-y-7 text-slate-700 text-[16px]">
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 text-white text-sm font-black mt-1 shadow-md shadow-emerald-200">1</span>
+                                <p class="font-bold leading-loose">"AI가 교과서의 <span class="blank-box blank-box-emerald">AI가 언급한 수학적 성질</span> 이라는 성질을 적용하여 이 대상을 <span class="blank-box blank-box-emerald">AI의 정답</span> (이)라고 분석한 것은 타당하다."</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 text-white text-sm font-black mt-1 shadow-md shadow-emerald-200">2</span>
+                                <p class="font-bold leading-loose">"하지만 AI의 분석에는 <span class="blank-box blank-box-emerald">초점 위치, 장축 길이 등 수치적 검증</span> (이)가 누락되어 있어 완벽한 증명이라고 보기는 어렵다."</p>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 text-white text-sm font-black mt-1 shadow-md shadow-emerald-200">3</span>
+                                <p class="font-bold leading-loose">"이를 보완하기 위해 모델링한 결과 <span class="blank-box blank-box-emerald">내가 도출한 방정식</span> 식을 얻었고, 이를 통해 축의 길이가 <span class="blank-box blank-box-emerald">내가 계산한 수치</span> (으)로 정확히 계산된다. 따라서 AI의 정성적 분석에 나의 수식적 검증이 더해져 완벽히 확증된다."</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 완성 예시 -->
+                    <div class="notebook-paper border border-emerald-200 rounded-[1.5rem] p-6 sm:p-8 relative shadow-inner mt-auto bg-white/80">
+                        <div class="absolute -top-4 right-6 bg-yellow-300 text-yellow-900 text-[11px] font-black px-4 py-1.5 rounded-md shadow-md transform -rotate-2 z-10 border border-yellow-400">1등급 선배의 노트 훔쳐보기 👀</div>
+                        <p class="handwriting text-slate-700 text-[19px]">
+                            "AI가 교과서의 <span class="highlight-mint">거리의 합이 일정하다는</span> 성질을 적용하여 이 사물을 <span class="highlight-mint">타원</span>이라고 분석한 것은 타당하다. 하지만 AI의 분석에는 <span class="highlight-mint">실제 초점의 위치와 장축 길이 등 대수적 검증</span>이 누락되어 있어 완벽한 증명은 아니다. 이를 보완하기 위해 모델링한 결과 <span class="highlight-mint">x²/25 + y²/9 = 1</span> 식을 얻었고, 이를 통해 장축의 길이가 <span class="highlight-mint">10</span>임이 정확히 계산된다. 따라서 AI의 분석에 나의 수식 검증이 더해져 완벽히 확증된다."
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- 3. 마법의 키워드 사전 -->
+            <section id="sec-keywords" class="glass-panel rounded-[3rem] p-10 sm:p-14 border-2 border-white relative scroll-mt-32 shadow-xl mt-12">
+                <div class="text-center mb-12 relative">
+                    <div class="inline-block relative">
+                        <h3 class="text-3xl sm:text-4xl font-black text-slate-800 flex items-center justify-center gap-4 relative z-10 tracking-tight">
+                            <span class="text-5xl">🪄</span> 마법의 키워드 사전
+                        </h3>
+                        <div class="absolute bottom-1 left-0 w-full h-4 bg-yellow-300/60 -rotate-1 z-0"></div>
+                    </div>
+                    <p class="text-slate-500 text-[17px] font-bold mt-5">단조로운 문장이 고민이라면? 세특 수준을 확 높여줄 예쁜 단어들을 골라 자유롭게 조립해 보세요!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 수학 개념 (라벤더) -->
+                    <div class="bg-purple-50/90 p-8 rounded-[2rem] border border-purple-100 shadow-sm hover:shadow-[0_15px_30px_rgb(168,85,247,0.15)] transition duration-300">
+                        <h4 class="text-xl font-black text-purple-900 mb-6 flex items-center gap-3 border-b-2 border-purple-200 pb-4">
+                            <span class="bg-white p-2 rounded-xl shadow-sm text-2xl">📐</span> 기하학 개념
+                        </h4>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">초점과 준선</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">장축과 단축</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">이심률(찌그러진 정도)</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">기하학적 궤적</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">꼭짓점의 위치</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">점근선에 무한히 접근</span>
+                            <span class="keyword-tag bg-white text-purple-700 border border-purple-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">형태 결정 상수 조절</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 논리 증명 (버터 옐로우) -->
+                    <div class="bg-amber-50/90 p-8 rounded-[2rem] border border-amber-100 shadow-sm hover:shadow-[0_15px_30px_rgb(245,158,11,0.15)] transition duration-300">
+                        <h4 class="text-xl font-black text-amber-900 mb-6 flex items-center gap-3 border-b-2 border-amber-200 pb-4">
+                            <span class="bg-white p-2 rounded-xl shadow-sm text-2xl">🧠</span> 논리 및 분석
+                        </h4>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">대수적 모델링</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">정량적(수치적) 검증</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">정성적 판단 보완</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">수학적 엄밀성 확보</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">타당성을 완벽히 확증</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">논리적으로 뒷받침</span>
+                            <span class="keyword-tag bg-white text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">오차 범위 보정</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 오류 지적 (피치 핑크) -->
+                    <div class="bg-pink-50/90 p-8 rounded-[2rem] border border-pink-100 shadow-sm hover:shadow-[0_15px_30px_rgb(244,114,182,0.15)] transition duration-300">
+                        <h4 class="text-xl font-black text-pink-900 mb-6 flex items-center gap-3 border-b-2 border-pink-200 pb-4">
+                            <span class="bg-white p-2 rounded-xl shadow-sm text-2xl">🚨</span> AI 한계 지적
+                        </h4>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">시각적 한계 노출</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">할루시네이션(환각)</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">피상적인 형태 비교</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">기하학적 불일치 발생</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">원근법(투시) 간과</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">입체 구조의 단면 왜곡</span>
+                            <span class="keyword-tag bg-white text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-[15px] font-bold cursor-pointer">촬영 각도에 따른 착시</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <footer class="text-center pt-8 pb-4 text-slate-400 text-sm font-bold">
+                <p>© 2026 Jeonju Sungsim Girls' High School. All rights reserved.</p>
+            </footer>
+
+        </main>
+    </div>
+
+</body>
+</html>

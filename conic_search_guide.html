@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이차곡선 구글링 및 세팅 완벽 가이드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], processEscapes: true } };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+            scroll-behavior: smooth;
+        }
+        
+        /* 다꾸 감성의 형광펜 하이라이트 효과 */
+        .highlight-yellow { background: linear-gradient(180deg, rgba(255,255,255,0) 50%, #fef08a 50%); }
+        .handwriting { font-family: 'Gowun Dodum', sans-serif; line-height: 1.8em; }
+
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 3px solid #f8fafc; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 통통 튀는 애니메이션 */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating { animation: float 4s ease-in-out infinite; }
+
+        /* 토스트 알림 애니메이션 */
+        @keyframes slideUp {
+            from { transform: translate(-50%, 20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        .toast-show {
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.3s ease 2s forwards;
+        }
+        
+        /* 2단 분할 그리드 및 인쇄 최적화 */
+        section[id^="sec-"] .grid > div {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        @media print {
+            body { background: white !important; background-image: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            section[id^="sec-"] .grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 1.25rem !important; }
+            section { break-inside: avoid !important; page-break-inside: avoid !important; border: 2px solid #e2e8f0 !important; box-shadow: none !important; margin-bottom: 2rem !important; }
+            h2, h3 { break-after: avoid !important; page-break-after: avoid !important; }
+            .sticky, header .floating, .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased py-10 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
+
+    <!-- 토스트 알림창 -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl font-black text-sm z-50 opacity-0 pointer-events-none flex items-center gap-2">
+        <span class="text-xl">✨</span> 복사되었습니다! 구글 이미지 검색에 붙여넣기 하세요.
+    </div>
+
+    <div class="max-w-7xl mx-auto space-y-12">
+        
+        <header class="bg-white/80 backdrop-blur-xl rounded-[3rem] shadow-[0_20px_60px_rgba(56,189,248,0.15)] border border-white p-8 sm:p-14 text-center relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 w-72 h-72 bg-sky-200/50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-200/50 rounded-full mix-blend-multiply filter blur-3xl opacity-60 pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <span class="inline-flex items-center gap-1.5 py-1.5 px-6 rounded-full border border-sky-100 bg-gradient-to-r from-sky-50 to-blue-50 text-sky-700 text-sm font-black mb-6 tracking-wide shadow-sm">
+                    ✨ 전주성심여자고등학교 기하 수행평가 ✨
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500">
+                    나만의 이차곡선 이미지<br>구글링 & 세팅 가이드
+                </h1>
+                <p class="text-slate-600 font-bold text-base sm:text-lg leading-relaxed max-w-2xl">
+                    세상에 하나뿐인 세특을 위해 내 진로와 관련된 사진을 직접 찾고,<br>계산이 10배 쉬워지는 마법의 모델링 세팅법을 알아봅시다! 📸
+                </p>
+            </div>
+            
+            <div class="absolute top-12 left-12 text-5xl floating pointer-events-none hidden md:block">🔎</div>
+            <div class="absolute bottom-12 right-12 text-5xl floating pointer-events-none hidden md:block" style="animation-delay: 1.5s;">🖼️</div>
+        </header>
+
+        <section class="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-sm border border-slate-200 relative">
+            <div class="absolute -top-5 left-10 bg-indigo-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider">STEP 01</div>
+            
+            <h2 class="text-2xl font-black text-indigo-900 mb-4 flex items-center gap-2 mt-2">
+                <span class="text-3xl">💡</span> 진로별 맞춤형 검색어 (단면도 치트키)
+            </h2>
+            <div class="bg-indigo-50/70 p-5 rounded-2xl border border-indigo-100">
+                <p class="text-slate-700 text-[15px] font-bold leading-relaxed">
+                    단순히 '포물선'이라고 치면 재미없는 수학 문제만 나옵니다! 나의 진로나 관심사와 연결된 대상을 검색해 보세요. <br>
+                    특히, 3차원 입체 도형을 2D 평면에 완벽하게 모델링하기 위해 <strong>모든 검색어에 <span class="bg-white px-1.5 py-0.5 rounded text-indigo-700 border border-indigo-200 shadow-sm">단면(cross section)</span>이나 <span class="bg-white px-1.5 py-0.5 rounded text-indigo-700 border border-indigo-200 shadow-sm">측면(profile view)</span> 마법의 키워드가 조합되어 있습니다.</strong><br>
+                    <span class="text-indigo-600">원하는 분야의 영어 검색어 박스를 클릭하면 자동으로 복사됩니다!</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 스마트 목차 내비게이션 (Sticky Floating Bar) -->
+        <div class="sticky top-6 z-40 flex justify-center w-full px-4 no-print">
+            <div class="flex flex-wrap justify-center gap-2.5 bg-white/90 backdrop-blur-xl p-3 sm:p-4 rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-slate-200/50 max-w-fit transition-all hover:shadow-[0_15px_40px_rgba(0,0,0,0.15)]">
+                <button onclick="document.getElementById('sec-medical').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-rose-50 text-rose-600 border border-rose-100 hover:border-rose-300 transition shadow-sm hover:-translate-y-1">🩺 보건·생명</button>
+                <button onclick="document.getElementById('sec-archi').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-emerald-50 text-emerald-600 border border-emerald-100 hover:border-emerald-300 transition shadow-sm hover:-translate-y-1">🏛️ 건축·공학</button>
+                <button onclick="document.getElementById('sec-it').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-blue-50 text-blue-600 border border-blue-100 hover:border-blue-300 transition shadow-sm hover:-translate-y-1">💻 IT·통신</button>
+                <button onclick="document.getElementById('sec-aero').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-indigo-50 text-indigo-600 border border-indigo-100 hover:border-indigo-300 transition shadow-sm hover:-translate-y-1">🚀 우주·물리</button>
+                <button onclick="document.getElementById('sec-enviro').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-teal-50 text-teal-600 border border-teal-100 hover:border-teal-300 transition shadow-sm hover:-translate-y-1">🌱 환경·생태</button>
+                <button onclick="document.getElementById('sec-socio').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-violet-50 text-violet-600 border border-violet-100 hover:border-violet-300 transition shadow-sm hover:-translate-y-1">📊 경제·사회</button>
+                <button onclick="document.getElementById('sec-art').scrollIntoView()" class="px-5 py-2.5 rounded-full text-sm font-black bg-white hover:bg-amber-50 text-amber-600 border border-amber-100 hover:border-amber-300 transition shadow-sm hover:-translate-y-1">🎨 예술·일상</button>
+            </div>
+        </div>
+
+        <!-- 1. 보건/생명 -->
+        <section id="sec-medical" class="scroll-mt-36">
+            <h3 class="font-black text-rose-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-rose-100 p-2 rounded-xl text-2xl shadow-sm">🩺</span> 보건 · 의학 · 생명 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">체외충격파 쇄석기 반사경 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Lithotripter reflector cross section', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Lithotripter reflector cross section</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">치과 및 수술용 무영등 단면(Cutaway)</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Surgical light reflector cutaway profile', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Surgical light reflector cutaway profile</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">비구면 렌즈 및 각막 지형도 측면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Aspheric lens cross section profile', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Aspheric lens cross section profile</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">청력 검사용 포물면 마이크 도해</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Parabolic microphone cross section schematic', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Parabolic microphone cross section schematic</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">의료 영상(MRI/CT) 비스듬한 절단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('MRI oblique cylinder cross section', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">MRI oblique cylinder cross section</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">혈관 내 혈류 속도 분포 그래프</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Blood flow velocity profile parabola diagram', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Blood flow velocity profile parabola diagram</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">치과용 임플란트 나사선의 측면 윤곽</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Dental implant thread profile view', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Dental implant thread profile view</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-rose-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-rose-100 text-rose-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">의학용 광학 기구(현미경 등) 거울 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-rose-300 group-hover:bg-rose-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Microscope mirror cross section schematic', this)">
+                        <code class="text-[13px] text-rose-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Microscope mirror cross section schematic</code>
+                        <div class="absolute inset-0 bg-rose-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 건축/공학 -->
+        <section id="sec-archi" class="scroll-mt-36">
+            <h3 class="font-black text-emerald-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-emerald-100 p-2 rounded-xl text-2xl shadow-sm">🏛️</span> 건축 · 토목 · 공학 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">원자력 발전소 냉각탑 정면 입면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hyperboloid cooling tower profile elevation', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hyperboloid cooling tower profile elevation</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">현수교(광안대교 등) 평면 정면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Suspension bridge flat front elevation', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Suspension bridge flat front elevation</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">로마 콜로세움 건축 평면도(Top view)</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Colosseum architectural plan top view', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Colosseum architectural plan top view</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">사그라다 파밀리아 천장 둥근 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Sagrada Familia hyperboloid vault cross section', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Sagrada Familia hyperboloid vault cross section</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">쌍곡포물면 안장 지붕 정면 윤곽선</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hyperbolic paraboloid roof front profile', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hyperbolic paraboloid roof front profile</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">송전탑 및 마이크로웨이브 철탑 설계도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Lattice transmission tower profile blueprint', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Lattice transmission tower profile blueprint</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">타원형 기어(Elliptical gear) 평면 도해</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Elliptical gear mechanism flat schematic', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Elliptical gear mechanism flat schematic</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-emerald-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-emerald-100 text-emerald-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">돔구장(고척 스카이돔 등) 건축 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-emerald-300 group-hover:bg-emerald-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Elliptical dome roof architectural cross section', this)">
+                        <code class="text-[13px] text-emerald-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Elliptical dome roof architectural cross section</code>
+                        <div class="absolute inset-0 bg-emerald-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. IT/통신 -->
+        <section id="sec-it" class="scroll-mt-36">
+            <h3 class="font-black text-blue-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-blue-100 p-2 rounded-xl text-2xl shadow-sm">💻</span> IT · 소프트웨어 · 통신 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">파라볼라 위성 안테나 중심 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Parabolic satellite dish cross section', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Parabolic satellite dish cross section</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">LORAN(로란) 전파 항법 2D 평면 맵</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('LORAN navigation hyperbola 2D map', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">LORAN navigation hyperbola 2D map</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">Wi-Fi 지향성 안테나 평면 도해</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Wi-Fi parabolic reflector top view schematic', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Wi-Fi parabolic reflector top view schematic</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">광통신 광섬유 케이블의 비스듬한 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Optical fiber oblique cut cross section', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Optical fiber oblique cut cross section</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">음원 위치 추적(TDOA) 2D 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('TDOA localization hyperbola 2D plot', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">TDOA localization hyperbola 2D plot</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">레이더 돔(Radome) 내부 단면 윤곽</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Radar radome cross section profile', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Radar radome cross section profile</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">3D 그래픽스 쌍곡면 와이어프레임 측면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hyperboloid wireframe side profile 2D', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hyperboloid wireframe side profile 2D</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-blue-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-blue-100 text-blue-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">인공위성 통신 커버리지 평면 맵</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-blue-300 group-hover:bg-blue-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Satellite footprint ellipse flat map', this)">
+                        <code class="text-[13px] text-blue-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Satellite footprint ellipse flat map</code>
+                        <div class="absolute inset-0 bg-blue-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 항공우주/물리 -->
+        <section id="sec-aero" class="scroll-mt-36">
+            <h3 class="font-black text-indigo-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-indigo-100 p-2 rounded-xl text-2xl shadow-sm">🚀</span> 항공우주 · 기계 · 물리 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">인공위성 및 행성 공전 궤도 2D 도해</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Satellite elliptical orbit 2D schematic', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Satellite elliptical orbit 2D schematic</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">카세그레인 망원경 광학 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Cassegrain telescope cross section ray diagram', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Cassegrain telescope cross section ray diagram</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">우주 탐사선 스윙바이 2D 궤적 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Spacecraft flyby hyperbolic trajectory 2D plot', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Spacecraft flyby hyperbolic trajectory 2D plot</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">무중력 체험 비행기 포물선 비행 프로필</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Zero gravity flight parabolic flight path profile', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Zero gravity flight parabolic flight path profile</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">원자핵 쿨롱 산란(러더퍼드) 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Rutherford scattering hyperbola cross section', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Rutherford scattering hyperbola cross section</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">비주기 혜성 궤도의 궤도면(평면) 뷰</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Comet parabolic trajectory orbital plane view', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Comet parabolic trajectory orbital plane view</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">쌍성계(Binary star) 궤도 하향식 뷰</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Binary star orbit ellipse top down view', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Binary star orbit ellipse top down view</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-indigo-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">입자가속기 빔 충돌 산란 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Particle collision scattering cross section', this)">
+                        <code class="text-[13px] text-indigo-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Particle collision scattering cross section</code>
+                        <div class="absolute inset-0 bg-indigo-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 환경/에너지 -->
+        <section id="sec-enviro" class="scroll-mt-36">
+            <h3 class="font-black text-teal-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-teal-100 p-2 rounded-xl text-2xl shadow-sm">🌱</span> 환경 · 에너지 · 생태 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">태양열 발전소 집광판(구유형) 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Parabolic trough solar collector cross section', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Parabolic trough solar collector cross section</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">해양 표층 해류의 거대한 환류 맵</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Ocean gyre circulation ellipse flat map', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Ocean gyre circulation ellipse flat map</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">친환경 빗물 저장 탱크 압력 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Underground water tank cross section', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Underground water tank cross section</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타/쌍</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">화산 분화구 비스듬한 침식 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Volcanic cone oblique cross section ellipse', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Volcanic cone oblique cross section ellipse</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">고온 태양로 거대 거울 측면 윤곽</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Solar furnace parabolic reflector side profile', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Solar furnace parabolic reflector side profile</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">자연 소용돌이(Vortex) 입체 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Vortex funnel hyperboloid cross section', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Vortex funnel hyperboloid cross section</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">지구 조석 현상 기조력 분포 도해</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Tidal force distribution ellipse cross section schematic', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Tidal force distribution ellipse cross section schematic</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-teal-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-teal-100 text-teal-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">풍력 발전기 터빈 블레이드 공력 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-teal-300 group-hover:bg-teal-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Wind turbine blade airfoil cross section', this)">
+                        <code class="text-[13px] text-teal-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Wind turbine blade airfoil cross section</code>
+                        <div class="absolute inset-0 bg-teal-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 경제/사회 -->
+        <section id="sec-socio" class="scroll-mt-36">
+            <h3 class="font-black text-violet-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-violet-100 p-2 rounded-xl text-2xl shadow-sm">📊</span> 경제 · 사회 · 인문 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">행동경제학 쌍곡선 할인 2D 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hyperbolic discounting curve 2D plot', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hyperbolic discounting curve 2D plot</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">경제학 생산가능곡선(PPF) 2D 그래프</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Production possibility frontier 2D graph', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Production possibility frontier 2D graph</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">경영 한계비용 및 수익 포물선 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Marginal cost revenue parabola 2D plot', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Marginal cost revenue parabola 2D plot</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">세율과 세수의 라퍼 곡선 평면 그래프</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Laffer curve 2D flat graph', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Laffer curve 2D flat graph</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">소득 불평등 지표 로렌츠 곡선 2D 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Lorenz curve inequality 2D plot', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Lorenz curve inequality 2D plot</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">인구 성장 곡선 1차 도함수 플롯</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Population growth derivative parabola plot', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Population growth derivative parabola plot</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-violet-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-violet-100 text-violet-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">마케팅 제품 수명주기(PLC) 평면 그래프</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-violet-300 group-hover:bg-violet-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Product life cycle parabola flat graph', this)">
+                        <code class="text-[13px] text-violet-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Product life cycle parabola flat graph</code>
+                        <div class="absolute inset-0 bg-violet-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 예술/체육/일상 -->
+        <section id="sec-art" class="scroll-mt-36">
+            <h3 class="font-black text-amber-700 text-2xl mb-6 flex items-center gap-3 px-4">
+                <span class="bg-amber-100 p-2 rounded-xl text-2xl shadow-sm">🎨</span> 예술 · 체육 · 식품 · 일상 계열
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">분수대 물줄기 평면 측면 뷰</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Water fountain parabola flat profile view', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Water fountain parabola flat profile view</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">타원형 당구대 하향식(Plan view)</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Elliptical pool table top down plan view', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Elliptical pool table top down plan view</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">평평한 벽면에 비친 조명 그림자</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Lamp shadow hyperbola on flat wall', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Lamp shadow hyperbola on flat wall</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">자동차 헤드라이트 반사경 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Car headlight reflector cross section', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Car headlight reflector cross section</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍곡선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">모래시계의 평면 측면 윤곽선</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hourglass hyperbola flat side profile', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hourglass hyperbola flat side profile</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">쌍/포</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">프링글스 쌍곡포물면 안장형 단면</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Hyperbolic paraboloid saddle cross section', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Hyperbolic paraboloid saddle cross section</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">포물선</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">농구 슛 등 발사체 궤적 측면 프로필</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Basketball shot parabola trajectory side profile', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Basketball shot parabola trajectory side profile</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+                <div class="bg-white/80 backdrop-blur p-5 rounded-[1.5rem] border border-amber-100 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group">
+                    <div class="flex items-start gap-2.5 mb-3">
+                        <span class="bg-amber-100 text-amber-700 text-xs font-black px-2.5 py-1 rounded-full shadow-sm shrink-0 mt-0.5">타원</span>
+                        <h4 class="text-[15px] font-bold text-slate-800 leading-tight">럭비공(미식축구공) 평면 단면도</h4>
+                    </div>
+                    <div class="mt-auto bg-slate-50 cursor-pointer p-3 rounded-xl border border-slate-200 group-hover:border-amber-300 group-hover:bg-amber-50 transition-all relative overflow-hidden" onclick="copyToClipboard('Rugby ball flat cross section ellipse', this)">
+                        <code class="text-[13px] text-amber-600 font-mono font-bold block transition-transform duration-300 group-hover:-translate-y-8">Rugby ball flat cross section ellipse</code>
+                        <div class="absolute inset-0 bg-amber-500 flex items-center justify-center text-white text-[13px] font-black opacity-0 group-hover:opacity-100 transition-all translate-y-full group-hover:translate-y-0 duration-300">클릭해서 복사하기 ✨</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 02: 주의할 사진 -->
+        <section class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-10 shadow-sm border border-rose-200 relative mt-16 avoid-break">
+            <div class="absolute -top-5 left-10 bg-rose-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider">STEP 02</div>
+            
+            <h2 class="text-2xl font-black text-rose-700 mb-5 flex items-center gap-2 mt-2">
+                <span class="text-3xl">🚨</span> 이런 사진 고르면 평가 망해요! (가장 중요)
+            </h2>
+            
+            <div class="bg-rose-50/70 p-6 sm:p-8 rounded-3xl border border-rose-100 flex flex-col sm:flex-row gap-5 sm:gap-6 items-start shadow-inner">
+                <div class="w-14 h-14 shrink-0 bg-rose-200 rounded-full flex items-center justify-center text-rose-700 font-black text-2xl shadow-sm">!</div>
+                <div>
+                    <h4 class="font-black text-slate-800 text-xl mb-3">원근감(투시 왜곡)이 들어간 비스듬한 사진 절대 금지 ❌</h4>
+                    <p class="text-[16px] font-bold text-slate-600 leading-relaxed handwriting">
+                        건물 아래에서 위로 비스듬하게 올려다보거나, 다리를 측면 각도에서 예쁘게 찍은 풍경 사진은 <span class="text-rose-600 underline decoration-rose-300 decoration-2 underline-offset-4">대수적 모델링이 아예 불가능</span>합니다.<br>
+                        우리가 사는 3차원 공간을 비스듬히 찍으면 원근법이 적용되어 완벽한 원형 건물도 사진에서는 정체불명의 곡선으로 왜곡되기 때문입니다.
+                    </p>
+                    <div class="mt-4 inline-flex items-center gap-2 font-black text-rose-700 bg-white border border-rose-200 px-4 py-2.5 rounded-xl shadow-sm">
+                        👉 해결책: 멋없어 보이더라도 무조건 완벽한 <span class="bg-rose-100 px-1.5 py-0.5 rounded text-rose-800">단면도(Cross Section)</span>, 측면 윤곽선(Profile), 또는 <span class="bg-rose-100 px-1.5 py-0.5 rounded text-rose-800">정면도(Front Elevation)</span>를 고르세요!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 03: 활동지 세팅 꿀팁 -->
+        <section class="bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-8 sm:p-10 shadow-sm border border-emerald-200 relative mb-16 avoid-break">
+            <div class="absolute -top-5 left-10 bg-emerald-500 text-white text-sm font-black px-5 py-2 rounded-full shadow-lg tracking-wider">STEP 03</div>
+            
+            <h2 class="text-2xl font-black text-emerald-800 mb-5 flex items-center gap-2 mt-2">
+                <span class="text-3xl">🎯</span> 모델링 계산이 10배 쉬워지는 마법의 세팅
+            </h2>
+            
+            <p class="text-slate-600 text-[15px] mb-6 font-bold leading-relaxed">
+                사진을 평가 활동지 시뮬레이터(문항 1번)에 업로드했다면, 아래 원칙에 따라 이미지를 드래그하여 배치하세요. 
+            </p>
+
+            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-[2rem] border border-emerald-100 shadow-inner">
+                <h4 class="font-black text-emerald-900 text-xl mb-6 text-center">
+                    🌟 곡선의 '중심' 또는 '꼭짓점'을 무조건 원점 $(0,0)$에 일치시키세요!
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 hover:-translate-y-1 transition duration-300">
+                        <div class="font-black text-emerald-700 mb-3 flex items-center gap-2 text-lg">
+                            <span>📈</span> 포물선을 찾은 경우
+                        </div>
+                        <p class="text-[15px] font-bold text-slate-700 leading-relaxed mb-4">
+                            곡선이 가장 볼록(또는 오목)한 부분인 <span class="highlight-yellow text-slate-900 px-1">꼭짓점을 원점 $(0,0)$</span>에 정확히 맞추세요.
+                        </p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-[13px] text-slate-600 font-bold leading-relaxed">
+                            원점에 맞추지 않으면 식에 평행이동이 들어가서 $(x-m)^2 = 4p(y-n)$ 처럼 복잡해집니다. 원점에 맞추면 수식이 $x^2 = 4py$ 하나로 깔끔하게 떨어집니다.
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 hover:-translate-y-1 transition duration-300">
+                        <div class="font-black text-emerald-700 mb-3 flex items-center gap-2 text-lg">
+                            <span>🪐</span> 타원이나 쌍곡선을 찾은 경우
+                        </div>
+                        <p class="text-[15px] font-bold text-slate-700 leading-relaxed mb-4">
+                            십자 모양인 $x$축과 $y$축의 교차점이 <span class="highlight-yellow text-slate-900 px-1">도형의 완벽한 정중앙(중심)</span>이 되도록 사진을 맞추세요.
+                        </p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-[13px] text-slate-600 font-bold leading-relaxed">
+                            중심을 $(0,0)$에 맞추면 식이 기본형 $\frac{x^2}{a^2} \pm \frac{y^2}{b^2} = 1$ 이 되어 초점을 계산하기가 매우 쉬워집니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="text-center pb-20 pt-8 border-t border-slate-200 no-print">
+            <p class="text-lg font-black text-slate-800 mb-5">자, 이제 내 진로에 맞는 완벽한 검색어를 복사해서 구글로 떠나봅시다!</p>
+            <button onclick="window.open('https://images.google.com', '_blank')" class="px-10 py-4 bg-slate-900 text-white text-base font-black rounded-full hover:bg-slate-800 transition shadow-xl hover:-translate-y-1 hover:shadow-2xl">
+                구글 이미지 검색 바로가기 ↗
+            </button>
+        </div>
+
+    </div>
+
+    <!-- 복사 기능 JavaScript -->
+    <script>
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('toast-show');
+                void toast.offsetWidth; 
+                toast.classList.add('toast-show');
+                
+                const originalBg = element.style.backgroundColor;
+                element.style.backgroundColor = '#f1f5f9';
+                setTimeout(() => { element.style.backgroundColor = originalBg; }, 200);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('복사에 실패했습니다. 수동으로 복사해 주세요.');
+            });
+        }
+    </script>
+</body>
+</html>
