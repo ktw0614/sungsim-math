@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[실습용] 기하 수학 실험실 샌드박스</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard 폰트 및 고운돋움 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f0fdf4; /* 민트/그린 테마 */
+            background-image: radial-gradient(#a7f3d0 1.2px, transparent 1.2px);
+            background-size: 28px 28px;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* 실습용 워터마크 */
+        body::before {
+            content: 'PRACTICE ONLY';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 8rem;
+            color: rgba(16, 185, 129, 0.04);
+            font-weight: 900;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* 캔버스 스타일 */
+        canvas {
+            background-color: #ffffff;
+            cursor: grab;
+            touch-action: none;
+        }
+        canvas:active { cursor: grabbing; }
+
+        /* 수식 도우미 버튼 호버 효과 */
+        .math-tool-btn {
+            transition: all 0.15s ease-in-out;
+            font-family: 'Noto Serif KR', serif;
+        }
+        .math-tool-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+        }
+        .math-tool-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 수식 미리보기 뷰어 영역 */
+        .math-preview-box {
+            background-color: #f8fafc;
+            min-height: 52px;
+            font-family: 'Noto Serif KR', serif;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        textarea { 
+            resize: none; 
+            overflow: hidden; 
+            transition: border-color 0.2s, box-shadow 0.2s; 
+        }
+
+        /* 인쇄 최적화 - UI 요소 숨김 및 렌더링 화면 최적화 */
+        @media print {
+            body { background: white !important; background-image: none !important; }
+            body::before { display: none !important; }
+            .no-print { display: none !important; }
+            .print-clean { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+            .page-break { page-break-before: always; }
+            .avoid-break { page-break-inside: avoid; }
+            
+            /* 핵심: 인쇄 시 텍스트 입력창 숨기기 */
+            textarea { display: none !important; }
+            
+            /* 점 P 좌표 입력창 인쇄 최적화 */
+            input[type="text"] {
+                border: none !important;
+                border-bottom: 1px solid #94a3b8 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0 4px !important;
+                font-size: 11pt !important;
+            }
+            
+            /* 핵심: 미리보기 창의 배경과 테두리를 없애서 깔끔한 문서처럼 출력 */
+            .math-preview-box { 
+                display: block !important;
+                border: none !important; 
+                background: transparent !important; 
+                padding: 0 !important; 
+                box-shadow: none !important;
+                min-height: auto !important;
+                font-size: 11pt !important;
+            }
+            .preview-label { display: none !important; }
+
+            .sim-container { flex-direction: column !important; border: none !important; }
+            .sim-controls { width: 100% !important; height: auto !important; border: none !important; }
+        }
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased py-8 px-3 sm:px-6">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+
+        <!-- 상단 헤더 카드 -->
+        <header class="bg-white/95 backdrop-blur-sm rounded-[2rem] shadow-[0_10px_30px_rgba(16,185,129,0.08)] border-2 border-emerald-100 p-6 sm:p-10 relative overflow-hidden print-clean avoid-break">
+            <div class="absolute -right-12 -top-12 w-48 h-48 bg-gradient-to-br from-emerald-200/40 via-teal-200/40 to-green-200/40 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-black mb-3 shadow-sm">
+                        <span class="animate-pulse">🧪 실습 1차시 샌드박스</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                        기하 수학 실험실 (실습용)
+                    </h1>
+                    <p class="text-slate-500 font-semibold text-sm sm:text-base mt-1">
+                        본 평가를 위한 시뮬레이터 조작 및 수식 입력기 숙달 훈련
+                    </p>
+                </div>
+
+                <!-- 학생 인적사항 입력란 -->
+                <div class="bg-slate-50/80 border border-slate-200 p-4 rounded-2xl flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0 shadow-inner">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-500">학번</label>
+                        <input type="text" placeholder="예: 20101" class="w-24 sm:w-28 px-3 py-1.5 text-center text-sm font-bold bg-white border border-slate-300 rounded-xl focus:border-emerald-500 focus:outline-none transition shadow-sm">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-500">성명</label>
+                        <input type="text" placeholder="홍길동" class="w-24 sm:w-28 px-3 py-1.5 text-center text-sm font-bold bg-white border border-slate-300 rounded-xl focus:border-emerald-500 focus:outline-none transition shadow-sm">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 문항 1: 공학 도구를 활용한 이차곡선 모델링 -->
+        <section class="bg-white rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200 p-6 sm:p-8 print-clean avoid-break">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2 mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-black text-sm flex items-center justify-center shadow-md shadow-emerald-200">1</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-800">이차곡선 시뮬레이터 조작 훈련</h2>
+                </div>
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 self-start sm:self-auto shadow-sm no-print">[실습 모드]</span>
+            </div>
+
+            <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 mb-6 text-sm text-slate-700 leading-relaxed flex items-start gap-2.5 no-print">
+                <span class="text-lg">💡</span>
+                <div>
+                    <strong>실습 안내:</strong> 본 평가에서는 직접 사진을 업로드하지만, 1차시 실습에서는 <strong>제공된 3가지 샘플 버튼</strong> 중 하나를 클릭하여 불러오세요.<br class="hidden sm:inline">
+                    샘플을 불러온 후, 사진 크기를 미세 조절하고 <strong>형태 결정 상수를 정수로 세팅</strong>하는 훈련을 진행합니다.
+                </div>
+            </div>
+
+            <!-- 시뮬레이터 본체 -->
+            <div class="w-full bg-slate-50 rounded-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200 sim-container">
+                
+                <!-- 좌측 컨트롤 패널 -->
+                <div class="w-full lg:w-[380px] bg-white border-r border-slate-200 flex flex-col sim-controls">
+                    
+                    <!-- 샘플 이미지 로드 및 미세 이동 (인쇄 시 숨김) -->
+                    <div class="p-4 border-b border-slate-100 no-print">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-black text-slate-700">🖼 실습용 샘플 불러오기</label>
+                            <button type="button" onclick="resetSimulator()" class="px-2.5 py-1 bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 text-[10px] font-black rounded-lg border border-slate-200 transition shadow-sm flex items-center gap-1">
+                                <span class="text-sm leading-none">↺</span> 초기화
+                            </button>
+                        </div>
+                        
+                        <!-- 샘플 버튼 -->
+                        <div class="grid grid-cols-3 gap-1.5 mb-2">
+                            <button type="button" onclick="loadSample('parabola')" class="py-2 text-[11px] font-bold rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition shadow-sm">샘플1(포물선)</button>
+                            <button type="button" onclick="loadSample('ellipse')" class="py-2 text-[11px] font-bold rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition shadow-sm">샘플2(타원)</button>
+                            <button type="button" onclick="loadSample('hyperbola')" class="py-2 text-[11px] font-bold rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition shadow-sm">샘플3(쌍곡선)</button>
+                        </div>
+
+                        <!-- 다운로드 버튼 (학생들이 3번 문항 프롬프트 연습을 위해 다운받을 수 있게 함) -->
+                        <button type="button" onclick="downloadSampleImage()" class="w-full py-2 text-[11px] font-black rounded-lg border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 transition shadow-sm flex items-center justify-center gap-1 mb-4 no-print">
+                            <span>⬇️</span> AI 질문용 원본 이미지 다운로드 (.png)
+                        </button>
+                        
+                        <!-- 슬라이더: 투명도 & 크기 -->
+                        <div class="grid grid-cols-2 gap-2.5 mb-3">
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                <div class="flex justify-between text-[11px] font-bold text-slate-600 mb-1">
+                                    <span>투명도</span>
+                                    <span id="val-opacity" class="text-emerald-600">50%</span>
+                                </div>
+                                <input type="range" id="slider-opacity" min="0" max="100" value="50" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-100 shadow-inner ring-1 ring-emerald-100">
+                                <div class="flex justify-between text-[11px] font-bold text-slate-600 mb-1">
+                                    <span>크기 조절</span>
+                                    <span id="val-scale" class="text-emerald-600 font-mono">1.00x</span>
+                                </div>
+                                <input type="range" id="slider-scale" min="0.1" max="3" step="0.01" value="1" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+                        </div>
+
+                        <!-- 1px 미세 조정 패드 -->
+                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold text-slate-600 text-center mb-1.5">위치 미세 조정 (1px씩 이동)</span>
+                            <div class="flex flex-col items-center gap-1">
+                                <button type="button" onclick="nudgeImage(0, -1)" class="w-8 h-6 bg-white border border-slate-200 rounded-md text-xs font-bold text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center">▲</button>
+                                <div class="flex gap-1">
+                                    <button type="button" onclick="nudgeImage(-1, 0)" class="w-8 h-6 bg-white border border-slate-200 rounded-md text-xs font-bold text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center">◀</button>
+                                    <button type="button" onclick="nudgeImage(0, 1)" class="w-8 h-6 bg-white border border-slate-200 rounded-md text-xs font-bold text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center">▼</button>
+                                    <button type="button" onclick="nudgeImage(1, 0)" class="w-8 h-6 bg-white border border-slate-200 rounded-md text-xs font-bold text-slate-700 hover:bg-slate-100 shadow-sm flex items-center justify-center">▶</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 곡선 종류 선택 (인쇄 시 숨김) -->
+                    <div class="p-4 border-b border-slate-100 no-print">
+                        <label class="block text-xs font-black text-slate-700 mb-2">곡선 종류 선택</label>
+                        <div class="grid grid-cols-3 gap-1.5 mb-2.5">
+                            <button type="button" id="btn-type-parabola" onclick="setConicType('parabola')" class="py-2 text-xs font-bold rounded-xl border border-emerald-600 bg-emerald-600 text-white shadow-sm transition">포물선</button>
+                            <button type="button" id="btn-type-ellipse" onclick="setConicType('ellipse')" class="py-2 text-xs font-bold rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition">타원</button>
+                            <button type="button" id="btn-type-hyperbola" onclick="setConicType('hyperbola')" class="py-2 text-xs font-bold rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition">쌍곡선</button>
+                        </div>
+                        <div id="orientation-toggle" class="flex bg-slate-100 p-1 rounded-xl">
+                            <button type="button" id="btn-dir-1" onclick="setDirection(1)" class="flex-1 py-1 text-xs font-bold bg-white text-emerald-700 rounded-lg shadow-sm">상/하 방향 ($x^2$)</button>
+                            <button type="button" id="btn-dir-2" onclick="setDirection(-1)" class="flex-1 py-1 text-xs font-bold text-slate-500 hover:text-slate-800">좌/우 방향 ($y^2$)</button>
+                        </div>
+                    </div>
+
+                    <!-- 매개변수 조절 (정수형 고정, 인쇄 시 숨김) -->
+                    <div class="p-4 flex-1 no-print">
+                        <label class="block text-xs font-black text-slate-700 mb-2 flex items-center justify-between">
+                            <span>형태 결정 상수</span>
+                            <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 rounded">정수 1 단위</span>
+                        </label>
+                        <div class="space-y-3">
+                            <div id="param-p-container" class="bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100">
+                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                    <span>초점 매개변수 ($p$)</span>
+                                    <span id="val-p" class="font-mono text-emerald-600 font-bold bg-white px-1.5 rounded shadow-sm">2</span>
+                                </div>
+                                <input type="range" id="slider-p" min="-10" max="10" step="1" value="2" class="w-full h-1.5 bg-emerald-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                            </div>
+
+                            <div id="param-ab-container" class="hidden space-y-2.5">
+                                <div class="bg-teal-50/50 p-2.5 rounded-xl border border-teal-100">
+                                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                        <span>x축 방향 상수 ($a$)</span>
+                                        <span id="val-a" class="font-mono text-teal-600 font-bold bg-white px-1.5 rounded shadow-sm">5</span>
+                                    </div>
+                                    <input type="range" id="slider-a" min="1" max="20" step="1" value="5" class="w-full h-1.5 bg-teal-200 rounded-lg appearance-none cursor-pointer accent-teal-600">
+                                </div>
+                                <div class="bg-green-50/50 p-2.5 rounded-xl border border-green-100">
+                                    <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                        <span>y축 방향 상수 ($b$)</span>
+                                        <span id="val-b" class="font-mono text-green-600 font-bold bg-white px-1.5 rounded shadow-sm">3</span>
+                                    </div>
+                                    <input type="range" id="slider-b" min="1" max="20" step="1" value="3" class="w-full h-1.5 bg-green-200 rounded-lg appearance-none cursor-pointer accent-green-600">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 도출된 방정식 디스플레이 (인쇄 시 배경색/글자색 반전 최적화) -->
+                    <div class="p-4 bg-slate-900 text-white rounded-b-2xl lg:rounded-none print:bg-white print:text-slate-800 print:border print:border-slate-200 print:rounded-2xl">
+                        <span class="block text-[11px] font-bold text-emerald-300 uppercase tracking-wider mb-1 text-center print:text-slate-500">🎯 도출된 최종 방정식</span>
+                        <div id="equation-display" class="py-3 px-2 text-center text-lg sm:text-xl font-bold text-emerald-400 bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto whitespace-nowrap min-h-[56px] flex items-center justify-center print:bg-transparent print:text-black print:border-none print:shadow-none">
+                            <!-- JS MathJax rendering -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 캔버스 영역 -->
+                <div class="flex-1 p-3 sm:p-5 flex items-center justify-center bg-slate-100/70 min-h-[420px] print:bg-white print:p-0 print:min-h-0 print:mt-4">
+                    <div class="w-full h-full max-w-[650px] aspect-square rounded-2xl bg-white shadow-sm border border-slate-200 overflow-hidden flex items-center justify-center relative cursor-crosshair print:border-2 print:border-slate-300">
+                        <canvas id="mathCanvas" width="800" height="800" class="w-full h-full object-contain"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 문항 2: 방정식의 수학적 분석 및 대수적 검증 -->
+        <section class="bg-white rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200 p-6 sm:p-8 print-clean">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2 mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white font-black text-sm flex items-center justify-center shadow-md shadow-emerald-200">2</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-800">방정식의 수학적 분석 및 대수적 검증</h2>
+                </div>
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 self-start sm:self-auto shadow-sm no-print">[실습 모드]</span>
+            </div>
+
+            <div class="space-y-8">
+                
+                <!-- 2-1 대수적 검증 -->
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 avoid-break print:bg-white print:border-none print:p-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 print:hidden"></span>
+                            2-1. 곡선 위의 점 대입을 통한 대수적 검증
+                        </h3>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed bg-white p-3 rounded-lg border border-slate-100 print:bg-transparent print:border-none print:p-0 print:mb-2">
+                        그래프 상에서 뚜렷하게 관찰되는 <strong>점 $P$의 좌표</strong>를 읽고, 도출된 방정식에 대입하여 좌변과 우변이 정확히 일치하는지 논리적으로 검증하세요.
+                    </p>
+
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex items-center gap-2 mb-4 text-sm font-bold shadow-sm inline-flex print:border-none print:shadow-none print:p-0 print:bg-transparent print:mb-2">
+                        <span class="text-slate-700">곡선 위의 점 $P$ : (</span>
+                        <input type="text" placeholder="x좌표" class="w-20 px-2 py-1 text-center bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500 shadow-inner">
+                        <span class="text-slate-700">,</span>
+                        <input type="text" placeholder="y좌표" class="w-20 px-2 py-1 text-center bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500 shadow-inner">
+                        <span class="text-slate-700">)</span>
+                    </div>
+
+                    <!-- 수식 툴바 (인쇄 시 숨김) -->
+                    <div class="mb-2 no-print">
+                        <div class="text-[11px] font-bold text-slate-500 mb-1.5 flex items-center gap-1.5">
+                            <span>⌨️ 수식 입력 도우미 (클릭 시 삽입)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 bg-white p-2 rounded-xl border border-slate-200 shadow-inner">
+                            <button type="button" onclick="insertSymbol('calc-text-1', 'x_1')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$x_1$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', 'y_1')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$y_1$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', 'x^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$x^2$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', 'y^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$y^2$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '\\frac{a}{b}')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$\frac{a}{b}$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '=')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$=$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '\\neq')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$\neq$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '\\therefore')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">$\therefore$</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '\\text{좌변}=')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">좌변=</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '\\text{우변}=')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">우변=</button>
+                            <button type="button" onclick="insertSymbol('calc-text-1', '$$')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-100 hover:bg-emerald-100 hover:text-emerald-700 rounded-lg border border-slate-200">수식블록($$)</button>
+                        </div>
+                    </div>
+
+                    <!-- 입력창 (인쇄 시 숨김) -->
+                    <textarea id="calc-text-1" oninput="renderMathPreview('calc-text-1', 'calc-preview-1'); resizeTextarea(this);" rows="4" class="w-full p-3.5 text-[15px] rounded-xl border border-slate-300 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition leading-relaxed bg-white shadow-inner" placeholder="🚨 주의: 한글은 반드시 수식 기호 $ 밖에 적어주세요! (수식 안에 한글을 넣으면 글자가 깨집니다)&#10;&#10;[대입 및 증명 과정 서술]&#10;1. 도출된 방정식에 점 P의 좌표 대입&#10;2. 좌변의 계산 결과 확인&#10;3. 우변의 계산 결과 확인&#10;4. 최종 검증 결론 (좌변과 우변의 일치 여부)"></textarea>
+
+                    <!-- 미리보기 창 (인쇄 시 이것만 남음) -->
+                    <div class="mt-2.5">
+                        <span class="preview-label block text-[11px] font-bold text-emerald-600 mb-1 no-print">✨ 실시간 수식 미리보기 (인쇄 화면)</span>
+                        <div id="calc-preview-1" class="math-preview-box p-4 rounded-xl border border-slate-200 text-[15px] text-slate-800 leading-relaxed shadow-sm bg-white">
+                            <span class="text-slate-400 text-xs italic no-print">위 입력창에 서술과 수식을 작성하면 이곳에 수식이 깔끔하게 렌더링됩니다.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2-2 기하학적 특징 추출 -->
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-5 sm:p-6 avoid-break print:bg-white print:border-none print:p-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 print:hidden"></span>
+                            2-2. 기하학적 핵심 구성 요소 도출 및 계산
+                        </h3>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed print:mb-2">
+                        자신이 모델링한 이차곡선 종류를 선택하고, 교과서 정의에 따른 <strong>2가지 핵심 구성 요소</strong>를 정확히 계산하여 서술하세요.
+                    </p>
+
+                    <div class="flex flex-wrap gap-2 sm:gap-3 mb-4 print:hidden">
+                        <label class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-400 transition text-xs sm:text-sm font-bold text-slate-700 shadow-sm">
+                            <input type="radio" name="conic-feature-type" value="parabola" onchange="updateFeatureHint('parabola')" class="accent-emerald-600">
+                            <span>포물선 (초점, 준선)</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-400 transition text-xs sm:text-sm font-bold text-slate-700 shadow-sm">
+                            <input type="radio" name="conic-feature-type" value="ellipse" onchange="updateFeatureHint('ellipse')" class="accent-emerald-600">
+                            <span>타원 (초점, 장축의 길이)</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-emerald-400 transition text-xs sm:text-sm font-bold text-slate-700 shadow-sm">
+                            <input type="radio" name="conic-feature-type" value="hyperbola" onchange="updateFeatureHint('hyperbola')" class="accent-emerald-600">
+                            <span>쌍곡선 (초점, 주축의 길이)</span>
+                        </label>
+                    </div>
+
+                    <!-- 2-2 전용 동적 툴바 -->
+                    <div class="mb-2 no-print">
+                        <div class="text-[11px] font-bold text-slate-500 mb-1.5 flex items-center justify-between">
+                            <span>⌨ 기하 특화 수식 도우미</span>
+                            <span id="feature-target-badge" class="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 text-[10px]">곡선을 선택해주세요</span>
+                        </div>
+                        <div id="dynamic-toolbar-container" class="flex flex-wrap gap-1.5 bg-white p-2 rounded-xl border border-slate-200 shadow-inner min-h-[46px] items-center">
+                            <span class="text-xs text-slate-400 font-medium italic px-2">위에서 곡선의 종류를 선택하면 관련된 공식 버튼이 마법처럼 나타납니다. ✨</span>
+                        </div>
+                    </div>
+
+                    <textarea id="calc-text-2" oninput="renderMathPreview('calc-text-2', 'calc-preview-2'); resizeTextarea(this);" rows="4" class="w-full p-3.5 text-[15px] rounded-xl border border-slate-300 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100 transition leading-relaxed bg-white shadow-inner" placeholder="🚨 주의: 한글은 반드시 수식 기호 $ 밖에 적어주세요!&#10;&#10;[핵심 구성 요소 계산 과정 서술]&#10;1. 도출된 방정식의 형태 결정 상수 확인&#10;2. 첫 번째 핵심 구성 요소(예: 초점) 계산 과정 및 결과&#10;3. 두 번째 핵심 구성 요소(예: 준선, 축의 길이 등) 계산 과정 및 결과"></textarea>
+
+                    <div class="mt-2.5">
+                        <span class="preview-label block text-[11px] font-bold text-emerald-600 mb-1 no-print">✨ 실시간 렌더링 결과 (인쇄용)</span>
+                        <div id="calc-preview-2" class="math-preview-box p-4 rounded-xl border border-slate-200 text-[15px] text-slate-800 leading-relaxed shadow-sm bg-white">
+                            <span class="text-slate-400 text-xs italic no-print">작성하신 계산 과정과 수식이 여기에 깔끔하게 표시됩니다.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 문항 3: 생성형 AI 답변 비판 및 교정 논술 (본 평가지 100% 이식) -->
+        <section class="bg-white rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-slate-200 p-6 sm:p-8 print-clean">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2 mb-6">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 text-white font-black text-sm flex items-center justify-center shadow-md shadow-sky-200">3</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-800">생성형 AI 답변 비판 및 교정 논술</h2>
+                </div>
+                <span class="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100 self-start sm:self-auto shadow-sm no-print">[실습 모드]</span>
+            </div>
+
+            <!-- 논술 3단계 작성 컨테이너 -->
+            <div class="space-y-6">
+                <!-- 1단계 -->
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 sm:p-5 avoid-break print:bg-white print:border-none print:p-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs sm:text-sm font-black text-slate-700 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center font-bold shadow-sm print:hidden">1</span>
+                            [1단계] AI 주장 요약
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-medium no-print">AI가 어떤 시각적 특징을 보고 무엇이라 답했는가?</span>
+                    </div>
+                    <textarea id="essay-1" oninput="updateCharCount(this, 'count-1'); renderMathPreview('essay-1', 'essay-preview-1'); resizeTextarea(this);" rows="3" class="w-full p-3.5 text-[15px] rounded-xl border border-slate-300 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition leading-relaxed bg-white shadow-inner" placeholder="AI가 제시한 핵심 주장과 판단 근거를 요약하여 서술하시오."></textarea>
+                    <div class="flex justify-end mt-1.5 pr-2 no-print"><span id="count-1" class="text-[11px] font-bold text-slate-400">0 자</span></div>
+                    
+                    <div class="mt-2.5">
+                        <span class="preview-label block text-[11px] font-bold text-sky-600 mb-1 no-print">✨ 실시간 렌더링 결과 (인쇄용)</span>
+                        <div id="essay-preview-1" class="math-preview-box p-4 rounded-xl border border-slate-200 text-[15px] text-slate-800 leading-relaxed shadow-sm bg-white">
+                            <span class="text-slate-400 text-xs italic no-print">작성하신 내용이 이곳에 깔끔하게 표시됩니다.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2단계 -->
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 sm:p-5 avoid-break print:bg-white print:border-none print:p-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs sm:text-sm font-black text-slate-700 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center font-bold shadow-sm print:hidden">2</span>
+                            [2단계] 수학적 비판 및 타당성 분석
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-medium no-print">교과서의 기하학적 정의를 기준으로 무엇이 결여/타당한가?</span>
+                    </div>
+                    <textarea id="essay-2" oninput="updateCharCount(this, 'count-2'); renderMathPreview('essay-2', 'essay-preview-2'); resizeTextarea(this);" rows="4" class="w-full p-3.5 text-[15px] rounded-xl border border-slate-300 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition leading-relaxed bg-white shadow-inner" placeholder="기하 교과서의 수학적 정의를 근거로 AI 분석의 오류를 꼬집거나 타당성을 분석하시오."></textarea>
+                    <div class="flex justify-end mt-1.5 pr-2 no-print"><span id="count-2" class="text-[11px] font-bold text-slate-400">0 자</span></div>
+
+                    <div class="mt-2.5">
+                        <span class="preview-label block text-[11px] font-bold text-sky-600 mb-1 no-print">✨ 실시간 렌더링 결과 (인쇄용)</span>
+                        <div id="essay-preview-2" class="math-preview-box p-4 rounded-xl border border-slate-200 text-[15px] text-slate-800 leading-relaxed shadow-sm bg-white">
+                            <span class="text-slate-400 text-xs italic no-print">작성하신 내용이 이곳에 깔끔하게 표시됩니다.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3단계 -->
+                <div class="bg-slate-50/70 border border-slate-200 rounded-2xl p-4 sm:p-5 avoid-break print:bg-white print:border-none print:p-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs sm:text-sm font-black text-slate-700 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center font-bold shadow-sm print:hidden">3</span>
+                            [3단계] 최종 교정 및 확증
+                        </label>
+                        <span class="text-[11px] text-slate-400 font-medium no-print">내가 직접 도출한 방정식과 계산 결과로 어떻게 입증하는가?</span>
+                    </div>
+                    <textarea id="essay-3" oninput="updateCharCount(this, 'count-3'); renderMathPreview('essay-3', 'essay-preview-3'); resizeTextarea(this);" rows="4" class="w-full p-3.5 text-[15px] rounded-xl border border-slate-300 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition leading-relaxed bg-white shadow-inner" placeholder="본인이 직접 모델링하여 얻은 수식과 기하학적 수치를 바탕으로 AI 답변을 올바르게 교정하거나 확증하시오."></textarea>
+                    <div class="flex justify-end mt-1.5 pr-2 no-print"><span id="count-3" class="text-[11px] font-bold text-slate-400">0 자</span></div>
+
+                    <div class="mt-2.5">
+                        <span class="preview-label block text-[11px] font-bold text-sky-600 mb-1 no-print">✨ 실시간 렌더링 결과 (인쇄용)</span>
+                        <div id="essay-preview-3" class="math-preview-box p-4 rounded-xl border border-slate-200 text-[15px] text-slate-800 leading-relaxed shadow-sm bg-white">
+                            <span class="text-slate-400 text-xs italic no-print">작성하신 내용이 이곳에 깔끔하게 표시됩니다.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 최종 제출 및 PDF 저장 버튼 영역 -->
+        <div class="text-center py-6 no-print border-t border-slate-200 mt-8">
+            <button type="button" onclick="prepareAndPrint()" class="inline-flex items-center gap-2.5 px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white text-lg font-black rounded-full shadow-2xl hover:shadow-xl transition transform hover:-translate-y-1 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>실습 완료 및 PDF 저장 연습 (인쇄)</span>
+            </button>
+            <p class="text-xs text-slate-500 mt-4 font-bold">
+                * 인쇄 설정에서 '대상'을 <strong class="text-emerald-600 font-black">'PDF로 저장'</strong>으로 선택하시면 작성된 수식과 함께 전자 문서로 보관됩니다.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 이차곡선 캔버스 시뮬레이터 로직
+        // ==========================================
+        const canvas = document.getElementById('mathCanvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 40; // 1단위 = 40px
+        const originX = canvas.width / 2;
+        const originY = canvas.height / 2;
+
+        // 정수 모델링 전용 State
+        let state = {
+            type: 'parabola',
+            direction: 1,
+            p: 2,  a: 5,  b: 3,
+            img: {
+                obj: null,
+                x: 0, y: 0,
+                scale: 1.0,
+                opacity: 0.5,
+                isDragging: false,
+                dragStartX: 0, dragStartY: 0
+            }
+        };
+
+        const els = {
+            opSlider: document.getElementById('slider-opacity'), scSlider: document.getElementById('slider-scale'),
+            opVal: document.getElementById('val-opacity'), scVal: document.getElementById('val-scale'),
+            pSlider: document.getElementById('slider-p'), aSlider: document.getElementById('slider-a'), bSlider: document.getElementById('slider-b'),
+            pVal: document.getElementById('val-p'), aVal: document.getElementById('val-a'), bVal: document.getElementById('val-b'),
+            eqDisplay: document.getElementById('equation-display'),
+            pContainer: document.getElementById('param-p-container'), abContainer: document.getElementById('param-ab-container'),
+            dir1: document.getElementById('btn-dir-1'), dir2: document.getElementById('btn-dir-2'), dirToggle: document.getElementById('orientation-toggle')
+        };
+
+        // 초기화 기능
+        window.resetSimulator = function() {
+            state.type = 'parabola'; state.direction = 1; state.p = 2; state.a = 5; state.b = 3;
+            state.img.opacity = 0.5;
+            
+            if (state.img.obj) {
+                const padding = 100;
+                const targetWidth = canvas.width - padding; const targetHeight = canvas.height - padding;
+                const scaleX = targetWidth / state.img.obj.width; const scaleY = targetHeight / state.img.obj.height;
+                let initialScale = Math.min(scaleX, scaleY);
+                initialScale = Math.max(0.1, Math.min(initialScale, 3.0));
+                
+                state.img.scale = initialScale;
+                els.scSlider.value = initialScale; els.scVal.innerText = initialScale.toFixed(2) + 'x';
+                state.img.x = canvas.width / 2 - (state.img.obj.width * state.img.scale) / 2;
+                state.img.y = canvas.height / 2 - (state.img.obj.height * state.img.scale) / 2;
+            }
+            
+            els.opSlider.value = 50; els.opVal.innerText = '50%';
+            els.pSlider.value = 2; els.pVal.innerText = '2'; els.aSlider.value = 5; els.aVal.innerText = '5'; els.bSlider.value = 3; els.bVal.innerText = '3';
+            setConicType('parabola');
+        };
+
+        // 미세 조정
+        window.nudgeImage = function(dx, dy) {
+            if (!state.img.obj) return;
+            state.img.x += dx; state.img.y += dy;
+            render();
+        };
+
+        // Base64 SVG Image Data (CORS 및 로컬 실행 에러 원천 차단)
+        const svgs = {
+            parabola: "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" fill="#e0f2fe"/><rect y="250" width="400" height="50" fill="#0284c7"/><path d="M 50 250 Q 200 50 350 250" stroke="#dc2626" stroke-width="8" fill="none"/><rect x="40" y="50" width="20" height="200" fill="#dc2626"/><rect x="340" y="50" width="20" height="200" fill="#dc2626"/></svg>'),
+            ellipse: "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" fill="#166534"/><ellipse cx="200" cy="150" rx="160" ry="100" stroke="#ffffff" stroke-width="6" fill="#fcd34d"/><ellipse cx="200" cy="150" rx="140" ry="80" stroke="#ffffff" stroke-width="2" fill="#22c55e"/></svg>'),
+            hyperbola: "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#e0f2fe"/><path d="M 100 400 Q 160 200 120 50 L 280 50 Q 240 200 300 400 Z" fill="#94a3b8" stroke="#475569" stroke-width="4"/><line x1="120" y1="50" x2="280" y2="50" stroke="#475569" stroke-width="8"/></svg>')
+        };
+
+        // 샘플 이미지 로드 함수
+        window.loadSample = function(type) {
+            const img = new Image();
+            img.onload = function() {
+                state.img.obj = img;
+                
+                const padding = 100;
+                const targetWidth = canvas.width - padding; const targetHeight = canvas.height - padding;
+                const scaleX = targetWidth / img.width; const scaleY = targetHeight / img.height;
+                let initialScale = Math.min(scaleX, scaleY);
+                initialScale = Math.max(0.1, Math.min(initialScale, 3.0));
+                
+                state.img.scale = initialScale;
+                els.scSlider.value = initialScale; els.scVal.innerText = initialScale.toFixed(2) + 'x';
+                
+                state.img.x = canvas.width / 2 - (img.width * state.img.scale) / 2;
+                state.img.y = canvas.height / 2 - (img.height * state.img.scale) / 2;
+                
+                setConicType(type); // 자동 렌더링 호출
+            };
+            img.src = svgs[type];
+        };
+
+        // AI 질문용 이미지 다운로드 기능 (PNG 파일 변환)
+        window.downloadSampleImage = function() {
+            if (!state.img.obj) {
+                alert('먼저 실습용 샘플을 하나 불러와주세요.');
+                return;
+            }
+            
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.img.obj.width;
+            tempCanvas.height = state.img.obj.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCtx.fillStyle = '#ffffff';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            tempCtx.drawImage(state.img.obj, 0, 0);
+            
+            const link = document.createElement('a');
+            link.href = tempCanvas.toDataURL('image/png');
+            link.download = `기하_실습용_샘플_${state.type}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // 슬라이더 이벤트
+        els.opSlider.addEventListener('input', (e) => { state.img.opacity = e.target.value / 100; els.opVal.innerText = e.target.value + '%'; render(); });
+        els.scSlider.addEventListener('input', (e) => {
+            const oldScale = state.img.scale; state.img.scale = parseFloat(e.target.value); els.scVal.innerText = state.img.scale.toFixed(2) + 'x';
+            if (state.img.obj) {
+                const cx = state.img.x + (state.img.obj.width * oldScale) / 2; const cy = state.img.y + (state.img.obj.height * oldScale) / 2;
+                state.img.x = cx - (state.img.obj.width * state.img.scale) / 2; state.img.y = cy - (state.img.obj.height * state.img.scale) / 2;
+            } render();
+        });
+
+        function bindParamSlider(slider, displayEl, key) {
+            slider.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value, 10);
+                if (key === 'p' && val === 0) { val = 1; e.target.value = 1; }
+                state[key] = val; displayEl.innerText = val; updateEquationText(); render();
+            });
+        }
+        bindParamSlider(els.pSlider, els.pVal, 'p'); bindParamSlider(els.aSlider, els.aVal, 'a'); bindParamSlider(els.bSlider, els.bVal, 'b');
+
+        // 드래그 로직
+        function getCanvasPos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height;
+            const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX; const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+            return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+        }
+        function onDragStart(evt) {
+            if (!state.img.obj) return;
+            const pos = getCanvasPos(evt);
+            const w = state.img.obj.width * state.img.scale; const h = state.img.obj.height * state.img.scale;
+            if (pos.x >= state.img.x && pos.x <= state.img.x + w && pos.y >= state.img.y && pos.y <= state.img.y + h) {
+                state.img.isDragging = true; state.img.dragStartX = pos.x - state.img.x; state.img.dragStartY = pos.y - state.img.y;
+            }
+        }
+        function onDragMove(evt) {
+            if (state.img.isDragging) { const pos = getCanvasPos(evt); state.img.x = pos.x - state.img.dragStartX; state.img.y = pos.y - state.img.dragStartY; render(); }
+        }
+        function onDragEnd() { state.img.isDragging = false; }
+        canvas.addEventListener('mousedown', onDragStart); canvas.addEventListener('mousemove', onDragMove); window.addEventListener('mouseup', onDragEnd);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); onDragStart(e); }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); onDragMove(e); }, { passive: false }); window.addEventListener('touchend', onDragEnd);
+
+        // 곡선 설정
+        window.setConicType = function(type) {
+            state.type = type;
+            ['parabola', 'ellipse', 'hyperbola'].forEach(t => {
+                const btn = document.getElementById(`btn-type-${t}`);
+                if (t === type) btn.className = 'py-2 text-xs font-bold rounded-xl border border-emerald-600 bg-emerald-600 text-white shadow-sm transition';
+                else btn.className = 'py-2 text-xs font-bold rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition';
+            });
+
+            if (type === 'parabola') {
+                els.pContainer.style.display = 'block'; els.abContainer.style.display = 'none'; els.dirToggle.style.display = 'flex';
+                els.dir1.innerText = '상/하 방향 ($x^2$)'; els.dir2.innerText = '좌/우 방향 ($y^2$)';
+            } else if (type === 'ellipse') {
+                els.pContainer.style.display = 'none'; els.abContainer.style.display = 'block'; els.dirToggle.style.display = 'none';
+            } else if (type === 'hyperbola') {
+                els.pContainer.style.display = 'none'; els.abContainer.style.display = 'block'; els.dirToggle.style.display = 'flex';
+                els.dir1.innerText = '좌/우 쌍곡선 (= 1)'; els.dir2.innerText = '상/하 쌍곡선 (= -1)';
+            }
+            state.direction = 1; updateDirectionUI(); updateEquationText(); render();
+        };
+
+        window.setDirection = function(dir) { state.direction = dir; updateDirectionUI(); updateEquationText(); render(); };
+
+        function updateDirectionUI() {
+            if (state.direction === 1) {
+                els.dir1.className = 'flex-1 py-1 text-xs font-bold bg-white text-emerald-700 rounded-lg shadow-sm';
+                els.dir2.className = 'flex-1 py-1 text-xs font-bold text-slate-500 hover:text-slate-800';
+            } else {
+                els.dir2.className = 'flex-1 py-1 text-xs font-bold bg-white text-emerald-700 rounded-lg shadow-sm';
+                els.dir1.className = 'flex-1 py-1 text-xs font-bold text-slate-500 hover:text-slate-800';
+            }
+        }
+
+        function updateEquationText() {
+            const { type, direction, p, a, b } = state;
+            let latexStr = "";
+            if (type === 'parabola') {
+                const fourP = 4 * p;
+                latexStr = direction === 1 ? `$$x^2 = ${fourP}y$$` : `$$y^2 = ${fourP}x$$`;
+            } else if (type === 'ellipse') {
+                const a2 = a * a; const b2 = b * b;
+                latexStr = `$$\\frac{x^2}{${a2}} + \\frac{y^2}{${b2}} = 1$$`;
+            } else if (type === 'hyperbola') {
+                const a2 = a * a; const b2 = b * b;
+                const rhs = direction === 1 ? "1" : "-1";
+                latexStr = `$$\\frac{x^2}{${a2}} - \\frac{y^2}{${b2}} = ${rhs}$$`;
+            }
+            els.eqDisplay.innerHTML = latexStr;
+            if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([els.eqDisplay]).catch(() => {});
+        }
+
+        function toCanvasX(x) { return originX + x * scale; } function toCanvasY(y) { return originY - y * scale; }
+
+        function drawGrid() {
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const startX = -Math.ceil(canvas.width / 2 / scale); const endX = Math.ceil(canvas.width / 2 / scale);
+            const startY = -Math.ceil(canvas.height / 2 / scale); const endY = Math.ceil(canvas.height / 2 / scale);
+
+            for (let i = startX; i <= endX; i++) {
+                ctx.strokeStyle = i === 0 ? '#1e293b' : 'rgba(203, 213, 225, 0.45)'; ctx.lineWidth = i === 0 ? 2 : 1;
+                ctx.beginPath(); ctx.moveTo(toCanvasX(i), 0); ctx.lineTo(toCanvasX(i), canvas.height); ctx.stroke();
+                if (i !== 0 && i % 5 === 0) { ctx.fillStyle = '#94a3b8'; ctx.font = '12px sans-serif'; ctx.fillText(i, toCanvasX(i) + 4, originY + 15); }
+            }
+            for (let i = startY; i <= endY; i++) {
+                ctx.strokeStyle = i === 0 ? '#1e293b' : 'rgba(203, 213, 225, 0.45)'; ctx.lineWidth = i === 0 ? 2 : 1;
+                ctx.beginPath(); ctx.moveTo(0, toCanvasY(i)); ctx.lineTo(canvas.width, toCanvasY(i)); ctx.stroke();
+                if (i !== 0 && i % 5 === 0) { ctx.fillStyle = '#94a3b8'; ctx.font = '12px sans-serif'; ctx.fillText(i, originX + 5, toCanvasY(i) - 4); }
+            }
+            ctx.fillStyle = '#0f172a'; ctx.font = 'italic bold 16px sans-serif';
+            ctx.fillText('x', canvas.width - 22, originY - 8); ctx.fillText('y', originX + 8, 22); ctx.fillText('O', originX - 18, originY + 18);
+        }
+
+        function drawCurve() {
+            const { type, direction, p, a, b } = state;
+            ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 3.5;
+            if (type === 'parabola') {
+                ctx.beginPath();
+                if (direction === 1) {
+                    for (let x = -20; x <= 20; x += 0.1) { let y = (x * x) / (4 * p); if (x === -20) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); }
+                } else {
+                    for (let y = -20; y <= 20; y += 0.1) { let x = (y * y) / (4 * p); if (y === -20) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); }
+                }
+                ctx.stroke();
+            } else if (type === 'ellipse') {
+                ctx.beginPath(); ctx.ellipse(toCanvasX(0), toCanvasY(0), a * scale, b * scale, 0, 0, 2 * Math.PI); ctx.stroke();
+            } else if (type === 'hyperbola') {
+                ctx.beginPath(); ctx.strokeStyle = 'rgba(148, 163, 184, 0.7)'; ctx.lineWidth = 1.5; ctx.setLineDash([6, 6]);
+                ctx.moveTo(toCanvasX(-20), toCanvasY((b / a) * -20)); ctx.lineTo(toCanvasX(20), toCanvasY((b / a) * 20));
+                ctx.moveTo(toCanvasX(-20), toCanvasY(-(b / a) * -20)); ctx.lineTo(toCanvasX(20), toCanvasY(-(b / a) * 20));
+                ctx.stroke(); ctx.setLineDash([]);
+                ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 3.5;
+                if (direction === 1) {
+                    ctx.beginPath(); for (let t = -3; t <= 3; t += 0.05) { let x = a * Math.cosh(t), y = b * Math.sinh(t); if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); } ctx.stroke();
+                    ctx.beginPath(); for (let t = -3; t <= 3; t += 0.05) { let x = -a * Math.cosh(t), y = b * Math.sinh(t); if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); } ctx.stroke();
+                } else {
+                    ctx.beginPath(); for (let t = -3; t <= 3; t += 0.05) { let x = a * Math.sinh(t), y = b * Math.cosh(t); if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); } ctx.stroke();
+                    ctx.beginPath(); for (let t = -3; t <= 3; t += 0.05) { let x = a * Math.sinh(t), y = -b * Math.cosh(t); if (t === -3) ctx.moveTo(toCanvasX(x), toCanvasY(y)); else ctx.lineTo(toCanvasX(x), toCanvasY(y)); } ctx.stroke();
+                }
+            }
+            ctx.beginPath(); ctx.arc(toCanvasX(0), toCanvasY(0), 4, 0, Math.PI * 2); ctx.fillStyle = '#4f46e5'; ctx.fill();
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            if (state.img.obj) {
+                ctx.save(); ctx.globalAlpha = state.img.opacity;
+                ctx.drawImage(state.img.obj, state.img.x, state.img.y, state.img.obj.width * state.img.scale, state.img.obj.height * state.img.scale);
+                ctx.restore();
+            }
+            drawCurve();
+        }
+
+        // 초기 시작 시 캔버스 렌더링을 위해 명시적 호출
+        window.onload = function() {
+            setConicType('parabola');
+        };
+
+        // ==========================================
+        // 2. 글자 수 카운터 및 수식 입력 도우미 (동적 툴바)
+        // ==========================================
+        window.updateCharCount = function(el, countId) {
+            const counter = document.getElementById(countId);
+            if (counter) {
+                counter.innerText = el.value.length + ' 자';
+                if (el.value.length > 0) counter.classList.replace('text-slate-400', 'text-emerald-500');
+                else counter.classList.replace('text-emerald-500', 'text-slate-400');
+            }
+        };
+
+        const dynamicToolbars = {
+            parabola: `
+                <button type="button" onclick="insertSymbol('calc-text-2', 'p')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$p$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(p, 0)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(p, 0)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(0, p)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(0, p)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'x = -p')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$x=-p$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'y = -p')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$y=-p$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'x^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$x^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'y^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$y^2$</button>
+            `,
+            ellipse: `
+                <button type="button" onclick="insertSymbol('calc-text-2', 'a^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$a^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'b^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$b^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'c^2 = a^2 - b^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$c^2=a^2-b^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(c, 0)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(c, 0)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(0, c)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(0, c)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '2a')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$2a$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '2b')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$2b$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '\\pm')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$\\pm$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '\\sqrt{}')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$\\sqrt{}$</button>
+            `,
+            hyperbola: `
+                <button type="button" onclick="insertSymbol('calc-text-2', 'a^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$a^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'b^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$b^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'c^2 = a^2 + b^2')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$c^2=a^2+b^2$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(c, 0)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(c, 0)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'F(0, c)')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$F(0, c)$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '2a')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$2a$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '2b')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$2b$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', 'y = \\\\pm \\\\frac{b}{a}x')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$y = \\pm \\frac{b}{a}x$</button>
+                <button type="button" onclick="insertSymbol('calc-text-2', '\\sqrt{}')" class="math-tool-btn px-2.5 py-1 text-xs font-bold bg-slate-50 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 rounded-lg border border-slate-200">$\\sqrt{}$</button>
+            `
+        };
+
+        window.updateDynamicToolbar = function(type) {
+            const container = document.getElementById('dynamic-toolbar-container');
+            container.innerHTML = dynamicToolbars[type];
+            if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([container]).catch(()=>{});
+        };
+
+        window.insertSymbol = function(textareaId, symbol) {
+            const el = document.getElementById(textareaId); if (!el) return;
+            const start = el.selectionStart; const end = el.selectionEnd; const text = el.value;
+            let insertion = symbol;
+            
+            // 수식 기호가 아니면 $로 감싸서 삽입
+            if (symbol !== '$$') { 
+                insertion = `$${symbol}$`; 
+            }
+            
+            el.value = text.substring(0, start) + insertion + text.substring(end);
+            el.focus(); el.selectionStart = el.selectionEnd = start + insertion.length;
+
+            if (textareaId === 'calc-text-1') renderMathPreview('calc-text-1', 'calc-preview-1');
+            if (textareaId === 'calc-text-2') renderMathPreview('calc-text-2', 'calc-preview-2');
+            if (textareaId === 'essay-1') renderMathPreview('essay-1', 'essay-preview-1');
+            if (textareaId === 'essay-2') renderMathPreview('essay-2', 'essay-preview-2');
+            if (textareaId === 'essay-3') renderMathPreview('essay-3', 'essay-preview-3');
+            
+            const event = new Event('input'); el.dispatchEvent(event);
+        };
+
+        const renderTimers = {};
+        window.renderMathPreview = function(textareaId, previewId) {
+            clearTimeout(renderTimers[previewId]);
+            renderTimers[previewId] = setTimeout(() => {
+                const textarea = document.getElementById(textareaId); const preview = document.getElementById(previewId);
+                if (!textarea || !preview) return;
+                const rawVal = textarea.value.trim();
+                if (!rawVal) {
+                    preview.innerHTML = `<span class="text-slate-400 text-xs italic no-print">작성한 내용이 이곳에 표시됩니다.</span>`; return;
+                }
+                preview.textContent = rawVal;
+                if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([preview]).catch(()=>{});
+            }, 120);
+        };
+
+        // 곡선 선택 힌트
+        window.updateFeatureHint = function(type) {
+            const badge = document.getElementById('feature-target-badge');
+            if (type === 'parabola') badge.innerText = '포물선: 초점 F(p,0) 또는 F(0,p), 준선 x=-p 또는 y=-p';
+            else if (type === 'ellipse') badge.innerText = '타원: 초점 c² = a²-b², 장축의 길이 2a 또는 2b';
+            else if (type === 'hyperbola') badge.innerText = '쌍곡선: 초점 c² = a²+b², 주축의 길이 2a 또는 2b';
+        };
+
+        // 텍스트 박스 리사이징
+        const textareas = document.querySelectorAll('.auto-expand');
+        window.resizeTextarea = function(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; };
+        textareas.forEach(textarea => { resizeTextarea(textarea); });
+        window.addEventListener('beforeprint', () => { textareas.forEach(textarea => resizeTextarea(textarea)); });
+
+        window.prepareAndPrint = function() {
+            renderMathPreview('calc-text-1', 'calc-preview-1'); 
+            renderMathPreview('calc-text-2', 'calc-preview-2');
+            renderMathPreview('essay-1', 'essay-preview-1');
+            renderMathPreview('essay-2', 'essay-preview-2');
+            renderMathPreview('essay-3', 'essay-preview-3');
+            setTimeout(() => { window.print(); }, 300);
+        };
+    </script>
+</body>
+</html>
