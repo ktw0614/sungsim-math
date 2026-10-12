@@ -42,8 +42,14 @@
         .math-tool-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08); }
         .math-tool-btn:active { transform: translateY(0); }
 
-        /* 수식 미리보기 뷰어 영역 */
-        .math-preview-box { background-color: #f8fafc; min-height: 52px; font-family: 'Noto Serif KR', serif; }
+        /* 수식 미리보기 뷰어 영역 (줄바꿈 완벽 유지 적용) */
+        .math-preview-box { 
+            background-color: #f8fafc; 
+            min-height: 52px; 
+            font-family: 'Noto Serif KR', serif; 
+            white-space: pre-wrap; /* 학생이 누른 엔터(줄바꿈)를 그대로 반영합니다 */
+            word-break: break-word; /* 긴 단어나 수식이 박스를 뚫고 나가지 않게 방지합니다 */
+        }
 
         /* 🖨️ 인쇄(PDF) 완벽 최적화 CSS */
         @media print {
@@ -58,7 +64,7 @@
             /* 타이틀 Flexbox 렌더링 버그 강제 고정 */
             .title-wrapper { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between !important; page-break-after: avoid !important; }
             
-            /* 텍스트 입력창 숨김 */
+            /* 텍스트 입력창 완벽 숨김 */
             textarea { display: none !important; }
             
             /* 2-1번 점 P 좌표 입력창 자연스럽게 */
@@ -213,7 +219,7 @@
                         </div>
                     </div>
 
-                    <!-- 도출된 최종 방정식 디스플레이 (인쇄 시에도 나타남) -->
+                    <!-- 도출된 최종 방정식 디스플레이 (인쇄 시 캔버스 아래로 이동) -->
                     <div class="p-6 bg-slate-900 text-white mt-auto rounded-bl-[1.5rem] lg:rounded-bl-none equation-wrapper">
                         <span class="block text-xs font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center justify-center gap-2"><span>🎯</span> 도출된 최종 방정식</span>
                         <div id="equation-display" class="py-4 px-3 text-center text-xl sm:text-2xl font-bold text-emerald-400 bg-slate-950 rounded-2xl border border-slate-700 shadow-inner min-h-[70px] flex items-center justify-center overflow-hidden">
@@ -241,7 +247,7 @@
                 <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100 shrink-0 shadow-sm">[배점: 7점]</span>
             </div>
 
-            <!-- 한글 입력 강력 경고 뱃지 (수정 완) -->
+            <!-- 한글 입력 강력 경고 뱃지 (수식 오작동 방지 텍스트 수정) -->
             <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 mb-6 flex items-center gap-3 shadow-sm no-print">
                 <span class="text-rose-500 text-xl">🚨</span>
                 <span class="text-[14px] font-black text-rose-700">주의: 한글은 반드시 수식 밖(일반 텍스트 영역)에 적어주세요! (올바른 예: 좌변은 $x^2$ 이다)</span>
@@ -333,7 +339,7 @@
                 <span class="text-xs font-black text-rose-600 bg-rose-50 px-4 py-2 rounded-full border border-rose-100 shrink-0 shadow-sm">[배점: 7점]</span>
             </div>
 
-            <!-- 한글 입력 강력 경고 뱃지 (수정 완) -->
+            <!-- 한글 입력 강력 경고 뱃지 -->
             <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 mb-8 flex items-center gap-3 shadow-sm no-print">
                 <span class="text-rose-500 text-xl">🚨</span>
                 <span class="text-[14px] font-black text-rose-700">주의: 한글은 반드시 수식 밖(일반 텍스트 영역)에 적어주세요! (올바른 예: 초점은 $F(c, 0)$ 이다)</span>
@@ -506,7 +512,7 @@
             ['parabola', 'ellipse', 'hyperbola'].forEach(t => {
                 document.getElementById(`btn-type-${t}`).className = t === type ? 
                     'py-2 text-xs font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition' : 
-                    'py-2 text-xs font-black rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition';
+                    'py-2 text-xs font-black rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition';
             });
             if (type === 'parabola') {
                 els.pContainer.style.display = 'block'; els.abContainer.style.display = 'none'; els.dirToggle.style.display = 'flex';
@@ -523,11 +529,11 @@
         window.setDirection = function(dir) { state.direction = dir; updateDirectionUI(); updateEquationText(); render(); };
         function updateDirectionUI() {
             if (state.direction === 1) {
-                els.dir1.className = 'flex-1 py-2 text-xs font-black bg-white text-indigo-700 rounded-lg shadow-sm';
-                els.dir2.className = 'flex-1 py-2 text-xs font-black text-slate-500';
+                els.dir1.className = 'flex-1 py-2 text-xs font-black bg-white text-indigo-700 rounded-lg shadow-sm transition';
+                els.dir2.className = 'flex-1 py-2 text-xs font-black text-slate-500 hover:text-slate-800 transition';
             } else {
-                els.dir2.className = 'flex-1 py-2 text-xs font-black bg-white text-indigo-700 rounded-lg shadow-sm';
-                els.dir1.className = 'flex-1 py-2 text-xs font-black text-slate-500';
+                els.dir2.className = 'flex-1 py-2 text-xs font-black bg-white text-indigo-700 rounded-lg shadow-sm transition';
+                els.dir1.className = 'flex-1 py-2 text-xs font-black text-slate-500 hover:text-slate-800 transition';
             }
         }
 
@@ -628,7 +634,10 @@
                 if (!textarea || !preview) return;
                 const rawVal = textarea.value.trim();
                 if (!rawVal) { preview.innerHTML = `<span class="text-slate-300 text-xs italic no-print">작성 내용 렌더링 영역</span>`; return; }
+                
+                // textContent로 할당하여 white-space: pre-wrap 속성을 완벽하게 적용합니다.
                 preview.textContent = rawVal; 
+                
                 if (window.MathJax) window.MathJax.typesetPromise([preview]).catch(()=>{});
             }, 120);
         };
