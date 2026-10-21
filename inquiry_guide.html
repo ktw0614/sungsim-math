@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기하 심화 탐구 프로젝트 : 1차시 연구 기획서 작성 가이드북</title>
+
+  <!-- Google Fonts: Noto Sans KR & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 Configuration -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']], processEscapes: true },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --navy-dark: #0b1329;
+      --navy-main: #172a45;
+      --primary-blue: #0284c7;
+      --primary-cyan: #0ea5e9;
+      --accent-teal: #0d9488;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-indigo: #4f46e5;
+      --bg-page: #e2e8f0;
+      --border-color: #cbd5e1;
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      /* 인쇄 시 색상/배경 보존을 위한 필수 속성 */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-dark);
+      line-height: 1.45;
+      padding: 40px 20px 80px 20px;
+    }
+
+    /* ================= Floating Print Button (Screen Only) ================= */
+    .floating-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      gap: 12px;
+      background: rgba(11, 19, 41, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 12px 18px;
+      border-radius: 50px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      align-items: center;
+    }
+
+    .floating-bar span {
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+      transition: transform 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-print:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ================= Page Container (Screen View) ================= */
+    .pages-workspace {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .page {
+      /* 웹 화면에서는 A4 비율처럼 보이도록 고정 치수 사용 */
+      width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      padding: 12mm 14mm;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+      border-radius: 8px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Header Banner */
+    .guide-header {
+      background: linear-gradient(135deg, #0b1329 0%, #1e3a8a 60%, #0f766e 100%);
+      color: #ffffff;
+      padding: 14px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guide-header::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 6px;
+      background: linear-gradient(to bottom, #38bdf8, #2dd4bf);
+    }
+
+    .header-left .badge-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      background: rgba(56, 189, 248, 0.2);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    .badge.teal {
+      background: rgba(45, 212, 191, 0.2);
+      color: #5eead4;
+      border-color: rgba(45, 212, 191, 0.4);
+    }
+
+    .header-left h1 {
+      font-size: 1.32rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 2px;
+    }
+
+    .header-left p {
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    .page-indicator {
+      text-align: right;
+      font-family: 'Outfit', sans-serif;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .page-indicator .p-num {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #38bdf8;
+      display: block;
+    }
+
+    .page-indicator .p-sub {
+      font-size: 0.68rem;
+      color: #e2e8f0;
+    }
+
+    /* Section Headings */
+    .sec-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      border-bottom: 2px solid var(--navy-dark);
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+    }
+
+    .sec-num {
+      font-family: 'Outfit', serif;
+      background: var(--navy-dark);
+      color: #38bdf8;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .sec-desc {
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* Section 1: Sentence Templates */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tpl-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-top: 3px solid var(--primary-blue);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .tpl-card.teal { border-top-color: var(--accent-teal); }
+    .tpl-card.indigo { border-top-color: var(--accent-indigo); }
+
+    .tpl-head {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tpl-head span.step-tag {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .tpl-box {
+      background: #ffffff;
+      border: 1px dashed #94a3b8;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 0.73rem;
+      line-height: 1.5;
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+
+    .blank {
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 700;
+      padding: 0 4px;
+      border-radius: 3px;
+      border: 1px solid #fde68a;
+    }
+
+    .tpl-tip {
+      font-size: 0.69rem;
+      color: #475569;
+    }
+
+    /* Section 2: Master Reference Table */
+    .dict-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.71rem;
+      margin-bottom: 10px;
+    }
+
+    .dict-table th {
+      background: #1e293b;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 6px 6px;
+      border: 1px solid #334155;
+      text-align: center;
+    }
+
+    .dict-table td {
+      padding: 5.5px 6px;
+      border: 1px solid var(--border-color);
+      vertical-align: middle;
+      line-height: 1.38;
+    }
+
+    .dict-table tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .unit-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .u-conic { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+    .u-space { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .u-vec { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+
+    .career-name {
+      font-weight: 800;
+      color: var(--navy-dark);
+      display: block;
+      margin-bottom: 1px;
+    }
+
+    .topic-sub {
+      color: #475569;
+      font-size: 0.67rem;
+    }
+
+    .io-tag {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 0px 4px;
+      border-radius: 3px;
+      margin-right: 3px;
+    }
+
+    .io-in { background: #dbeafe; color: #1e40af; }
+    .io-out { background: #ccfbf1; color: #115e59; }
+
+    /* Step Guide Box Bottom Page 1 */
+    .io-guide-banner {
+      background: linear-gradient(90deg, #f0f9ff 0%, #f0fdfa 100%);
+      border: 1px solid #bae6fd;
+      border-left: 4px solid var(--primary-blue);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      font-size: 0.72rem;
+    }
+
+    .io-guide-banner .banner-title {
+      font-weight: 800;
+      color: #0369a1;
+      white-space: nowrap;
+      font-size: 0.78rem;
+    }
+
+    /* Page 2: 4 Model Answer Cards */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .case-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .case-header {
+      padding: 7px 12px;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .case-a .case-header { background: linear-gradient(90deg, #1e3a8a, #2563eb); }
+    .case-b .case-header { background: linear-gradient(90deg, #4c1d95, #7c3aed); }
+    .case-c .case-header { background: linear-gradient(90deg, #14532d, #16a34a); }
+    .case-d .case-header { background: linear-gradient(90deg, #0f766e, #0ea5e9); }
+
+    .case-header h3 {
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .case-header span {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.66rem;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 1px 7px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .case-body {
+      padding: 8px 10px;
+      font-size: 0.71rem;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .c-row {
+      border-bottom: 1px dashed #e2e8f0;
+      padding-bottom: 4px;
+    }
+
+    .c-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .c-label {
+      font-weight: 800;
+      color: var(--navy-dark);
+      display: inline-block;
+      margin-bottom: 1px;
+      font-size: 0.72rem;
+    }
+
+    .c-math-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid var(--primary-blue);
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-top: 2px;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+
+    .case-b .c-math-box { border-left-color: #7c3aed; }
+    .case-c .c-math-box { border-left-color: #16a34a; }
+    .case-d .c-math-box { border-left-color: #0d9488; }
+
+    /* Before & After Comparison Table */
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .ba-box {
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 0.71rem;
+    }
+
+    .ba-bad {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-left: 4px solid #e11d48;
+    }
+
+    .ba-good {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 4px solid #16a34a;
+    }
+
+    .ba-title {
+      font-weight: 800;
+      font-size: 0.76rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ba-bad .ba-title { color: #be123c; }
+    .ba-good .ba-title { color: #15803d; }
+
+    .ba-list {
+      padding-left: 15px;
+      line-height: 1.45;
+      color: #334155;
+    }
+
+    .ba-list li { margin-bottom: 2px; }
+
+    /* Footer */
+    .page-footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.66rem;
+      color: #64748b;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+    }
+
+    /* ================= PRINT CSS: Native Browser Options Enabled ================= */
+    @media print {
+      /* @page 안에 size 강제 고정을 지워 브라우저 인쇄 옵션을 활성화합니다. */
+      @page {
+        margin: 10mm; /* 기본 여백 제공, 인쇄 창에서 '사용자 지정'으로 덮어쓰기 가능 */
+      }
+      
+      body {
+        background: #ffffff;
+        padding: 0;
+        margin: 0;
+      }
+      
+      .no-print {
+        display: none !important;
+      }
+      
+      .pages-workspace {
+        gap: 0;
+        padding: 0;
+        display: block; /* Flexbox로 인한 인쇄 잘림 현상 방지 */
+      }
+      
+      .page {
+        /* 고정 크기를 해제하고 인쇄 용지에 맞춰 100% 꽉 차게 반응형으로 작동합니다. */
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0; /* @page 여백이 적용되므로 내부 padding은 제거 */
+        box-shadow: none;
+        border-radius: 0;
+        /* 무조건 다음 페이지로 넘기기 (배율 조절 시 백지 방지) */
+        page-break-after: always;
+        break-after: page;
+      }
+      
+      .page:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      /* 인쇄 시 텍스트 해상도 개선 */
+      * {
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Print Button (Hidden on Print) -->
+  <div class="floating-bar no-print">
+    <span>💡 인쇄 창에서 <strong>[설정 더보기 ➔ 배율 / 용지 크기]</strong>를 자유롭게 조절하실 수 있습니다.</span>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+      인쇄 및 PDF 저장
+    </button>
+  </div>
+
+  <div class="pages-workspace">
+    <!-- ================= PAGE 1 ================= -->
+    <div class="page">
+      <div>
+        <!-- Header -->
+        <header class="guide-header">
+          <div class="header-left">
+            <div class="badge-row">
+              <span class="badge">2022 개정 교육과정 기하</span>
+              <span class="badge teal">학생용 기획서 작성 치트시트</span>
+            </div>
+            <h1>진로 연계 3D 기하 시뮬레이터 : 탐구 기획서 작성 가이드북</h1>
+            <p>막막한 백지 앞에서도 빈칸 공식과 진로별 예시 사전을 조합하여 완성하는 1차시 연구 설계 매뉴얼</p>
+          </div>
+          <div class="page-indicator">
+            <span class="p-num">PAGE 01 / 02</span>
+            <span class="p-sub">작성 공식 & 10대 진로 족보</span>
+          </div>
+        </header>
+
+        <!-- Section I: Sentence Templates -->
+        <div class="sec-title">
+          <span class="sec-num">STEP 1</span>
+          <span>웹 기획서 항목별 '빈칸 조립식' 학술 문장 작성 공식</span>
+          <span class="sec-desc">노란색 대괄호 [ ] 부분만 내 진로 키워드로 바꿔 넣으면 학술적인 문장이 완성됩니다.</span>
+        </div>
+
+        <div class="template-grid">
+          <div class="tpl-card">
+            <div class="tpl-head">
+              <span>Ⅰ. 탐구 배경 및 문제 정의 공식</span>
+              <span class="step-tag">기획서 Ⅰ번 칸</span>
+            </div>
+            <div class="tpl-box">
+              "<span class="blank">[희망 진로 분야]</span>에서 <span class="blank">[탐구 대상/현상]</span>을 설계·분석할 때, 입체적 각도나 구조에 의해 <span class="blank">[해결할 문제: 왜곡/압력손실/파절 등]</span>이 발생한다. 이를 기하학의 <span class="blank">[핵심 기하 개념]</span>으로 모델링하여 <span class="blank">[최종 목표 조건]</span>을 도출하고자 한다."
+            </div>
+            <div class="tpl-tip">
+              ✔ <strong>핵심 팁:</strong> '왜 이 현상을 기하학으로 계산해야만 안전하거나 효율적인가?'(문제 상황)를 한 문장으로 먼저 제시하세요.
+            </div>
+          </div>
+
+          <div class="tpl-card teal">
+            <div class="tpl-head">
+              <span>Ⅱ. 기하학적 치환(단순화) 공식</span>
+              <span class="step-tag" style="background:#ccfbf1; color:#115e59;">기획서 Ⅱ번 칸</span>
+            </div>
+            <div class="tpl-box">
+              "현실의 복잡한 <span class="blank">[실제 구조물/현상]</span> 전체를 그리는 대신, 핵심 중심축을 <span class="blank">[점 P / 직선 l / 평면 α / 곡면]</span>으로 치환하고, 물리적 작용(힘·속도·극성)을 <span class="blank">[방향벡터 / 법선벡터]</span>로 단순화하여 <span class="blank">[적용 수학 공식]</span>을 세운다."
+            </div>
+            <div class="tpl-tip">
+              ✔ <strong>핵심 팁:</strong> 실제 사물(뼈, 파이프, 치아)을 교과서 속 도형(선분 $AB$, 평면 $\alpha$, 벡터 $\vec{u}$)과 1:1로 짝지어 선언하세요.
+            </div>
+          </div>
+
+          <div class="tpl-card indigo">
+            <div class="tpl-head">
+              <span>Ⅲ. 시뮬레이션 가설 설정 공식</span>
+              <span class="step-tag" style="background:#e0e7ff; color:#3730a3;">기획서 Ⅲ번 칸</span>
+            </div>
+            <div class="tpl-box">
+              "슬라이더를 통해 조작 변수인 <span class="blank">[입력 변수 x, θ]</span>를 <span class="blank">[증가/감소/특정 범위로 조절]</span>하면, <span class="blank">[수학적 원리]</span>에 의해 산출 결과인 <span class="blank">[출력 변수 y]</span>가 변화하여 <span class="blank">[최적/위험 판정 기준]</span>을 실시간으로 확인할 수 있을 것이다."
+            </div>
+            <div class="tpl-tip">
+              ✔ <strong>핵심 팁:</strong> 수학의 정의역(슬라이더 조작값)이 바뀔 때 치역(계산 대시보드 결과)이 어떻게 변할지 예측하여 적으세요.
+            </div>
+          </div>
+        </div>
+
+        <!-- Section II: 10 Career Examples Table -->
+        <div class="sec-title">
+          <span class="sec-num">STEP 2</span>
+          <span>단원별·진로별 '기하학적 치환 & 시뮬레이터 입출력(I/O) 변수' 설계 백과사전</span>
+          <span class="sec-desc">내 진로와 가장 가까운 주제를 고르거나, 두 가지 주제의 아이디어를 조합해 보세요!</span>
+        </div>
+
+        <table class="dict-table">
+          <thead>
+            <tr>
+              <th style="width: 11%;">기하 단원</th>
+              <th style="width: 17%;">진로 계열 및 탐구 대상</th>
+              <th style="width: 25%;">기하학적 치환 요소 (Ⅱ번 칸)</th>
+              <th style="width: 22%;">핵심 수학 공식 (Ⅱ번 칸)</th>
+              <th style="width: 25%;">슬라이더(IN) & 대시보드(OUT) (Ⅲ번 칸)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="unit-badge u-vec">벡터의 연산<br>공간벡터</span></td>
+              <td>
+                <span class="career-name">① 약학·생명·화학</span>
+                <span class="topic-sub">약물 분자 구조와 세포막 투과성</span>
+              </td>
+              <td>중심 원자를 원점 $O(0,0,0)$로, 두 화학 결합의 전하 쏠림을 3D 공간 벡터 $\vec{\mu}_1, \vec{\mu}_2$로 치환</td>
+              <td>$$\vec{\mu}_{total} = \vec{\mu}_1 + \vec{\mu}_2$$<br>$$\cos\theta = \frac{\vec{\mu}_1 \cdot \vec{\mu}_2}{|\vec{\mu}_1||\vec{\mu}_2|}$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>결합 쌍극자 크기($|\vec{\mu}|$), 결합 사잇각($\theta$), 입체 비틀림각($\phi$)<br>
+                <span class="io-tag io-out">OUT</span>합성 벡터 크기($|\vec{\mu}_{total}|$), 친유성/친수성 세포막 투과 판정
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-conic">이차곡선<br>쌍곡선·접선</span></td>
+              <td>
+                <span class="career-name">② 치의학·기계·신소재</span>
+                <span class="topic-sub">치아 보철물(크라운) 저작압 분산</span>
+              </td>
+              <td>보철물 외형을 일엽쌍곡면 회전 곡면으로, 교합점 $P(x_1, z_1)$의 경사를 접선/법선 벡터로 치환</td>
+              <td>$$\frac{x^2}{a^2} + \frac{y^2}{a^2} - \frac{z^2}{b^2} = 1$$<br>$$\frac{x_1 x}{a^2} - \frac{z_1 z}{b^2} = 1$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>목 반지름($a$), 곡률 매개변수($b$), 수직 저작압($F_z$), 작용 높이($z_1$)<br>
+                <span class="io-tag io-out">OUT</span>접선 경사각($\theta$), 수직 법선력($F_n$), 측면 분산력($F_t$) 및 파절 위험도
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-space">공간도형<br>정사영·삼수선</span></td>
+              <td>
+                <span class="career-name">③ 수의학·의학·의공학</span>
+                <span class="topic-sub">X-ray 왜곡 보정 및 수술 가이드</span>
+              </td>
+              <td>실제 뼈 중심축을 선분 $AB$, X-ray 감광판을 평면 $\alpha$, 투영 상을 $A'B'$, 나사 경로를 수선 $PH \perp \alpha$로 치환</td>
+              <td>$$l = \frac{l'}{\cos\theta}$$<br>$$PH \perp \alpha, HK \perp l \Rightarrow PK \perp l$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>X-ray 이미지 길이($l'$), 촬영 평면 경사각($\theta$), 법선 경사각($\phi$), 깊이($PH$)<br>
+                <span class="io-tag io-out">OUT</span>실제 뼈 길이($l$), 왜곡 오차($l-l'$) 및 축소율($\%$), 가이드 직선 방정식
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-vec">공간좌표<br>직선·내적</span></td>
+              <td>
+                <span class="career-name">④ 화학공학·환경·플랜트</span>
+                <span class="topic-sub">배관 네트워크 유체 압력 손실</span>
+              </td>
+              <td>주 배관과 분기 배관 중심축을 공간 직선으로, 유체 이동 방향을 방향벡터 $\vec{u}_1, \vec{u}_2$로 치환</td>
+              <td>$$\frac{x-x_1}{a} = \frac{y-y_1}{b} = \frac{z-z_1}{c}$$<br>$$K_L \approx 2\sin^2\left(\frac{\theta}{2}\right)$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>분기 평면 사잇각($\theta$), 입체 입사각($\phi$), 유입 유속($v_0$), 직경비($D_2/D_1$)<br>
+                <span class="io-tag io-out">OUT</span>방향벡터 내적($\vec{u}_1 \cdot \vec{u}_2$), 교차각, 손실 계수($K_L$) 및 동압력 손실($\Delta P$)
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-space">공간도형<br>넓이의 정사영</span></td>
+              <td>
+                <span class="career-name">⑤ 건축·친환경에너지</span>
+                <span class="topic-sub">태양광 패널 및 건물 채광 최적화</span>
+              </td>
+              <td>지면($\alpha$)에 대해 기울어진 태양광 패널 평면($\beta$)과 태양 광선에 수직인 기준 평면 사이의 정사영 관계로 치환</td>
+              <td>$$S' = S \cdot \cos\theta$$<br>$$\cos\theta = |\vec{n}_{panel} \cdot \vec{u}_{sun}|$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>패널 설치 경사각($\theta_p$), 태양 남중 고도각($\alpha_s$), 방위각, 패널 면적($S$)<br>
+                <span class="io-tag io-out">OUT</span>법선과 광선 사이각($\theta$), 유효 수광 정사영 면적($S'$), 시간당 발전 효율($\%$)
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-conic">이차곡선<br>포물선·초점</span></td>
+              <td>
+                <span class="career-name">⑥ 우주항공·전기전자</span>
+                <span class="topic-sub">위성 파라볼라 안테나 전파 집속</span>
+              </td>
+              <td>안테나 단면을 포물선으로, 수신기(Feed Horn) 위치를 초점 $F(0, p)$로, 입사 전파를 축에 평행한 직선으로 치환</td>
+              <td>$$x^2 = 4py \quad \left(p = \frac{D^2}{16h}\right)$$<br>$$\text{접선 반사각 } \alpha = \beta$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>안테나 구경 폭($D$), 곡면 깊이($h$), 전파 입사 오차각($\Delta\theta$)<br>
+                <span class="io-tag io-out">OUT</span>최적 초점 거리($p$), 반사 전파 궤적선, 초점 수신 감도 및 이득률($\text{dB}$)
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-conic">이차곡선<br>타원·두 초점</span></td>
+              <td>
+                <span class="career-name">⑦ 의학·물리·음향공학</span>
+                <span class="topic-sub">체외충격파 쇄석기(ESWL) / 음향홀</span>
+              </td>
+              <td>반사경 단면을 타원으로, 충격파 발생 전극을 제1초점 $F_1(-c, 0)$, 신장 결석 위치를 제2초점 $F_2(c, 0)$로 치환</td>
+              <td>$$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$<br>$$c = \sqrt{a^2 - b^2}, \;\; \overline{F_1P} + \overline{PF_2} = 2a$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>타원 장축 반지름($a$), 단축 반지름($b$), 환자 체내 결석 깊이 오차($\Delta x$)<br>
+                <span class="io-tag io-out">OUT</span>초점 좌표($\pm c, 0$), 경로 합 일정성($2a$), 제2초점 에너지 집중률($\%$)
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-vec">공간벡터<br>위치벡터·내적</span></td>
+              <td>
+                <span class="career-name">⑧ 로봇공학·자율주행</span>
+                <span class="topic-sub">다관절 수술/산업용 로봇 팔 제어</span>
+              </td>
+              <td>로봇 어깨·팔꿈치·손목 관절을 공간 좌표 점 $O, A, B$로, 각 링크 마디를 위치벡터 $\vec{r}_1, \vec{r}_2$의 합으로 치환</td>
+              <td>$$\vec{P}_{end} = \vec{r}_1 + \vec{r}_2$$<br>$$d = \frac{|\vec{n} \cdot (\vec{P}_{end} - \vec{P}_0)|}{|\vec{n}|}$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>1번 관절 회전각($\theta_1$), 2번 관절 굽힘각($\theta_2$), 베이스 회전각($\phi$)<br>
+                <span class="io-tag io-out">OUT</span>로봇 끝점(End-Effector) 3D 좌표, 목표 평면과의 최단 거리($d$), 충돌 판정
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-vec">법선벡터<br>내적·정사영</span></td>
+              <td>
+                <span class="career-name">⑨ 컴퓨터공학·미디어아트</span>
+                <span class="topic-sub">3D 게임 그래픽스 셰이딩(명암)</span>
+              </td>
+              <td>3D 폴리곤 물체 표면의 수직 방향을 단위 법선벡터 $\vec{N}$으로, 광원 방향을 단위 빛 벡터 $\vec{L}$로 치환 (Lambert 모델)</td>
+              <td>$$I_{diff} = I_0 \cdot \max(0, \vec{N} \cdot \vec{L})$$<br>$$\vec{R} = 2(\vec{N}\cdot\vec{L})\vec{N} - \vec{L}$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>광원 고도각($\theta_L$), 광원 방위각($\phi_L$), 표면 기울기($\alpha$), 빛 세기($I_0$)<br>
+                <span class="io-tag io-out">OUT</span>내적값($\vec{N}\cdot\vec{L}$), 정반사 벡터($\vec{R}$) 성분, 표면 픽셀 밝기($\%$)
+              </td>
+            </tr>
+            <tr>
+              <td><span class="unit-badge u-space">공간좌표<br>구의 방정식</span></td>
+              <td>
+                <span class="career-name">⑩ 항공교통·국방·지리</span>
+                <span class="topic-sub">GPS 위성 삼변측량 및 드론 방공망</span>
+              </td>
+              <td>탐지 레이더/위성의 신호 도달 범위를 구의 방정식으로, 지형 고도면을 평면으로 치환하여 교선(원) 도출</td>
+              <td>$$(x-a)^2 + (y-b)^2 + (z-c)^2 = R^2$$<br>$$r_{circle} = \sqrt{R^2 - h^2}$$</td>
+              <td>
+                <span class="io-tag io-in">IN</span>레이더 탐지 반경($R$), 드론 비행 고도($h$), 두 기지국 간 거리($d$)<br>
+                <span class="io-tag io-out">OUT</span>고도 평면 단면 원의 반지름($r$), 중첩 탐지 영역 폭, 음영 구역 경보
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Bottom Tip Banner -->
+        <div class="io-guide-banner">
+          <div class="banner-title">💡 슬라이더(IN) vs 대시보드(OUT) 구분 꿀팁</div>
+          <div>
+            공식 $l = \frac{l'}{\cos\theta}$ 에서 <strong>등호($=$) 오른쪽</strong>에 있어서 내가 마우스로 바꿔볼 원인이 되는 문자($l', \theta$)를 <strong>[조작 변수 Input]</strong> 칸에 적고, <strong>등호($=$) 왼쪽</strong>에 있어서 컴퓨터가 계산해 줄 결과 문자($l$, 오차율 $\%$)를 <strong>[산출 결과 Output]</strong> 칸에 적으면 100% 정확합니다!
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span>2022 개정 교육과정 기하 심화 탐구 프로젝트 | 1차시 연구 기획서 작성 가이드북</span>
+        <span>Page 1 of 2</span>
+      </div>
+    </div>
+
+    <!-- ================= PAGE 2 ================= -->
+    <div class="page">
+      <div>
+        <!-- Header -->
+        <header class="guide-header">
+          <div class="header-left">
+            <div class="badge-row">
+              <span class="badge">실전 작성 레퍼런스</span>
+              <span class="badge teal">8대 진로 계열 모범 답안 완전체</span>
+            </div>
+            <h1>계열별 탐구 기획서 모범 답안 8선 & 자가 점검 체크리스트</h1>
+            <p>웹 기획서의 Ⅰ·Ⅱ·Ⅲ번 입력란에 실제로 어떻게 작성하면 되는지 보여주는 완성형 모범 예시입니다.</p>
+          </div>
+          <div class="page-indicator">
+            <span class="p-num">PAGE 02 / 02</span>
+            <span class="p-sub">모범 답안 8선 & Before/After</span>
+          </div>
+        </header>
+
+        <!-- Section III: 4 Model Cases -->
+        <div class="sec-title">
+          <span class="sec-num">STEP 3</span>
+          <span>진로 계열별 '실전 모범 답안 완전체' 8선 (기획서 양식 1:1 대응)</span>
+          <span class="sec-desc">아래 모범 답안의 문장 구조와 수식 표현 방식을 참고하여 나만의 기획서를 채워보세요.</span>
+        </div>
+
+        <div class="cases-grid">
+          <!-- Case A -->
+          <div class="case-card case-a">
+            <div class="case-header">
+              <h3>모범 답안 A. 약학·화학·생명과학 계열</h3>
+              <span>벡터의 연산과 내적</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                약물 분자의 3차원 입체 결합각에 따른 쌍극자 모멘트 벡터 합성과 세포막 투과성 예측 모델링
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                신약 개발 시 약물 분자가 인지질 이중층(세포막)을 통과하려면 분자 전체의 극성이 낮아야(친유성) 한다. 동일한 극성 작용기를 가진 이성질체라도 3차원 결합 각도에 따라 극성이 상쇄되거나 보강되므로, 이를 공간벡터의 합성으로 시뮬레이션하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                중심 탄소 원자를 원점 $O(0,0,0)$로 두고, 두 극성 작용기 결합을 평면 사잇각 $\theta$, 입체 비틀림각 $\phi$를 갖는 3D 성분 벡터 $\vec{\mu}_1, \vec{\mu}_2$로 치환하여 합벡터의 크기를 구한다.
+                <div class="c-math-box">
+                  $\vec{\mu}_1 = (\mu_1, 0, 0), \quad \vec{\mu}_2 = (\mu_2\cos\theta, \mu_2\sin\theta\cos\phi, \mu_2\sin\theta\sin\phi)$<br>
+                  $|\vec{\mu}_{total}| = \sqrt{|\vec{\mu}_1|^2 + |\vec{\mu}_2|^2 + 2|\vec{\mu}_1||\vec{\mu}_2|\cos\theta}$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 중심 원자 구(Sphere), 2개의 결합 벡터 화살표, 보라색 알짜 합벡터 화살표<br>
+                • <strong>슬라이더(IN):</strong> 결합 쌍극자 크기($\mu_1, \mu_2$), 결합 사잇각($\theta: 0^\circ \sim 180^\circ$), 비틀림각($\phi$)<br>
+                • <strong>대시보드(OUT):</strong> 알짜 쌍극자 모멘트 크기($|\vec{\mu}_{total}| \text{ D}$), 세포막 투과 판정 배지<br>
+                • <strong>탐구 가설:</strong> $\theta$가 $180^\circ$(대칭 구조)에 가까워질수록 두 벡터가 상쇄되어 $|\vec{\mu}_{total}| \to 0$이 되며, 지질 세포막 투과율이 극대화될 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case B -->
+          <div class="case-card case-b">
+            <div class="case-header">
+              <h3>모범 답안 B. 치의학·기계·신소재공학 계열</h3>
+              <span>이차곡선과 접선의 방정식</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                일엽쌍곡면 회전 곡면과 접선의 방정식을 활용한 치과 보철물(크라운)의 저작압 분산 최적화 설계
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                어금니 보철물에 강한 수직 저작압($F_z$)이 반복해서 가해질 때, 보철물 옆면 굴곡이 부적절하면 특정 부위에 응력이 집중되어 파절이나 잇몸 손상이 발생한다. 이를 쌍곡선 회전 곡면과 접선 벡터로 모델링하여 힘의 분산 효율을 극대화하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                보철물의 외형을 일엽쌍곡면으로, $xz$단면을 쌍곡선으로 치환하고, 교합 하중 작용점 $P(x_1, z_1)$에서의 접선의 기울기($\tan\theta$)를 통해 수직력을 법선력($F_n$)과 접선 분산력($F_t$)으로 분해한다.
+                <div class="c-math-box">
+                  $\text{단면 쌍곡선: } \frac{x^2}{a^2} - \frac{z^2}{b^2} = 1 \quad \Rightarrow \quad \text{접선: } \frac{x_1 x}{a^2} - \frac{z_1 z}{b^2} = 1$<br>
+                  $F_n = F_z \sin\theta, \quad F_t = F_z \cos\theta \quad (\text{분산 효율 } \eta = \cos\theta \times 100\%)$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 3D 일엽쌍곡면 메쉬, 단면 쌍곡선, 작용점 $P$의 접선 및 힘 분해 화살표($F_z, F_n, F_t$)<br>
+                • <strong>슬라이더(IN):</strong> 목 반지름($a$), 곡률 매개변수($b$), 수직 저작압($F_z$), 하중 작용 높이($z_1$)<br>
+                • <strong>대시보드(OUT):</strong> 접점 좌표 $P(x_1, z_1)$, 접선 경사각($\theta$), 법선 압력($F_n$), 측면 분산력($F_t$)<br>
+                • <strong>탐구 가설:</strong> 매개변수 $b/a$ 비율을 조절해 접선 경사각을 완만하게 유도하면, 치근을 직접 누르는 법선 압력($F_n$)이 감소하고 측면 분산 효율($\eta$)이 상승할 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case C -->
+          <div class="case-card case-c">
+            <div class="case-header">
+              <h3>모범 답안 C. 수의학·의학·의공학 계열</h3>
+              <span>정사영과 삼수선의 정리</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                공간도형의 정사영을 통한 X-ray 골절 이미지 왜곡 보정 및 삼수선의 정리를 활용한 3D 수술 가이드 설계
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                소형견 골절 수술 시 2차원 X-ray 평면($\alpha$)에 투영된 뼈의 이미지($l'$)는 뼈의 입체적 기울기($\theta$) 때문에 실제 길이($l$)보다 항상 짧게 찍힌다. 또한 수술 나사가 뼈 표면에 수직으로 진입하지 않으면 드릴이 미끄러지는 사고가 발생하므로 기하학적 보정과 경로 설계가 필수적이다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                실제 뼈 중심축을 선분 $AB(l)$, 촬영 감광판을 평면 $\alpha$, 투영된 상을 선분 $A'B'(l')$로 치환하여 실제 길이를 역산하고, 삼수선의 정리로 나사 진입 법선 직선의 방정식을 도출한다.
+                <div class="c-math-box">
+                  $\text{실제 뼈 길이 역산: } l = \frac{l'}{\cos\theta}, \quad \text{축소 왜곡률}(\%) = \left(1 - \cos\theta\right)\times 100$<br>
+                  $PH \perp \alpha, \; HK \perp l \Rightarrow PK \perp l \quad \left(\text{가이드 직선: } \frac{x-x_1}{a} = \frac{y-y_1}{b} = \frac{z-z_1}{c}\right)$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 3D 뼈 실린더($AB$), 평면 $\alpha$ 그리드, 정사영 상($A'B'$), 삼수선($PH, HK, PK$) 및 가이드 슬리브<br>
+                • <strong>슬라이더(IN):</strong> X-ray 측정 길이($l'$), 촬영 평면 경사각($\theta$), 법선 경사각($\phi$), 목표 깊이($PH$)<br>
+                • <strong>대시보드(OUT):</strong> 보정된 실제 뼈 길이($l$), 왜곡 오차($l-l'$), 축소 왜곡률($\%$), 법선 벡터 성분<br>
+                • <strong>탐구 가설:</strong> 경사각 $\theta = 30^\circ$일 때 약 $13.4\%$, $\theta = 45^\circ$일 때 약 $29.3\%$의 길이 축소 왜곡이 발생하며, 정사영 역산을 통해 정확한 규격의 금속판을 선정할 수 있을 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case D -->
+          <div class="case-card case-d">
+            <div class="case-header">
+              <h3>모범 답안 D. 화학공학·환경·건축공학 계열</h3>
+              <span>공간 직선의 방정식과 내적</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                화학 플랜트 배관 네트워크의 3차원 공간 직선 모델링 및 방향벡터 내적을 통한 유체 압력 손실 최소화
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                화학 공정 내 유체 수송 배관이 분기되거나 꺾이는 지점에서는 유체의 급격한 방향 전환으로 인해 와류(Turbulence)와 동압력 손실($\Delta P$), 관벽 마모가 발생한다. 공간 직선의 방향벡터 내적을 통해 에너지 손실을 최소화하는 최적 결합 각도를 도출하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                주 배관과 분기 배관의 중심선을 3차원 공간 직선의 방정식으로, 유체 흐름 방향을 단위 방향벡터 $\vec{u}_1, \vec{u}_2$로 치환하여 내적으로부터 입체 교차각 $\theta$와 압력 손실($\Delta P$)을 산출한다.
+                <div class="c-math-box">
+                  $\cos\theta = \frac{\vec{u}_1 \cdot \vec{u}_2}{|\vec{u}_1||\vec{u}_2|}, \quad K_L \approx 2\sin^2\left(\frac{\theta}{2}\right), \quad \Delta P = K_L \cdot \frac{1}{2}\rho v_0^2$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 주 배관/분기 배관 원통, 방향벡터 화살표($\vec{u}_1, \vec{u}_2$), 유체 속도장 입자 애니메이션<br>
+                • <strong>슬라이더(IN):</strong> 평면 분기각($\theta$), 입체 입사각($\phi$), 유입 유속($v_0$), 분기 배관 직경비($D_2/D_1$)<br>
+                • <strong>대시보드(OUT):</strong> 방향벡터 내적값, 입체 교차각, 국소 손실 계수($K_L$), 동압력 손실($\Delta P$), 안전도 배지<br>
+                • <strong>탐구 가설:</strong> 두 배관 방향벡터의 입체 교차각을 $45^\circ$ 이하로 설계하면 국소 손실 계수($K_L$)가 급감하여 에너지 손실과 배관 침식을 안전 범위 내로 제어할 수 있을 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case E -->
+          <div class="case-card">
+            <div class="case-header" style="background: linear-gradient(90deg, #831843, #be185d);">
+              <h3>모범 답안 E. 컴퓨터공학·게임·미디어 계열</h3>
+              <span>법선벡터와 광원 정사영</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                3D 게임 그래픽스 렌더링을 위한 광원과 법선벡터 내적 기반의 실시간 명암(Shading) 모델링
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                3D 환경에서 물체가 입체적으로 보이려면 빛이 닿는 각도에 따른 표면 밝기 계산이 필수적이다. 이를 람베르트(Lambert) 모델과 벡터 내적으로 단순화하여 렌더링 연산 부하를 줄이고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                물체 표면을 단위 법선벡터 $\vec{N}$으로, 광원의 입사 방향을 벡터 $\vec{L}$로 치환하여 두 벡터의 내적으로 픽셀의 밝기를 결정한다.
+                <div class="c-math-box" style="border-left-color: #be185d;">
+                  $I_{diff} = I_0 \cdot \max(0, \vec{N} \cdot \vec{L})$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 3D 구 모델(표면 픽셀), 광원 방향 벡터 화살표<br>
+                • <strong>슬라이더(IN):</strong> 광원 고도각($\theta_L$), 방위각($\phi_L$), 빛 세기($I_0$)<br>
+                • <strong>대시보드(OUT):</strong> 두 벡터 내적($\vec{N}\cdot\vec{L}$), 표면 렌더링 밝기($\%$)<br>
+                • <strong>탐구 가설:</strong> 광원 벡터와 표면 법선벡터의 사잇각이 $0^\circ$에 가까울수록 내적값이 $1$에 수렴하여 최대 밝기로 렌더링될 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case F -->
+          <div class="case-card">
+            <div class="case-header" style="background: linear-gradient(90deg, #b45309, #d97706);">
+              <h3>모범 답안 F. 건축·친환경에너지 계열</h3>
+              <span>넓이의 정사영과 이명각</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                태양광 패널 설치 각도와 남중 고도에 따른 유효 수광 면적(정사영) 및 발전 효율 최적화
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                태양광 패널이나 건물의 채광창은 태양 고도와 설치 각도에 따라 실제 빛을 받는 유효 면적이 달라져 발전 효율에 차이가 발생한다. 정사영 원리를 통해 시간대별 일조량을 수학적으로 예측하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                태양 광선에 수직인 기준 평면을 $\alpha$, 비스듬히 설치된 패널 평면을 $\beta$로 두고, 이명각 $\theta$를 이용해 유효 수광 면적(정사영)을 계산한다.
+                <div class="c-math-box" style="border-left-color: #d97706;">
+                  $S' = S \cdot \cos\theta \quad (\theta = \text{광선과 패널 법선 사이의 각})$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 지면, 기울어진 태양광 패널 평면, 평행 광선 벡터<br>
+                • <strong>슬라이더(IN):</strong> 패널 설치 경사각($\theta_p$), 태양 남중 고도각($\alpha_s$), 원본 패널 면적($S$)<br>
+                • <strong>대시보드(OUT):</strong> 이명각($\theta$), 정사영 유효 면적($S'$), 예상 발전 효율<br>
+                • <strong>탐구 가설:</strong> 계절별 남중 고도($\alpha_s$)에 맞춰 패널 경사각($\theta_p$)을 조절하여 이명각 $\theta$를 최소화하면 정사영 면적이 최대화될 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case G -->
+          <div class="case-card">
+            <div class="case-header" style="background: linear-gradient(90deg, #312e81, #4f46e5);">
+              <h3>모범 답안 G. 우주항공·전기전자 계열</h3>
+              <span>포물선의 초점과 접선</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                위성 파라볼라 안테나의 포물선 반사 원리와 최적의 수신기(Feed Horn) 위치 설계
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                위성 통신용 파라볼라 안테나는 미세한 전파를 한 점으로 모아야 하지만, 반사경의 곡률 설계가 어긋나면 신호 손실이 발생한다. 포물선의 접선 반사 원리를 활용해 최적의 수신기 위치를 검증하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                안테나 단면을 포물선($x^2=4py$)으로 치환하고, 평행 입사 전파가 접선에서 반사되어 초점 $F(0, p)$에 모이는 궤적을 모델링한다.
+                <div class="c-math-box" style="border-left-color: #4f46e5;">
+                  $x^2 = 4py \quad \left(p = \frac{D^2}{16h}\right), \quad \text{입사각} = \text{반사각}$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 포물선 반사경, 직선 입사/반사 전파 궤적, 초점 수신기<br>
+                • <strong>슬라이더(IN):</strong> 안테나 구경 폭($D$), 곡면 깊이($h$), 전파 입사각 오차($\Delta\theta$)<br>
+                • <strong>대시보드(OUT):</strong> 초점 좌표($0, p$), 초점 빗나감 거리, 수신 이득률($\text{dB}$)<br>
+                • <strong>탐구 가설:</strong> $D$와 $h$의 비율을 조절해 구한 초점 거리 $p$ 위치에 수신기를 배치하면 전파 궤적이 $100\%$ 한 점으로 집속될 것이다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Case H -->
+          <div class="case-card">
+            <div class="case-header" style="background: linear-gradient(90deg, #3f3f46, #52525b);">
+              <h3>모범 답안 H. 지리·경찰보안·물류 계열</h3>
+              <span>공간좌표와 구의 방정식</span>
+            </div>
+            <div class="case-body">
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-1. 탐구 주제]</span><br>
+                GPS 위성 삼변측량 원리와 드론 방공망 레이더 중첩 탐지 구역 시각화
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅰ-2. 탐구 배경 및 문제 정의]</span><br>
+                국가 주요 시설 방어 시, 여러 레이더의 3D 탐지 범위가 겹치는 구역을 파악해야 음영 구역 없는 방공망 구축이 가능하다. 구의 방정식을 활용하여 고도별 탐지 중첩 영역을 도출하고자 한다.
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅱ. 기하학적 치환 및 핵심 공식]</span><br>
+                레이더 탐지 범위를 중심이 $A, B$인 구의 방정식으로 치환하고, 드론 비행 고도를 $z=h$ 평면으로 두어 두 평면 단면(원)의 중첩 넓이를 계산한다.
+                <div class="c-math-box" style="border-left-color: #52525b;">
+                  $(x-a)^2 + (y-b)^2 + (z-c)^2 = R^2 \quad (\text{평면 } z=h \text{ 대입})$
+                </div>
+              </div>
+              <div class="c-row">
+                <span class="c-label">[Ⅲ. 시뮬레이터 I/O 변수 및 가설]</span><br>
+                • <strong>3D 캔버스 요소:</strong> 반투명 탐지 구(Sphere) 2개, $z=h$ 고도 절단면 평면, 교선 원<br>
+                • <strong>슬라이더(IN):</strong> 레이더 탐지 반경($R$), 기지국 간 거리($d$), 타겟 고도($h$)<br>
+                • <strong>대시보드(OUT):</strong> 교선 원의 반지름($r$), 중첩 영역 폭, 보안 경계 경보 배지<br>
+                • <strong>탐구 가설:</strong> 타겟 고도 $h$가 증가할수록 교선 원의 반지름 $r$이 감소하며 두 기지국 사이의 탐지 음영 구역이 급격히 넓어질 것이다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section IV: Before & After Check -->
+        <div class="sec-title">
+          <span class="sec-num">STEP 4</span>
+          <span>2차시 AI 코딩 성공률을 200% 높이는 '기획서 문장 점검' (Before & After)</span>
+          <span class="sec-desc">추상적인 표현을 구체적인 '도형·수식·색상 변화 조건'으로 바꾸면 완벽한 시뮬레이터가 생성됩니다.</span>
+        </div>
+
+        <div class="ba-grid">
+          <div class="ba-box ba-bad">
+            <div class="ba-title">❌ 아쉬운 기획 예시 (모호하고 추상적인 표현)</div>
+            <ul class="ba-list">
+              <li><strong>[기하 치환 미흡]:</strong> "강아지 다리뼈가 부러진 모습과 수술 도구를 3D로 멋있게 보여준다." (어떤 도형과 수식으로 계산할지 알 수 없음)</li>
+              <li><strong>[변수 설정 모호]:</strong> "슬라이더로 여러 가지 조건을 바꾸면 배관의 물 흐름이 바뀌는 것을 관찰한다." (구체적인 문자 기호와 단위가 없음)</li>
+              <li><strong>[시각화 조건 누락]:</strong> "위험할 때는 위험하다고 알려준다." (기준 수치와 시각적 변화가 없음)</li>
+            </ul>
+          </div>
+
+          <div class="ba-box ba-good">
+            <div class="ba-title">⭕ 훌륭한 기획 예시 (수학적·시각적 조건이 명확한 표현)</div>
+            <ul class="ba-list">
+              <li><strong>[명확한 기하 치환]:</strong> "골절된 뼈 중심축을 <strong>선분 $AB$</strong>로, X-ray 감광판을 <strong>평면 $\alpha$</strong>로, 나사 진입 경로를 <strong>수선 $PH \perp \alpha$</strong>로 치환하여 시각화한다."</li>
+              <li><strong>[구체적 기호와 범위]:</strong> "<strong>촬영 경사각($\theta$, $0^\circ \sim 60^\circ$)</strong>과 <strong>유속($v_0$, $0.5 \sim 5.0\text{ m/s}$)</strong>을 슬라이더로 조작한다."</li>
+              <li><strong>[시각적 피드백 명시]:</strong> "교차각이 $60^\circ$를 초과하면 입자 색상이 <strong>청록색(정상)에서 붉은색(위험)</strong>으로 변하게 한다."</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span>2022 개정 교육과정 기하 심화 탐구 프로젝트 | 1차시 연구 기획서 작성 가이드북</span>
+        <span>Page 2 of 2</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

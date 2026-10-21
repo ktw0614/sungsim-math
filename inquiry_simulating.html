@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기하 융합 시뮬레이터 오프라인 기획 캔버스 (2-Page)</title>
+  
+  <!-- Google Fonts: Noto Sans KR (본문용) & Outfit (영문/숫자 타이틀용) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* 세련된 웹 도구 컬러 팔레트 */
+      --primary-blue: #0284c7;
+      --primary-light-blue: #e0f2fe;
+      --primary-teal: #0d9488;
+      --primary-light-teal: #ccfbf1;
+      --primary-indigo: #4f46e5;
+      --primary-light-indigo: #e0e7ff;
+      --primary-purple: #7c3aed;
+      --primary-light-purple: #ede9fe;
+      
+      --text-dark: #0f172a;
+      --text-muted: #475569;
+      --border-color: #cbd5e1;
+      --bg-web: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #ccfbf1 100%);
+      --bg-grid: #f8fafc;
+      --grid-line: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-web);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 30px;
+    }
+
+    /* Floating Print Button */
+    .floating-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 12px 18px;
+      border-radius: 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      color: white;
+      align-items: center;
+    }
+
+    .btn-print {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-print:hover { background: #0369a1; }
+
+    /* Canvas Page Styles */
+    .a4-canvas {
+      width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      padding: 14mm 16mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 3px solid var(--primary-blue);
+      padding-bottom: 4mm;
+      margin-bottom: 5mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-mini {
+      border-bottom: 2px dashed var(--border-color);
+      padding-bottom: 2mm;
+      margin-bottom: 5mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-mini span {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+    }
+
+    .badge-period {
+      display: inline-block;
+      background: var(--primary-blue);
+      color: #ffffff;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .title-area h1 {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .title-area h1 .en-font {
+      font-family: 'Outfit', sans-serif;
+      color: var(--primary-blue);
+    }
+
+    .title-area p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .student-info {
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .info-box {
+      background: var(--primary-light-blue);
+      border: 1px solid #bae6fd;
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      min-width: 100px;
+    }
+
+    .info-box span { color: var(--primary-blue); font-size: 13px; }
+
+    /* Section Titles */
+    .section-title {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 15.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      border-radius: 4px;
+      margin-bottom: 3.5mm;
+      letter-spacing: -0.2px;
+      width: 100%;
+    }
+    
+    .section-title.blue { background: var(--primary-light-blue); color: #0369a1; border-left: 5px solid var(--primary-blue); }
+    .section-title.blue .sub-label { color: var(--primary-blue); }
+    
+    .section-title.teal { background: var(--primary-light-teal); color: #0f766e; border-left: 5px solid var(--primary-teal); }
+    .section-title.teal .sub-label { color: var(--primary-teal); }
+    
+    .section-title.indigo { background: var(--primary-light-indigo); color: #3730a3; border-left: 5px solid var(--primary-indigo); }
+    .section-title.indigo .sub-label { color: var(--primary-indigo); }
+
+    .section-title.purple { background: var(--primary-light-purple); color: #5b21b6; border-left: 5px solid var(--primary-purple); }
+    .section-title.purple .sub-label { color: var(--primary-purple); }
+
+    .section-title .sub-label {
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    /* Tables & Handwriting Areas */
+    .write-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 5mm;
+      table-layout: fixed;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .write-table th, .write-table td {
+      border: 1px solid var(--border-color);
+      padding: 8px 10px;
+    }
+
+    .write-table th {
+      width: 28%;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .th-blue { background: var(--primary-light-blue); color: #0369a1; }
+    .th-indigo { background: var(--primary-light-indigo); color: #3730a3; }
+    .th-purple { background: var(--primary-light-purple); color: #5b21b6; }
+
+    .write-table td {
+      width: 72%;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .guide-placeholder {
+      color: #94a3b8;
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.5;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .guide-text {
+      display: block;
+      font-weight: 500;
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* Sketch Area (Fills remaining space on Page 1) */
+    .sketch-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 2mm;
+    }
+
+    .sketch-header {
+      background: var(--bg-grid);
+      border-bottom: 1px dashed var(--border-color);
+      padding: 8px 14px;
+      font-size: 12.5px;
+      color: #0f766e;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sketch-area {
+      flex: 1;
+      background-color: #ffffff;
+      background-image: 
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 6mm 6mm; /* 넓은 필기용 모눈 */
+      position: relative;
+    }
+
+    .sketch-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: rgba(148, 163, 184, 0.5);
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.6;
+      pointer-events: none;
+    }
+
+    /* Math Grid Background for Formulas */
+    .math-grid {
+      background-color: #ffffff;
+      background-image: 
+        linear-gradient(rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+      background-size: 100% 8mm; /* 줄노트 간격 */
+    }
+
+    .math-hint {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 11px;
+      color: #64748b;
+      background: rgba(248, 250, 252, 0.85);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* AI Warning Box */
+    .ai-notice {
+      background: #f0f9ff;
+      border: 1px dashed #0ea5e9;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: auto;
+      font-size: 12.5px;
+      color: #0369a1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .ai-notice strong { color: #0284c7; }
+
+    /* Print Styles */
+    @media print {
+      body { background: none; padding: 0; display: block; gap: 0; }
+      .floating-bar { display: none !important; }
+      .a4-canvas {
+        width: 100%;
+        height: auto;
+        min-height: 297mm;
+        margin: 0;
+        padding: 12mm 14mm;
+        box-shadow: none;
+        border-radius: 0;
+        page-break-after: always;
+      }
+      .a4-canvas:last-child { page-break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Only: Print Guide -->
+  <div class="floating-bar">
+    <span>💡 2페이지 확장 캔버스입니다. 인쇄 설정에서 '배경 그래픽'을 켜고 PDF로 저장하세요.</span>
+    <button class="btn-print" onclick="window.print()">🖨️ 양식 인쇄 및 PDF 저장</button>
+  </div>
+
+  <!-- ================= PAGE 1 ================= -->
+  <div class="a4-canvas">
+    <!-- Header -->
+    <header>
+      <div class="title-area">
+        <span class="badge-period">1차시 : 탐구 주제 기획 및 수식 모델링</span>
+        <h1>기하 융합 시뮬레이터 <span class="en-font">Research Canvas</span></h1>
+        <p>※ 본 종이 활동지에 연필로 큼직하게 스케치한 후, 스마트폰으로 촬영하여 AI에게 전송하세요.</p>
+      </div>
+      <div class="student-info">
+        <div class="info-box"><span style="color:#475569; font-weight:500;">학번</span> <span style="width: 50px;">&nbsp;</span></div>
+        <div class="info-box"><span style="color:#475569; font-weight:500;">이름</span> <span style="width: 60px;">&nbsp;</span></div>
+      </div>
+    </header>
+
+    <!-- SECTION I -->
+    <div class="section-title blue">
+      <span>Ⅰ. Project Planning</span>
+      <span class="sub-label">진로 분야와 기하학의 연결</span>
+    </div>
+    <table class="write-table">
+      <tr>
+        <th class="th-blue" style="height: 15mm;">희망 진로 분야 및 탐구 대상</th>
+        <td><span class="guide-placeholder">예) 치의학 계열 / 치아 크라운(보철물)의 저작압 분산 설계</span></td>
+      </tr>
+      <tr>
+        <th class="th-blue" style="height: 15mm;">탐구 주제 (시뮬레이터 제목)</th>
+        <td></td>
+      </tr>
+      <tr>
+        <th class="th-blue" style="height: 25mm;">탐구 배경 및 목적<br><span class="guide-text">(왜 기하학으로 해결해야 하는가?)</span></th>
+        <td><span class="guide-placeholder">예) 보철물에 수직 압력이 가해질 때 굴곡에 따라 파절 위험이 생기므로, 이를 기하학적 곡면으로 모델링하여 분산력을 확인하고자 함.</span></td>
+      </tr>
+    </table>
+
+    <!-- SECTION II (Massive Sketch Area) -->
+    <div class="section-title teal">
+      <span>Ⅱ. Geometric Visual Sketching</span>
+      <span class="sub-label">탐구 대상의 기하학적 치환 스케치 (AI 비전 인식용)</span>
+    </div>
+    <div class="sketch-container">
+      <div class="sketch-header">
+        <span>✍️ 실제 대상을 기하학의 점, 선, 면, 벡터로 단순화하여 자유롭게 스케치하세요.</span>
+        <span style="font-size:11px; color:#64748b;">※ 화살표 지시선과 기호 이름표(예: $\vec{u}_1, \alpha$)를 꼭 적어주세요.</span>
+      </div>
+      <div class="sketch-area">
+        <div class="sketch-watermark">
+          이 공간을 활용하여 머릿속의 아이디어를 시각화하세요.<br>
+          (예: 3D 곡면 뼈대, 교차하는 배관 직선, 정사영된 뼈의 단면 등)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PAGE 2 ================= -->
+  <div class="a4-canvas">
+    <!-- Mini Header for Page 2 -->
+    <div class="header-mini">
+      <span>기하 융합 시뮬레이터 Research Canvas</span>
+      <span>Page 2</span>
+    </div>
+
+    <!-- SECTION III -->
+    <div class="section-title indigo">
+      <span>Ⅲ. Mathematical Modeling</span>
+      <span class="sub-label">교과 개념 및 핵심 수식 전개</span>
+    </div>
+    <table class="write-table">
+      <tr>
+        <th class="th-indigo" style="height: 18mm;">적용 기하 개념<br><span class="guide-text">(예: 이차곡선의 접선, 정사영 등)</span></th>
+        <td></td>
+      </tr>
+      <tr>
+        <th class="th-indigo" style="height: 22mm;">기하학적 치환 아이디어<br><span class="guide-text">(대상을 어떤 도형으로 짝지었는가)</span></th>
+        <td><span class="guide-placeholder">예) 보철물 외형 ➔ 일엽쌍곡면 곡면 / 교합점 압력 ➔ 법선 및 접선 벡터</span></td>
+      </tr>
+      <tr>
+        <th class="th-indigo" style="height: 65mm;">핵심 수식 및 방정식 전개<br><span class="guide-text">(1페이지의 스케치를 바탕으로 AI가 코딩할 수 있도록 상세 수식을 기재)</span></th>
+        <td class="math-grid">
+          <span class="math-hint">※ 알파벳 l(엘)과 숫자 1, 첨자 등을 또박또박 적어주세요.</span>
+        </td>
+      </tr>
+    </table>
+
+    <!-- SECTION IV -->
+    <div class="section-title purple">
+      <span>Ⅳ. Interactive Simulator I/O Design</span>
+      <span class="sub-label">조작 변수 및 실시간 산출 결과 기획</span>
+    </div>
+    <table class="write-table" style="margin-bottom: auto;">
+      <tr>
+        <th class="th-purple" style="height: 22mm;">3D 화면 시각화 요소<br><span class="guide-text">(캔버스에 렌더링될 입체/평면 요소들)</span></th>
+        <td><span class="guide-placeholder">예) 3D 반투명 일엽쌍곡면, 상단에서 내려오는 붉은색 수직 하중 화살표 등</span></td>
+      </tr>
+      <tr>
+        <th class="th-purple" style="height: 22mm;">조작 변수 Input (슬라이더)<br><span class="guide-text">(마우스로 수치를 변화시킬 원인 변수)</span></th>
+        <td><span class="guide-placeholder">마우스로 바꿀 문자들 (예: 수직 압력 Fz, 목 반지름 a)</span></td>
+      </tr>
+      <tr>
+        <th class="th-purple" style="height: 22mm;">산출 결과 Output (대시보드)<br><span class="guide-text">(컴퓨터가 자동 계산하여 띄워줄 결과값)</span></th>
+        <td><span class="guide-placeholder">예) 접선 경사각 $\theta$, 측면 분산 효율 %</span></td>
+      </tr>
+      <tr>
+        <th class="th-purple" style="height: 26mm;">시뮬레이션 가설<br><span class="guide-text">(슬라이더 조작 시 Output의 변화 예측)</span></th>
+        <td></td>
+      </tr>
+    </table>
+
+    <!-- AI Notice -->
+    <div class="ai-notice">
+      <span>🤖 <strong>AI 코딩 꿀팁:</strong> 이 2장의 종이를 스마트폰으로 밝고 선명하게 찍은 후, 2차시 AI 채팅창에 사진 2장을 첨부하고 <strong>"내가 손으로 쓴 1쪽의 스케치와 2쪽의 기획서를 분석해서 HTML 시뮬레이터 코드를 짜줘"</strong>라고 명령하세요.</span>
+    </div>
+  </div>
+
+</body>
+</html>
