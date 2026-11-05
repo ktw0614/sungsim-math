@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>벡터로 그리는 직선 3D 탐구실</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            chtml: { fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff');
+        body { font-family: 'NanumSquareRound', sans-serif; background-color: #f0fdf4; margin: 0; overflow: hidden; }
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); }
+        .tab-btn.active { background-color: #a7f3d0; color: #065f46; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(167, 243, 208, 0.5); }
+        .tab-btn { transition: all 0.3s ease; color: #64748b; background-color: transparent; }
+        .tab-btn:hover { background-color: #ecfdf5; color: #059669; }
+        canvas { outline: none; border-radius: 1rem; }
+        
+        /* 슬라이더 스타일 커스텀 */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #d1fae5; border-radius: 3px; }
+        .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .slider-label { width: 25px; font-weight: bold; color: #475569; }
+        .slider-val { width: 35px; text-align: right; color: #10b981; font-weight: bold; }
+    </style>
+</head>
+<body class="h-screen w-full flex text-gray-700">
+
+    <aside class="w-80 glass-panel m-4 rounded-3xl shadow-xl flex flex-col p-6 z-10 relative overflow-y-auto">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500 leading-tight">
+                직선의 방정식<br>3D 탐구실 🚀
+            </h1>
+            <p class="text-xs text-emerald-600/70 mt-2 font-bold">기하 - Ⅲ. 벡터</p>
+        </div>
+
+        <div class="flex flex-col gap-3 mb-6">
+            <button onclick="setMode('direction')" id="btn-direction" class="tab-btn active px-4 py-3 rounded-2xl text-left text-sm flex items-center gap-3">
+                <span class="text-xl">🧭</span> 1. 방향벡터로 만들기
+            </button>
+            <button onclick="setMode('twopoints')" id="btn-twopoints" class="tab-btn px-4 py-3 rounded-2xl text-left text-sm flex items-center gap-3">
+                <span class="text-xl">📍</span> 2. 두 점으로 만들기
+            </button>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-50 mb-4">
+            <h2 class="text-sm font-bold text-emerald-600 mb-2">실시간 직선의 방정식</h2>
+            <div id="equation-display" class="text-center min-h-[50px] flex items-center justify-center text-lg text-slate-800">
+                <!-- LaTeX 수식 렌더링 위치 -->
+            </div>
+            <p id="special-case-msg" class="text-xs text-rose-500 font-bold mt-2 text-center hidden">
+                💡 분모가 0이 되면 직선이 평면에 갇혀요!
+            </p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-50 flex-grow">
+            <h2 id="info-title" class="text-sm font-bold text-teal-600 mb-2"></h2>
+            <p id="info-content" class="text-xs text-gray-600 leading-relaxed"></p>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col p-4 pl-0">
+        <div class="relative w-full rounded-3xl overflow-hidden glass-panel flex-grow flex flex-col shadow-lg p-2 border-2 border-emerald-100">
+            
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 text-teal-800 text-sm py-2.5 px-5 font-bold flex justify-between items-center rounded-2xl mb-2">
+                <span id="instruction-text">💡 슬라이더를 움직여 방향벡터 $\vec{u}$와 매개변수 $t$를 조절해 보세요!</span>
+                <button onclick="resetCamera()" class="bg-white px-3 py-1 rounded-full shadow text-teal-600 hover:bg-teal-50 transition text-xs font-bold border border-teal-100">카메라 원위치 🎥</button>
+            </div>
+            
+            <div id="canvas-container" class="flex-grow h-full w-full relative rounded-2xl overflow-hidden"></div>
+            
+            <!-- 조작 패널 -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 glass-panel px-6 py-4 rounded-2xl shadow-2xl flex gap-8 items-center border border-emerald-200">
+                
+                <!-- 매개변수 t 슬라이더 -->
+                <div class="flex flex-col w-48 border-r border-gray-200 pr-6">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-extrabold text-purple-600">매개변수 $t$ (비율)</span>
+                        <button id="play-btn" onclick="toggleAutoPlay()" class="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-bold hover:bg-purple-200">▶ 자동</button>
+                    </div>
+                    <div class="slider-row">
+                        <span class="slider-label text-purple-500">$t$</span>
+                        <input type="range" id="t-slider" min="-3" max="3" value="1.5" step="0.1" oninput="updateScene()">
+                        <span id="t-val" class="slider-val text-purple-600">1.5</span>
+                    </div>
+                </div>
+
+                <!-- 방향벡터 / 두 점 설정 슬라이더 -->
+                <div id="vector-controls" class="flex flex-col w-48">
+                    <span id="control-title" class="text-sm font-extrabold text-sky-600 mb-1">방향벡터 $\vec{u} = (a, b, c)$</span>
+                    <div class="slider-row">
+                        <span id="label-x" class="slider-label text-sky-500">$a$</span>
+                        <input type="range" id="x-slider" min="-4" max="4" value="2" step="1" oninput="updateScene()">
+                        <span id="x-val" class="slider-val text-sky-600">2</span>
+                    </div>
+                    <div class="slider-row">
+                        <span id="label-y" class="slider-label text-sky-500">$b$</span>
+                        <input type="range" id="y-slider" min="-4" max="4" value="1" step="1" oninput="updateScene()">
+                        <span id="y-val" class="slider-val text-sky-600">1</span>
+                    </div>
+                    <div class="slider-row">
+                        <span id="label-z" class="slider-label text-sky-500">$c$</span>
+                        <input type="range" id="z-slider" min="-4" max="4" value="3" step="1" oninput="updateScene()">
+                        <span id="z-val" class="slider-val text-sky-600">3</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // 상태 변수
+        let mode = 'direction'; // 'direction' or 'twopoints'
+        let isPlaying = false;
+        let playDirection = 1;
+        
+        // 기준점 A (고정)
+        const ptA = new THREE.Vector3(2, 3, 2); 
+        // 목표점 B (두 점 모드용)
+        let ptB = new THREE.Vector3(4, 4, 5);
+        // 방향벡터 U
+        let vecU = new THREE.Vector3(2, 1, 3);
+        let paramT = 1.5;
+
+        // Three.js 전역 변수
+        let scene, camera, renderer, controls;
+        let objectsGroup = new THREE.Group();
+        
+        // 3D 오브젝트 레퍼런스
+        let arrowA, arrowU, arrowTU, arrowP, pointP, lineTrajectory;
+        let planeX, planeY, planeZ; // 특정 성분이 0일 때 나타날 평면
+        let labelGroup = new THREE.Group();
+
+        // 설명 데이터
+        const infoData = {
+            'direction': {
+                title: '🧭 위치벡터와 방향벡터',
+                content: `공간에서 점 A를 지나고 벡터 $\\vec{u}$에 평행한 직선의 자취를 그려봅니다.<br><br>
+                          임의의 점 P의 위치벡터 $\\vec{p}$는 기준 위치벡터 $\\vec{a}$에서 방향벡터 $\\vec{u}$를 매개변수 $t$배 만큼 늘리거나 줄인 결과로 표현할 수 있습니다.<br>
+                          <br><strong class="text-sm text-emerald-600">$\\vec{p} = \\vec{a} + t\\vec{u}$</strong><br><br>
+                          오른쪽 아래 패널에서 <strong>매개변수 $t$</strong>를 직접 조절하여 점 P가 선을 그리는 것을 확인해 보세요!`
+            },
+            'twopoints': {
+                title: '📍 두 점을 지나는 직선',
+                content: `두 점 A와 B가 주어지면, 따로 방향벡터가 없어도 직선을 만들 수 있어요.<br><br>
+                          바로 <strong>$\\vec{u} = \\vec{AB} = \\vec{b} - \\vec{a}$</strong> 를 방향벡터로 삼으면 되기 때문이죠!<br><br>
+                          <strong class="text-sm text-emerald-600">$\\vec{p} = \\vec{a} + t(\\vec{b} - \\vec{a})$</strong><br><br>
+                          우측 패널에서 <strong>점 B의 좌표</strong>를 움직여 새로운 직선을 뚫어보세요.`
+            }
+        };
+
+        init();
+        animate();
+
+        function init() {
+            const container = document.getElementById('canvas-container');
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0fdf4);
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(12, 10, 15);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // 조명
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            dirLight.position.set(10, 20, 10);
+            scene.add(dirLight);
+
+            // 축 헬퍼 & 그리드 (수학적 직관을 위해 Y축(위쪽)을 Z로 매핑하는 대신, 기본 XYZ를 그대로 쓰고 라벨만 붙임)
+            const axesHelper = new THREE.AxesHelper(10);
+            scene.add(axesHelper);
+            
+            const gridHelper = new THREE.GridHelper(20, 20, 0xd1fae5, 0xe2e8f0);
+            scene.add(gridHelper);
+
+            scene.add(objectsGroup);
+            scene.add(labelGroup);
+
+            // 초기 3D 요소 구성
+            build3DObjects();
+
+            // 리사이즈 이벤트
+            window.addEventListener('resize', onWindowResize);
+
+            // 초기 UI 세팅
+            window.setMode = setMode;
+            window.updateScene = updateScene;
+            window.resetCamera = resetCamera;
+            window.toggleAutoPlay = toggleAutoPlay;
+            
+            setMode('direction');
+        }
+
+        function createLabel(text, color, position) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold 36px sans-serif';
+            const textWidth = ctx.measureText(text).width;
+            canvas.width = textWidth + 20; canvas.height = 50;
+            
+            ctx.font = 'bold 36px sans-serif';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width/2, canvas.height/2);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.copy(position);
+            sprite.scale.set(canvas.width/30, canvas.height/30, 1);
+            return sprite;
+        }
+
+        function build3DObjects() {
+            // 화살표 헬퍼들
+            const origin = new THREE.Vector3(0, 0, 0);
+            
+            // a 벡터 (고정)
+            arrowA = new THREE.ArrowHelper(ptA.clone().normalize(), origin, ptA.length(), 0xdb2777, 0.4, 0.3); // 핑크
+            objectsGroup.add(arrowA);
+            
+            // u 벡터 (A에서 출발)
+            arrowU = new THREE.ArrowHelper(vecU.clone().normalize(), ptA, vecU.length(), 0x0284c7, 0.4, 0.3); // 파랑
+            objectsGroup.add(arrowU);
+
+            // tu 벡터 (A에서 출발, t에 비례)
+            arrowTU = new THREE.ArrowHelper(vecU.clone().normalize(), ptA, vecU.length()*paramT, 0x9333ea, 0.5, 0.4); // 보라
+            objectsGroup.add(arrowTU);
+
+            // p 벡터 (원점에서 출발)
+            const ptP = new THREE.Vector3().copy(ptA).add(vecU.clone().multiplyScalar(paramT));
+            arrowP = new THREE.ArrowHelper(ptP.clone().normalize(), origin, ptP.length(), 0x059669, 0.4, 0.3); // 초록
+            objectsGroup.add(arrowP);
+
+            // 점 P (구)
+            const geoP = new THREE.SphereGeometry(0.2, 16, 16);
+            const matP = new THREE.MeshBasicMaterial({ color: 0x059669 });
+            pointP = new THREE.Mesh(geoP, matP);
+            objectsGroup.add(pointP);
+
+            // 궤적 직선 l
+            const matLine = new THREE.LineBasicMaterial({ color: 0x94a3b8, linewidth: 2 });
+            const geoLine = new THREE.BufferGeometry();
+            lineTrajectory = new THREE.Line(geoLine, matLine);
+            objectsGroup.add(lineTrajectory);
+
+            // 성분 0일 때 나타날 보조 평면들 (반투명)
+            const planeGeo = new THREE.PlaneGeometry(20, 20);
+            // X성분=0 -> YZ평면 평행
+            planeX = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({color: 0xfca5a5, transparent: true, opacity: 0.3, side: THREE.DoubleSide}));
+            planeX.rotation.y = Math.PI / 2;
+            objectsGroup.add(planeX);
+            
+            // Y성분=0 -> XZ평면 평행
+            planeY = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({color: 0x86efac, transparent: true, opacity: 0.3, side: THREE.DoubleSide}));
+            planeY.rotation.x = Math.PI / 2;
+            objectsGroup.add(planeY);
+
+            // Z성분=0 -> XY평면 평행
+            planeZ = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({color: 0x93c5fd, transparent: true, opacity: 0.3, side: THREE.DoubleSide}));
+            objectsGroup.add(planeZ);
+
+            // 라벨들
+            labelGroup.add(createLabel("X", "#ef4444", new THREE.Vector3(10.5, 0, 0)));
+            labelGroup.add(createLabel("Y", "#22c55e", new THREE.Vector3(0, 10.5, 0)));
+            labelGroup.add(createLabel("Z", "#3b82f6", new THREE.Vector3(0, 0, 10.5)));
+            
+            labelGroup.add(createLabel("A(2,3,2)", "#db2777", ptA.clone().add(new THREE.Vector3(0, -0.5, 0))));
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            
+            // 탭 스타일
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + mode).classList.add('active');
+
+            // 설명 업데이트
+            document.getElementById('info-title').innerHTML = infoData[mode].title;
+            document.getElementById('info-content').innerHTML = infoData[mode].content;
+
+            // 컨트롤러 UI 업데이트
+            if (mode === 'direction') {
+                document.getElementById('control-title').innerHTML = '방향벡터 $\\vec{u} = (a, b, c)$';
+                document.getElementById('label-x').innerHTML = '$a$';
+                document.getElementById('label-y').innerHTML = '$b$';
+                document.getElementById('label-z').innerHTML = '$c$';
+                document.getElementById('instruction-text').innerHTML = '💡 슬라이더를 움직여 방향벡터 $\\vec{u}$와 매개변수 $t$를 조절해 보세요!';
+                
+                // 슬라이더 값 동기화
+                document.getElementById('x-slider').value = vecU.x;
+                document.getElementById('y-slider').value = vecU.y;
+                document.getElementById('z-slider').value = vecU.z;
+            } else {
+                document.getElementById('control-title').innerHTML = '점 $B = (x_2, y_2, z_2)$';
+                document.getElementById('label-x').innerHTML = '$x_2$';
+                document.getElementById('label-y').innerHTML = '$y_2$';
+                document.getElementById('label-z').innerHTML = '$z_2$';
+                document.getElementById('instruction-text').innerHTML = '💡 점 B의 좌표를 변경하여 새로운 방향벡터 $\\vec{AB}$를 만들어 보세요!';
+                
+                // 슬라이더 값 동기화
+                document.getElementById('x-slider').value = ptB.x;
+                document.getElementById('y-slider').value = ptB.y;
+                document.getElementById('z-slider').value = ptB.z;
+            }
+
+            updateScene();
+            
+            // UI의 텍스트가 모두 업데이트된 후 화면 전체의 수식을 재렌더링합니다.
+            if(window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err));
+            }
+        }
+
+        function updateScene() {
+            // UI 값 읽기
+            paramT = parseFloat(document.getElementById('t-slider').value);
+            document.getElementById('t-val').innerText = paramT.toFixed(1);
+
+            const sx = parseFloat(document.getElementById('x-slider').value);
+            const sy = parseFloat(document.getElementById('y-slider').value);
+            const sz = parseFloat(document.getElementById('z-slider').value);
+
+            document.getElementById('x-val').innerText = sx;
+            document.getElementById('y-val').innerText = sy;
+            document.getElementById('z-val').innerText = sz;
+
+            if (mode === 'direction') {
+                vecU.set(sx, sy, sz);
+            } else {
+                ptB.set(sx, sy, sz);
+                vecU.subVectors(ptB, ptA); // u = B - A
+            }
+
+            // 3D 객체 업데이트
+            const ptP = new THREE.Vector3().copy(ptA).add(vecU.clone().multiplyScalar(paramT));
+            pointP.position.copy(ptP);
+
+            const origin = new THREE.Vector3(0,0,0);
+
+            // 화살표 U 갱신
+            if(vecU.lengthSq() > 0) {
+                arrowU.setDirection(vecU.clone().normalize());
+                arrowU.setLength(vecU.length(), 0.4, 0.3);
+                arrowU.visible = true;
+
+                // 궤적 업데이트 (t: -10 ~ 10)
+                const ptStart = new THREE.Vector3().copy(ptA).add(vecU.clone().multiplyScalar(-10));
+                const ptEnd = new THREE.Vector3().copy(ptA).add(vecU.clone().multiplyScalar(10));
+                lineTrajectory.geometry.setFromPoints([ptStart, ptEnd]);
+                lineTrajectory.visible = true;
+            } else {
+                arrowU.visible = false;
+                lineTrajectory.visible = false;
+            }
+
+            // 화살표 tU 갱신
+            const tU = vecU.clone().multiplyScalar(paramT);
+            if(tU.lengthSq() > 0) {
+                arrowTU.setDirection(tU.clone().normalize());
+                arrowTU.setLength(tU.length(), 0.5, 0.4);
+                arrowTU.visible = true;
+            } else {
+                arrowTU.visible = false;
+            }
+
+            // 화살표 P 갱신
+            if(ptP.lengthSq() > 0) {
+                arrowP.setDirection(ptP.clone().normalize());
+                arrowP.setLength(ptP.length(), 0.4, 0.3);
+                arrowP.visible = true;
+            } else {
+                arrowP.visible = false;
+            }
+
+            // 특수 평면 (성분 0) 처리
+            planeX.visible = (vecU.x === 0 && vecU.lengthSq() > 0);
+            planeX.position.set(ptA.x, 0, 0); // x축 고정
+
+            planeY.visible = (vecU.y === 0 && vecU.lengthSq() > 0);
+            planeY.position.set(0, ptA.y, 0); // y축 고정
+
+            planeZ.visible = (vecU.z === 0 && vecU.lengthSq() > 0);
+            planeZ.position.set(0, 0, ptA.z); // z축 고정
+
+            const hasZero = (vecU.x === 0 || vecU.y === 0 || vecU.z === 0) && vecU.lengthSq() > 0;
+            document.getElementById('special-case-msg').style.display = hasZero ? 'block' : 'none';
+
+            // 수식 업데이트
+            updateEquation();
+        }
+
+        function updateEquation() {
+            let eq = "";
+            let u = vecU;
+            
+            if (u.x === 0 && u.y === 0 && u.z === 0) {
+                eq = "\\text{방향벡터가 영벡터입니다.}";
+            } else {
+                let fracParts = [];
+                let zeroParts = [];
+
+                if (u.x !== 0) fracParts.push(`\\frac{x - ${ptA.x}}{${u.x}}`);
+                else zeroParts.push(`x = ${ptA.x}`);
+
+                // 수학 좌표계(Y, Z) 매핑 
+                // Three.js의 Y를 Z로, Z를 Y로 표시하면 수학 교과서와 더 일치하지만,
+                // 혼란 방지를 위해 그대로 x,y,z 순서로 식을 씁니다.
+                if (u.y !== 0) fracParts.push(`\\frac{y - ${ptA.y}}{${u.y}}`);
+                else zeroParts.push(`y = ${ptA.y}`);
+
+                if (u.z !== 0) fracParts.push(`\\frac{z - ${ptA.z}}{${u.z}}`);
+                else zeroParts.push(`z = ${ptA.z}`);
+
+                let mainEq = fracParts.join(' = ');
+                if (zeroParts.length > 0) {
+                    if(mainEq === "") eq = zeroParts.join(', \\quad ');
+                    else eq = mainEq + ', \\quad ' + zeroParts.join(', \\quad ');
+                } else {
+                    eq = mainEq;
+                }
+            }
+
+            const display = document.getElementById('equation-display');
+            display.innerHTML = `$$ ${eq} $$`;
+            if(window.MathJax) MathJax.typesetPromise([display]);
+        }
+
+        function toggleAutoPlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('play-btn');
+            if(isPlaying) {
+                btn.innerText = '⏸ 정지';
+                btn.classList.replace('bg-purple-100', 'bg-purple-500');
+                btn.classList.replace('text-purple-600', 'text-white');
+            } else {
+                btn.innerText = '▶ 자동';
+                btn.classList.replace('bg-purple-500', 'bg-purple-100');
+                btn.classList.replace('text-white', 'text-purple-600');
+            }
+        }
+
+        function resetCamera() {
+            camera.position.set(12, 10, 15);
+            controls.target.set(0,0,0);
+            controls.update();
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if(isPlaying) {
+                let t = parseFloat(document.getElementById('t-slider').value);
+                t += 0.02 * playDirection;
+                if(t >= 3) { t = 3; playDirection = -1; }
+                if(t <= -3) { t = -3; playDirection = 1; }
+                document.getElementById('t-slider').value = t;
+                updateScene();
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
