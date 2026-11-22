@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코드 결합 및 최종 제출 가이드</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@500;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --primary-cyan: #22d3ee;
+      --primary-blue: #3b82f6;
+      --primary-indigo: #6366f1;
+      --primary-teal: #14b8a6;
+      --primary-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      
+      --code-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(34, 211, 238, 0.15) 0px, transparent 50%);
+      color: var(--text-main);
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .badge-step {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 50px;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    header h1 span {
+      background: linear-gradient(135deg, var(--primary-cyan), var(--primary-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    header p {
+      font-size: 15px;
+      color: var(--text-muted);
+      font-weight: 400;
+      word-break: keep-all;
+    }
+
+    /* Step Cards */
+    .step-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+    
+    .step-card.step2 .step-num { background: linear-gradient(135deg, #0d9488, #0f766e); box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3); }
+    .step-card.step3 .step-num { background: linear-gradient(135deg, #d97706, #b45309); box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); }
+    .step-card.step4 .step-num { background: linear-gradient(135deg, #be123c, #9f1239); box-shadow: 0 4px 10px rgba(190, 18, 60, 0.3); }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    
+    .step-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .step-body {
+      padding: 24px;
+    }
+
+    /* Action Button */
+    .btn-copy {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .btn-copy:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5); }
+    .btn-copy:active { transform: translateY(0); }
+
+    .copy-zone {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px dashed var(--primary-cyan);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .copy-zone p { color: #cbd5e1; font-size: 14.5px; }
+
+    /* Step 2: Code Assembly Visual */
+    .mock-editor {
+      background: var(--code-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .editor-header {
+      background: rgba(0,0,0,0.3);
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .editor-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ef4444; }
+    .dot-y { background: #eab308; }
+    .dot-g { background: #22c55e; }
+    .editor-title { color: #94a3b8; font-size: 13px; margin-left: 10px; }
+
+    .editor-content { padding: 16px; color: #94a3b8; overflow-x: auto; }
+    .editor-content .code-gray { opacity: 0.7; }
+    .editor-content .code-highlight { color: #cbd5e1; }
+    .editor-content .code-comment { color: #4ade80; font-weight: 700; }
+    
+    .insert-zone {
+      background: rgba(34, 211, 238, 0.1);
+      border: 2px dashed var(--primary-cyan);
+      border-radius: 6px;
+      padding: 16px;
+      margin: 12px 0;
+      color: var(--primary-cyan);
+      font-weight: 700;
+      text-align: center;
+      animation: pulseZone 2s infinite;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    @keyframes pulseZone {
+      0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(34, 211, 238, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+    }
+
+    /* Step 3: Save As Rules */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .rule-card {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .rule-icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--code-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      border: 1px solid var(--border-color);
+    }
+    .rule-card h4 { font-size: 15px; font-weight: 800; color: #e2e8f0; }
+    .rule-badge {
+      background: var(--primary-blue);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* Step 4: Self-Test Checklist */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-teal);
+      border-right: 1px solid var(--border-color);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .check-item svg { color: var(--primary-teal); flex-shrink: 0; width: 24px; height: 24px; }
+    .check-item p { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+    .check-item span { display: block; font-size: 13.5px; color: #94a3b8; font-weight: 400; margin-top: 4px; }
+    .check-item.tip { border-left-color: #facc15; background: rgba(250, 204, 21, 0.05); }
+    .check-item.tip svg { color: #facc15; }
+
+    /* Step 5: Final Submission */
+    .submit-box {
+      background: rgba(244, 63, 94, 0.05);
+      border: 2px solid rgba(244, 63, 94, 0.4);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .submit-title {
+      color: #fb7185;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .file-name-example {
+      background: var(--code-bg);
+      border: 2px dashed #fb7185;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 800;
+      color: #f43f5e;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+    .submit-notice {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fecdd3;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .submit-notice strong { color: white; }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      background: #10b981;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 9999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .rules-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 26px; }
+      .step-header { padding: 16px; }
+      .step-body { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <h1>코드 결합 및<br><span>최종 제출 가이드</span></h1>
+      <p>바탕화면에 빈 메모장 하나만 여세요!<br>뼈대와 AI 코드를 결합하여 완벽한 하나의 웹 시뮬레이터로 완성합니다.</p>
+    </header>
+
+    <!-- Step 1 (New) -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div>
+          <h2 class="step-title">기본 뼈대(Template) 파일 복사 및 준비</h2>
+          <p class="step-desc">바탕화면에 새 텍스트 문서(메모장)를 열고, 아래 버튼을 눌러 뼈대 코드를 통째로 붙여넣으세요.</p>
+        </div>
+      </div>
+      <div class="step-body">
+        <div class="copy-zone">
+          <p>선생님이 미리 환경을 모두 세팅해 둔 <strong>무결점 HTML 뼈대 코드</strong>입니다.<br>아래 버튼을 눌러 복사한 뒤, <strong>빈 메모장에 [Ctrl+V]</strong> 하세요!</p>
+          <button class="btn-copy" id="copyBaseBtn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            💾 뼈대 코드 원클릭 복사
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 (Former Step 1) -->
+    <div class="step-card step2">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div>
+          <h2 class="step-title">뼈대 코드 안에 AI 코드 조립하기 (결합)</h2>
+          <p class="step-desc">메모장에 붙여넣은 뼈대 코드 중간에 있는 '주석 경고등(🚨)' 사이 빈칸에 AI 코드를 복붙하세요.</p>
+        </div>
+      </div>
+      <div class="step-body">
+        <div class="mock-editor">
+          <div class="editor-header">
+            <div class="editor-dot dot-r"></div>
+            <div class="editor-dot dot-y"></div>
+            <div class="editor-dot dot-g"></div>
+            <span class="editor-title">기하_시뮬레이터_완성본.html - 메모장</span>
+          </div>
+          <div class="editor-content">
+            <div class="code-gray">
+              &lt;!DOCTYPE html&gt;<br>
+              &lt;html lang="ko"&gt;<br>
+              &lt;head&gt;<br>
+              &nbsp;&nbsp;... (중략) ...<br>
+              <span class="code-highlight">&nbsp;&nbsp;&lt;title&gt;기하 융합 주제 탐구 시뮬레이터&lt;/title&gt;</span><br>
+              &nbsp;&nbsp;... (중략) 필수 라이브러리 및 환경 세팅 ...<br>
+              &lt;/head&gt;<br>
+              &lt;body&gt;<br>
+              <span class="code-comment">&lt;!-- ====================================================================== --&gt;<br>
+              &lt;!-- 🚨 [학생 코딩 영역] 기존 코드를 지우지 말고, 아래 빈칸에 AI 코드를 그대로 붙여넣으세요! 🚨 --&gt;<br>
+              &lt;!-- ====================================================================== --&gt;</span>
+            </div>
+            <div class="insert-zone">
+              [ Ctrl + V ]<br>AI가 짜준 <code>```html</code> 안의 전체 코드를 여기에 붙여넣습니다.
+            </div>
+            <div class="code-gray">
+              <br>
+              &lt;/body&gt;<br>
+              &lt;/html&gt;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 (Former Step 2) -->
+    <div class="step-card step3">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div>
+          <h2 class="step-title">메모장 '다른 이름으로 저장' 3대 수칙</h2>
+          <p class="step-desc">코드를 결합한 후 [파일] ➔ [다른 이름으로 저장]을 누르고 아래 3가지를 반드시 지키세요.</p>
+        </div>
+      </div>
+      <div class="step-body">
+        <div class="rules-grid">
+          <div class="rule-card">
+            <div class="rule-icon">💾</div>
+            <h4>1. 파일 이름 (확장자)</h4>
+            <div class="rule-badge">.html</div>
+            <p style="font-size: 13px; color: #94a3b8;">이름 끝에 직접 <strong>.html</strong>을 타이핑해야 웹페이지로 인식됩니다.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">📁</div>
+            <h4>2. 파일 형식</h4>
+            <div class="rule-badge" style="background: #0ea5e9;">모든 파일 (*.*)</div>
+            <p style="font-size: 13px; color: #94a3b8;">'텍스트 문서'로 두면 <code>.html.txt</code>가 되어 브라우저에서 안 열립니다.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">🌐</div>
+            <h4>3. 인코딩</h4>
+            <div class="rule-badge" style="background: #8b5cf6;">UTF-8</div>
+            <p style="font-size: 13px; color: #94a3b8;">한글(수식 설명, 제목 등)이 외계어로 깨지는 현상을 방지합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 (Former Step 3) -->
+    <div class="step-card">
+      <div class="step-header" style="background: rgba(244, 63, 94, 0.1);">
+        <div class="step-num" style="background: linear-gradient(135deg, #f43f5e, #e11d48); box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3);">4</div>
+        <div>
+          <h2 class="step-title" style="color: #fecdd3;">최종 제출 규칙 (반드시 확인)</h2>
+          <p class="step-desc" style="color: #fda4af;">모든 테스트를 통과했다면 지정된 양식에 맞게 파일을 변경하여 제출합니다.</p>
+        </div>
+      </div>
+      <div class="step-body">
+        <div class="submit-box">
+          <div class="submit-title">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            제출용 파일 네이밍 규칙
+          </div>
+          <div class="file-name-example">
+            20500 김성심.html
+          </div>
+          <div class="submit-notice">
+            <span>✅ '학번 이름' 형태로 작성합니다.</span>
+            <span>✅ 위 완성된 HTML 파일 1개와 <strong>[STEP 2. 기획 캔버스]</strong> 작성 사진(또는 PDF)을 세트로 묶어 구글 클래스룸(또는 지정된 과제방)에 제출해 주세요.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    뼈대 코드가 복사되었습니다! 메모장에 붙여넣으세요.
+  </div>
+
+  <script>
+    const copyBaseBtn = document.getElementById('copyBaseBtn');
+    const toast = document.getElementById('toast');
+
+    // 뼈대 파일 원문 (이스케이프 처리 완료)
+    const rawBaseCode = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기하 융합 주제 탐구 시뮬레이터</title>
+    
+    <!-- 필수 라이브러리 및 환경 세팅 (CDN, 폰트, MathJax) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\\\(', '\\\\)']] }, svg: { fontCache: 'global' } };<\/script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+</head>
+<body>
+<!-- ====================================================================== -->
+<!-- 🚨 [학생 코딩 영역] 기존 코드를 지우지 말고, 아래 빈칸에 AI 코드를 그대로 붙여넣으세요! 🚨 -->
+<!-- ====================================================================== -->
+
+
+</body>
+</html>`;
+
+    copyBaseBtn.addEventListener('click', () => {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(rawBaseCode).then(() => {
+          showToast();
+        }).catch(err => {
+          fallbackCopyTextToClipboard(rawBaseCode);
+        });
+      } else {
+        fallbackCopyTextToClipboard(rawBaseCode);
+      }
+    });
+
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      
+      textArea.style.position = "fixed";
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.width = "2em";
+      textArea.style.height = "2em";
+      textArea.style.padding = "0";
+      textArea.style.border = "none";
+      textArea.style.outline = "none";
+      textArea.style.boxShadow = "none";
+      textArea.style.background = "transparent";
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showToast();
+        } else {
+          console.error('Copy command failed');
+        }
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function showToast() {
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
