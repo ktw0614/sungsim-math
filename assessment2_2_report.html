@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>탐구 과정 성찰 보고서</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-emerald: #059669;
+      --primary-light-emerald: #ecfdf5;
+      --primary-slate: #475569;
+
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --bg-web: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg-web);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 48px;
+      min-height: 100vh;
+    }
+
+    /* Screen Only: Top Sticky Web Toolbar */
+    .web-toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 1000;
+      width: 100%;
+      max-width: 210mm;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 12px 18px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+      color: #f8fafc;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .save-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #34d399;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+    }
+
+    .toolbar-guide {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-reset {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reset:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #f87171;
+      color: #ffffff;
+    }
+
+    .btn-print {
+      background: var(--primary-emerald);
+      color: #ffffff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+    }
+    .btn-print:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+
+    /* A4 Canvas Page Styles (Responsive on Screen, Exact A4 on Print) */
+    .a4-canvas {
+      width: 100%;
+      max-width: 210mm;
+      min-height: 297mm;
+      background: #ffffff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
+      padding: 14mm 16mm;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header: 제목 영역과 인적 사항 영역을 별도 행으로 분리 */
+    header {
+      border-bottom: 3px solid var(--primary-emerald);
+      padding-bottom: 4mm;
+      margin-bottom: 5mm;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .badge-period {
+      display: inline-block;
+      background: var(--primary-emerald);
+      color: #ffffff;
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .title-area h1 {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+    }
+
+    /* Student Info (Interactive Inputs) */
+    .student-info-grid {
+      width: 100%;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .info-box {
+      background: var(--primary-light-emerald);
+      border: 1.5px solid #a7f3d0;
+      padding: 7px 12px;
+      border-radius: 8px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .info-box:focus-within {
+      border-color: var(--primary-emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+    .info-box label {
+      color: var(--primary-emerald);
+      font-size: 12.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .info-input {
+      border: none;
+      border-bottom: 1.5px solid #94a3b8;
+      background: transparent;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      padding: 2px 4px;
+      outline: none;
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .info-input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+      font-size: 12px;
+    }
+    .info-input:focus {
+      border-bottom-color: var(--primary-emerald);
+    }
+
+    .info-print-mirror {
+      display: none;
+      flex: 1;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    /* Section Global */
+    .section-container {
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 5mm;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      padding: 10px 14px;
+      font-size: 15.5px;
+      font-weight: 800;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-body {
+      padding: 16px 18px;
+      background: #ffffff;
+      flex: 1;
+    }
+
+    /* Section Theme Colors (경험, 결과, 배운 점) */
+    .sec1-header { background: #fff1f2; color: #e11d48; }
+    .sec2-header { background: #eff6ff; color: #2563eb; }
+    .sec3-header { background: #fffbeb; color: #d97706; }
+
+    .sec-q {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.45;
+      word-break: keep-all;
+    }
+    .sec-q-sub {
+      margin-top: 14px;
+    }
+    .sec-q::before {
+      content: 'Q.';
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .sec1-q::before { color: #e11d48; }
+    .sec2-q::before { color: #2563eb; }
+    .sec3-q::before { color: #d97706; }
+
+    /* Interactive Textarea & Character Counter */
+    .field-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .write-input {
+      width: 100%;
+      min-height: 32mm;
+      padding: 12px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-dark);
+      resize: vertical;
+      outline: none;
+      overflow: hidden;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      display: block;
+    }
+    .write-input::placeholder {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+    .write-input:focus {
+      background: #ffffff;
+      border-color: var(--primary-emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.14);
+    }
+
+    .write-input.sec1-input:focus {
+      border-color: #e11d48;
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+    }
+    .write-input.sec2-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    .write-input.sec3-input {
+      min-height: 44mm;
+    }
+    .write-input.sec3-input:focus {
+      border-color: #d97706;
+      box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Prompt Quote Box (Interactive Dark Terminal Style) */
+    .prompt-quote-box {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 10px;
+      padding: 14px 22px;
+      position: relative;
+      margin-top: 4px;
+      border: 1.5px solid #1e293b;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .prompt-quote-box:focus-within {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+    .prompt-quote-box::before {
+      content: '"';
+      position: absolute;
+      top: 8px;
+      left: 9px;
+      font-size: 26px;
+      color: #38bdf8;
+      opacity: 0.6;
+      font-family: serif;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .prompt-quote-box::after {
+      content: '"';
+      position: absolute;
+      bottom: 2px;
+      right: 12px;
+      font-size: 26px;
+      color: #38bdf8;
+      opacity: 0.6;
+      font-family: serif;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .prompt-input {
+      width: 100%;
+      min-height: 18mm;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: vertical;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #f8fafc;
+      padding: 2px 6px;
+      display: block;
+    }
+    .prompt-input::placeholder {
+      color: #94a3b8;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13px;
+    }
+
+    /* Print Mirror Box (Hidden on Screen, Displayed on Print to Prevent Text Cutoff) */
+    .print-mirror {
+      display: none;
+      width: 100%;
+      min-height: 28mm;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #ffffff;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: #0f172a;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .print-mirror.sec3-mirror {
+      min-height: 40mm;
+    }
+    .print-mirror.prompt-mirror {
+      min-height: 16mm;
+      border: none;
+      padding: 2px 8px;
+      background: transparent;
+      font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+      font-size: 13px;
+    }
+    .print-mirror.is-empty {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* Custom Modal (Replaces alert / confirm) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      border: 1px solid #e2e8f0;
+    }
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      word-break: keep-all;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-modal-cancel {
+      background: #f1f5f9;
+      color: #334155;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-modal-cancel:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-modal-confirm {
+      background: #e11d48;
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-modal-confirm:hover {
+      background: #be123c;
+    }
+    .btn-modal-confirm.primary {
+      background: var(--primary-emerald);
+    }
+    .btn-modal-confirm.primary:hover {
+      background: #047857;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translate(-50%, 20px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 11px 20px;
+      border-radius: 50px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 2100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* Mobile / Tablet Adaptive Rules */
+    @media (max-width: 768px) {
+      .a4-canvas {
+        padding: 20px 16px;
+        min-height: auto;
+      }
+      .title-area h1 {
+        font-size: 20px;
+      }
+      .info-row {
+        grid-template-columns: 1fr;
+      }
+      .web-toolbar {
+        padding: 12px 14px;
+      }
+      .toolbar-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    /* Print Styles (PDF Export Optimization - A4 1페이지 안정 수용) */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 9mm 10mm;
+      }
+      body {
+        background: none;
+        padding: 0;
+        display: block;
+        min-height: auto;
+      }
+      .web-toolbar, .char-count, .modal-backdrop, .toast {
+        display: none !important;
+      }
+      .a4-canvas {
+        width: 100%;
+        max-width: none;
+        height: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 1mm 2mm;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      header {
+        padding-bottom: 3mm;
+        margin-bottom: 4mm;
+        gap: 8px;
+      }
+      .badge-period {
+        margin-bottom: 4px;
+        font-size: 10.5px;
+      }
+      .title-area h1 {
+        font-size: 21px;
+      }
+      .info-row {
+        display: grid !important;
+        grid-template-columns: 1.25fr 1fr !important;
+        gap: 8px;
+      }
+      .info-box {
+        padding: 5px 10px;
+        font-size: 12.5px;
+      }
+      .info-input {
+        display: none !important;
+      }
+      .info-print-mirror {
+        display: inline-block !important;
+      }
+      .write-input, .prompt-input {
+        display: none !important;
+      }
+      .print-mirror {
+        display: block !important;
+        min-height: 20mm;
+        padding: 8px 10px;
+        font-size: 12.5px;
+        line-height: 1.55;
+      }
+      .print-mirror.sec3-mirror {
+        min-height: 26mm;
+      }
+      .print-mirror.prompt-mirror {
+        min-height: 12mm;
+        font-size: 12px;
+        padding: 2px 6px;
+      }
+      .section-container {
+        border: 1.5px solid #94a3b8 !important;
+        margin-bottom: 3.5mm;
+      }
+      .section-header {
+        padding: 7px 12px;
+        font-size: 14px;
+      }
+      .section-body {
+        padding: 10px 14px;
+      }
+      .sec-q {
+        font-size: 13px;
+        margin-bottom: 6px;
+        line-height: 1.38;
+      }
+      .sec-q-sub {
+        margin-top: 9px;
+      }
+      .prompt-quote-box {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1.5px solid #94a3b8 !important;
+        padding: 8px 16px;
+      }
+      .prompt-quote-box::before, .prompt-quote-box::after {
+        color: #94a3b8 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Only: Top Interactive Toolbar -->
+  <div class="web-toolbar">
+    <div class="toolbar-left">
+      <div class="save-status">
+        <span class="status-dot"></span>
+        <span id="saveStatusText">웹에서 바로 작성 가능 (자동 임시 저장 활성화)</span>
+      </div>
+      <div class="toolbar-guide">💡 작성 완료 후 우측 <strong>[PDF로 저장하기]</strong>를 누르고, 인쇄 대상을 <strong>'PDF로 저장'</strong>으로 선택해 제출하세요.</div>
+    </div>
+    <div class="toolbar-actions">
+      <button type="button" class="btn-reset" id="btnOpenReset">초기화</button>
+      <button type="button" class="btn-print" id="btnSavePdf">📄 PDF로 저장하기</button>
+    </div>
+  </div>
+
+  <div class="a4-canvas">
+
+    <!-- Header -->
+    <header>
+      <div class="title-area">
+        <span class="badge-period">주제 탐구 및 AI 활용 코딩 프로젝트</span>
+        <h1>탐구 과정 성찰 보고서</h1>
+      </div>
+
+      <div class="student-info-grid">
+        <div class="info-row">
+          <div class="info-box">
+            <label for="field-major">관심 분야 또는 희망 진로</label>
+            <input type="text" id="field-major" class="info-input" placeholder="예: 생명공학" autocomplete="off">
+            <span class="info-print-mirror" id="mirror-major"></span>
+          </div>
+          <div class="info-box">
+            <label for="field-student">학번 / 이름</label>
+            <input type="text" id="field-student" class="info-input" placeholder="예: 20500 김성심" autocomplete="off">
+            <span class="info-print-mirror" id="mirror-student"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION 1: Experience & Problem Solving (경험) -->
+    <div class="section-container">
+      <div class="section-header sec1-header">
+        <span>🚨 1. 제작 과정의 [경험]: 전체 프로젝트 및 문제 해결 기록</span>
+      </div>
+      <div class="section-body">
+        <div class="sec-q sec1-q">주제 기획, AI와의 대화, 코딩 및 수정 등 전체 프로젝트 과정에서 가장 기억에 남는 경험이나 어려웠던 점을 자유롭게 작성하세요.</div>
+        <div class="field-wrapper">
+          <textarea id="field-exp" class="write-input sec1-input"></textarea>
+          <div id="mirror-exp" class="print-mirror"></div>
+          <div class="char-count" id="count-exp">0자</div>
+        </div>
+
+        <div class="sec-q sec1-q sec-q-sub">어려움을 해결하거나 원하는 결과를 얻기 위해, 내가 AI에게 직접 입력했던 핵심 '명령어(프롬프트)' 한 줄을 작성하세요.</div>
+        <div class="prompt-quote-box">
+          <textarea id="field-prompt" class="prompt-input" placeholder="AI 채팅창에 직접 입력했던 문장을 그대로 옮겨 적어주세요."></textarea>
+          <div id="mirror-prompt" class="print-mirror prompt-mirror"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Result (결과) -->
+    <div class="section-container">
+      <div class="section-header sec2-header">
+        <span>🔬 2. 자신의 활동 [결과]: 시뮬레이터 구현 및 탐구 결과</span>
+      </div>
+      <div class="section-body">
+        <div class="sec-q sec2-q">내가 기획하고 완성한 시뮬레이터의 핵심 기능과 시각적 결과를 작성하세요. (미완성인 경우, 탐구로 확인한 수학적·관심 분야 내용을 작성해도 좋습니다.)</div>
+        <div class="field-wrapper">
+          <textarea id="field-result" class="write-input sec2-input"></textarea>
+          <div id="mirror-result" class="print-mirror"></div>
+          <div class="char-count" id="count-result">0자</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Insight (배운 점) -->
+    <div class="section-container" style="margin-bottom: auto;">
+      <div class="section-header sec3-header">
+        <span>💡 3. 활동을 통해 [배운 점]: 자율 성찰 및 진로 인사이트</span>
+      </div>
+      <div class="section-body">
+        <div class="sec-q sec3-q">이 활동을 통해 새롭게 알게 된 기하학적 원리나, 나의 희망 진로에 수학이 어떻게 쓰일 수 있는지 배운 점을 자유롭게 작성하세요.</div>
+        <div class="field-wrapper">
+          <textarea id="field-learned" class="write-input sec3-input"></textarea>
+          <div id="mirror-learned" class="print-mirror sec3-mirror"></div>
+          <div class="char-count" id="count-learned">0자</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Custom Modal: Reset Confirmation -->
+  <div class="modal-backdrop" id="resetModal" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle">
+    <div class="modal-card">
+      <div class="modal-title" id="resetModalTitle">작성 중인 내용을 초기화할까요?</div>
+      <div class="modal-desc">현재 화면에 입력한 관심 분야, 학번, 이름, 보고서 작성 내용이 모두 삭제됩니다. 삭제된 내용은 복구할 수 없습니다.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnCancelReset">취소</button>
+        <button type="button" class="btn-modal-confirm" id="btnConfirmReset">모두 지우기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Modal: Empty Student Info Reminder Before Print -->
+  <div class="modal-backdrop" id="printWarnModal" role="dialog" aria-modal="true" aria-labelledby="printWarnTitle">
+    <div class="modal-card">
+      <div class="modal-title" id="printWarnTitle">학번 / 이름이 비어 있습니다</div>
+      <div class="modal-desc">상단의 <strong>[학번 / 이름]</strong>을 먼저 입력하면 PDF 저장 시 파일 이름이 자동으로 학번·이름에 맞춰 지정됩니다.</div>
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnBackToInput">돌아가서 입력</button>
+        <button type="button" class="btn-modal-confirm primary" id="btnProceedPrint">그대로 PDF 저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Message -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =========================================================================
+    // 웹 입력 도구 핵심 로직: 자동 높이 조절, 인쇄 미러링, sessionStorage 임시 저장
+    // =========================================================================
+    (function () {
+      const STORAGE_KEY = 'geo_step5_reflection_report_v1';
+      const ORIGINAL_TITLE = document.title;
+
+      // 입력 요소와 인쇄 미러, 글자 수 카운터 매핑
+      const fields = {
+        major:   { el: document.getElementById('field-major'),   mirror: document.getElementById('mirror-major'),   isTextarea: false },
+        student: { el: document.getElementById('field-student'), mirror: document.getElementById('mirror-student'), isTextarea: false },
+        exp:     { el: document.getElementById('field-exp'),     mirror: document.getElementById('mirror-exp'),     count: document.getElementById('count-exp'),     isTextarea: true },
+        prompt:  { el: document.getElementById('field-prompt'),  mirror: document.getElementById('mirror-prompt'),  isTextarea: true },
+        result:  { el: document.getElementById('field-result'),  mirror: document.getElementById('mirror-result'),  count: document.getElementById('count-result'),  isTextarea: true },
+        learned: { el: document.getElementById('field-learned'), mirror: document.getElementById('mirror-learned'), count: document.getElementById('count-learned'), isTextarea: true }
+      };
+
+      const saveStatusText = document.getElementById('saveStatusText');
+      const toastEl = document.getElementById('toast');
+      const resetModal = document.getElementById('resetModal');
+      const printWarnModal = document.getElementById('printWarnModal');
+      let toastTimer = null;
+
+      /**
+       * 화면 하단에 짧은 안내 토스트 표시
+       */
+      function showToast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('show');
+        }, 2400);
+      }
+
+      /**
+       * 입력량에 맞춰 textarea 높이를 자동으로 확장 (스크롤 및 잘림 방지)
+       */
+      function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      }
+
+      /**
+       * 개별 필드의 값을 인쇄 전용 미러(div/span) 및 글자 수 표시와 동기화
+       */
+      function syncField(key) {
+        const item = fields[key];
+        if (!item || !item.el || !item.mirror) return;
+        const val = item.el.value;
+
+        if (item.isTextarea) {
+          autoResizeTextarea(item.el);
+          if (val.trim() === '') {
+            item.mirror.textContent = '(작성된 내용이 없습니다)';
+            item.mirror.classList.add('is-empty');
+          } else {
+            item.mirror.textContent = val;
+            item.mirror.classList.remove('is-empty');
+          }
+          if (item.count) {
+            item.count.textContent = val.length + '자';
+          }
+        } else {
+          item.mirror.textContent = val.trim() || '\u00A0';
+        }
+      }
+
+      /**
+       * sessionStorage에 현재 입력값 임시 저장 (탭 종료 시 자동 삭제로 공용 PC 안전 확보)
+       */
+      function saveToSession() {
+        try {
+          const data = {};
+          Object.keys(fields).forEach((key) => {
+            data[key] = fields[key].el.value;
+          });
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+          const now = new Date();
+          const hh = String(now.getHours()).padStart(2, '0');
+          const mm = String(now.getMinutes()).padStart(2, '0');
+          const ss = String(now.getSeconds()).padStart(2, '0');
+          saveStatusText.textContent = '자동 임시 저장됨 (' + hh + ':' + mm + ':' + ss + ')';
+        } catch (err) {
+          saveStatusText.textContent = '작성 중 (브라우저 임시 저장 미지원 환경)';
+        }
+      }
+
+      /**
+       * 페이지 로드 시 sessionStorage에서 이전 입력 내용 복구
+       */
+      function loadFromSession() {
+        try {
+          const saved = sessionStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const data = JSON.parse(saved);
+            Object.keys(fields).forEach((key) => {
+              if (typeof data[key] === 'string') {
+                fields[key].el.value = data[key];
+              }
+            });
+            saveStatusText.textContent = '이전 작성 내용을 자동으로 불러왔습니다';
+          }
+        } catch (err) {
+          console.warn('임시 저장 불러오기 건너뜀:', err);
+        }
+
+        Object.keys(fields).forEach(syncField);
+      }
+
+      /**
+       * PDF 저장 시 기본 파일명을 '학번_이름_탐구과정성찰보고서' 형태로 자동 설정
+       */
+      function applyPrintFilename() {
+        const rawStudent = fields.student.el.value.trim();
+        if (rawStudent) {
+          const safeName = rawStudent
+            .replace(/[\\/:*?"<>|]/g, '')
+            .replace(/\s+/g, '_');
+          document.title = safeName + '_탐구과정성찰보고서';
+        } else {
+          document.title = '탐구_과정_성찰_보고서(학번_이름)';
+        }
+      }
+
+      /**
+       * 실제 브라우저 인쇄(PDF 저장) 호출
+       */
+      function executePrint() {
+        Object.keys(fields).forEach(syncField);
+        applyPrintFilename();
+        window.print();
+      }
+
+      // 인쇄 직전/직후 이벤트 (Ctrl+P 단축키로 인쇄하는 경우까지 대응)
+      window.addEventListener('beforeprint', () => {
+        Object.keys(fields).forEach(syncField);
+        applyPrintFilename();
+      });
+
+      window.addEventListener('afterprint', () => {
+        document.title = ORIGINAL_TITLE;
+      });
+
+      // 모든 입력 필드에 실시간 이벤트 바인딩
+      Object.keys(fields).forEach((key) => {
+        fields[key].el.addEventListener('input', () => {
+          syncField(key);
+          saveToSession();
+        });
+      });
+
+      // 창 크기 변경 시 textarea 높이 재계산
+      window.addEventListener('resize', () => {
+        Object.keys(fields).forEach((key) => {
+          if (fields[key].isTextarea) {
+            autoResizeTextarea(fields[key].el);
+          }
+        });
+      });
+
+      // [PDF로 저장하기] 버튼 클릭 처리
+      document.getElementById('btnSavePdf').addEventListener('click', () => {
+        if (!fields.student.el.value.trim()) {
+          printWarnModal.classList.add('open');
+        } else {
+          executePrint();
+        }
+      });
+
+      document.getElementById('btnBackToInput').addEventListener('click', () => {
+        printWarnModal.classList.remove('open');
+        fields.student.el.focus();
+      });
+
+      document.getElementById('btnProceedPrint').addEventListener('click', () => {
+        printWarnModal.classList.remove('open');
+        executePrint();
+      });
+
+      // [초기화] 버튼 및 커스텀 모달 처리
+      document.getElementById('btnOpenReset').addEventListener('click', () => {
+        resetModal.classList.add('open');
+      });
+
+      document.getElementById('btnCancelReset').addEventListener('click', () => {
+        resetModal.classList.remove('open');
+      });
+
+      document.getElementById('btnConfirmReset').addEventListener('click', () => {
+        Object.keys(fields).forEach((key) => {
+          fields[key].el.value = '';
+          syncField(key);
+        });
+        try {
+          sessionStorage.removeItem(STORAGE_KEY);
+        } catch (err) {
+          console.warn('임시 저장 삭제 건너뜀:', err);
+        }
+        saveStatusText.textContent = '웹에서 바로 작성 가능 (자동 임시 저장 활성화)';
+        resetModal.classList.remove('open');
+        showToast('작성 내용이 모두 초기화되었습니다.');
+      });
+
+      // 모달 바깥 영역 클릭 또는 ESC 키로 닫기
+      [resetModal, printWarnModal].forEach((modal) => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('open');
+          }
+        });
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          resetModal.classList.remove('open');
+          printWarnModal.classList.remove('open');
+        }
+      });
+
+      // 초기 로드 실행
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadFromSession);
+      } else {
+        loadFromSession();
+      }
+    })();
+  </script>
+
+</body>
+</html>
